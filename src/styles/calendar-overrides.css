@@ -1,0 +1,46 @@
+/* src/styles/custom-big-calendar.css */
+
+.rbc-calendar {
+  @apply w-full text-sm text-foreground font-sans;
+}
+
+.rbc-toolbar {
+  @apply hidden; /* car on utilise notre propre CustomToolbar */
+}
+
+.rbc-month-view {
+  @apply border rounded-lg overflow-hidden bg-background;
+}
+
+.rbc-header {
+  @apply bg-muted text-muted-foreground py-2 px-3 border-b font-medium text-center;
+}
+
+.rbc-day-bg {
+  @apply border border-muted;
+}
+
+.rbc-time-content {
+  @apply border-l;
+}
+
+.rbc-time-slot {
+  @apply border-t border-muted min-h-[2.5rem];
+}
+
+.rbc-event {
+  @apply rounded px-2 py-1 text-white text-xs bg-primary hover:bg-primary/90;
+}
+
+.rbc-today {
+  @apply bg-accent;
+}
+
+.rbc-agenda-view table {
+  @apply w-full text-left border;
+}
+
+.rbc-agenda-view th,
+.rbc-agenda-view td {
+  @apply border px-2 py-1;
+}

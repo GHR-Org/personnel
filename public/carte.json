@@ -1,0 +1,496 @@
+{
+  "total_clients": 12500000000,
+  "total_users": 87500000000,
+  "countries": [
+    {
+      "country": "United States",
+      "clients": 2500000000,
+      "users": 18000000000,
+      "region": "North America",
+      "coordinates": [-95, 38]
+    },
+    {
+      "country": "Canada",
+      "clients": 800000000,
+      "users": 6000000000,
+      "region": "North America",
+      "coordinates": [-96, 56]
+    },
+    {
+      "country": "Mexico",
+      "clients": 600000000,
+      "users": 4500000000,
+      "region": "North America",
+      "coordinates": [-102, 23]
+    },
+    {
+      "country": "Brazil",
+      "clients": 1200000000,
+      "users": 9000000000,
+      "region": "South America",
+      "coordinates": [-55, -10]
+    },
+    {
+      "country": "Argentina",
+      "clients": 400000000,
+      "users": 3000000000,
+      "region": "South America",
+      "coordinates": [-64, -34]
+    },
+    {
+      "country": "UK",
+      "clients": 800000000,
+      "users": 6000000000,
+      "region": "Europe",
+      "coordinates": [-2, 54]
+    },
+    {
+      "country": "France",
+      "clients": 700000000,
+      "users": 5500000000,
+      "region": "Europe",
+      "coordinates": [2, 46]
+    },
+    {
+      "country": "Germany",
+      "clients": 900000000,
+      "users": 7000000000,
+      "region": "Europe",
+      "coordinates": [10, 51]
+    },
+    {
+      "country": "Spain",
+      "clients": 500000000,
+      "users": 4000000000,
+      "region": "Europe",
+      "coordinates": [-3, 40]
+    },
+    {
+      "country": "Italy",
+      "clients": 600000000,
+      "users": 4500000000,
+      "region": "Europe",
+      "coordinates": [12, 42]
+    },
+    {
+      "country": "Russia",
+      "clients": 1000000000,
+      "users": 8000000000,
+      "region": "Europe",
+      "coordinates": [105, 65]
+    },
+    {
+      "country": "China",
+      "clients": 2000000000,
+      "users": 15000000000,
+      "region": "Asia",
+      "coordinates": [104, 35]
+    },
+    {
+      "country": "India",
+      "clients": 1500000000,
+      "users": 12000000000,
+      "region": "Asia",
+      "coordinates": [78, 20]
+    },
+    {
+      "country": "Japan",
+      "clients": 800000000,
+      "users": 6000000000,
+      "region": "Asia",
+      "coordinates": [138, 36]
+    },
+    {
+      "country": "Australia",
+      "clients": 400000000,
+      "users": 3000000000,
+      "region": "Oceania",
+      "coordinates": [133, -25]
+    },
+    {
+      "country": "South Africa",
+      "clients": 300000000,
+      "users": 2500000000,
+      "region": "Africa",
+      "coordinates": [24, -29]
+    },
+    {
+      "country": "Egypt",
+      "clients": 200000000,
+      "users": 1500000000,
+      "region": "Africa",
+      "coordinates": [30, 27]
+    },
+    {
+      "country": "Nigeria",
+      "clients": 250000000,
+      "users": 2000000000,
+      "region": "Africa",
+      "coordinates": [8, 10]
+    },
+    {
+      "country": "Madagascar",
+      "clients": 50000000,
+      "users": 400000000,
+      "region": "Africa",
+      "coordinates": [47, -20]
+    },
+    {
+      "country": "Morocco",
+      "clients": 100000000,
+      "users": 800000000,
+      "region": "Africa",
+      "coordinates": [-7, 32]
+    },
+    {
+      "country": "Algeria",
+      "clients": 80000000,
+      "users": 600000000,
+      "region": "Africa",
+      "coordinates": [3, 28]
+    },
+    {
+      "country": "Tunisia",
+      "clients": 60000000,
+      "users": 500000000,
+      "region": "Africa",
+      "coordinates": [9, 34]
+    },
+    {
+      "country": "Libya",
+      "clients": 40000000,
+      "users": 300000000,
+      "region": "Africa",
+      "coordinates": [17, 25]
+    },
+    {
+      "country": "Sudan",
+      "clients": 30000000,
+      "users": 250000000,
+      "region": "Africa",
+      "coordinates": [30, 15]
+    },
+    {
+      "country": "Ethiopia",
+      "clients": 70000000,
+      "users": 600000000,
+      "region": "Africa",
+      "coordinates": [40, 8]
+    },
+    {
+      "country": "Kenya",
+      "clients": 80000000,
+      "users": 700000000,
+      "region": "Africa",
+      "coordinates": [38, 0]
+    },
+    {
+      "country": "Tanzania",
+      "clients": 60000000,
+      "users": 500000000,
+      "region": "Africa",
+      "coordinates": [35, -6]
+    },
+    {
+      "country": "Uganda",
+      "clients": 40000000,
+      "users": 350000000,
+      "region": "Africa",
+      "coordinates": [32, 1]
+    },
+    {
+      "country": "Rwanda",
+      "clients": 20000000,
+      "users": 150000000,
+      "region": "Africa",
+      "coordinates": [30, -2]
+    },
+    {
+      "country": "Burundi",
+      "clients": 15000000,
+      "users": 120000000,
+      "region": "Africa",
+      "coordinates": [30, -4]
+    },
+    {
+      "country": "DR Congo",
+      "clients": 50000000,
+      "users": 400000000,
+      "region": "Africa",
+      "coordinates": [25, -4]
+    },
+    {
+      "country": "Congo",
+      "clients": 20000000,
+      "users": 150000000,
+      "region": "Africa",
+      "coordinates": [15, -1]
+    },
+    {
+      "country": "Central African Republic",
+      "clients": 10000000,
+      "users": 80000000,
+      "region": "Africa",
+      "coordinates": [20, 7]
+    },
+    {
+      "country": "Chad",
+      "clients": 15000000,
+      "users": 120000000,
+      "region": "Africa",
+      "coordinates": [19, 15]
+    },
+    {
+      "country": "Niger",
+      "clients": 20000000,
+      "users": 150000000,
+      "region": "Africa",
+      "coordinates": [8, 18]
+    },
+    {
+      "country": "Mali",
+      "clients": 25000000,
+      "users": 200000000,
+      "region": "Africa",
+      "coordinates": [-4, 17]
+    },
+    {
+      "country": "Burkina Faso",
+      "clients": 20000000,
+      "users": 150000000,
+      "region": "Africa",
+      "coordinates": [-2, 12]
+    },
+    {
+      "country": "Ghana",
+      "clients": 30000000,
+      "users": 250000000,
+      "region": "Africa",
+      "coordinates": [-1, 8]
+    },
+    {
+      "country": "Togo",
+      "clients": 10000000,
+      "users": 80000000,
+      "region": "Africa",
+      "coordinates": [1, 8]
+    },
+    {
+      "country": "Benin",
+      "clients": 15000000,
+      "users": 120000000,
+      "region": "Africa",
+      "coordinates": [2, 9]
+    },
+    {
+      "country": "Cameroon",
+      "clients": 25000000,
+      "users": 200000000,
+      "region": "Africa",
+      "coordinates": [12, 6]
+    },
+    {
+      "country": "Gabon",
+      "clients": 10000000,
+      "users": 80000000,
+      "region": "Africa",
+      "coordinates": [11, -1]
+    },
+    {
+      "country": "Equatorial Guinea",
+      "clients": 5000000,
+      "users": 40000000,
+      "region": "Africa",
+      "coordinates": [10, 2]
+    },
+    {
+      "country": "São Tomé and Príncipe",
+      "clients": 1000000,
+      "users": 8000000,
+      "region": "Africa",
+      "coordinates": [7, 1]
+    },
+    {
+      "country": "Côte d'Ivoire",
+      "clients": 20000000,
+      "users": 150000000,
+      "region": "Africa",
+      "coordinates": [-6, 8]
+    },
+    {
+      "country": "Guinea-Bissau",
+      "clients": 3000000,
+      "users": 25000000,
+      "region": "Africa",
+      "coordinates": [-15, 12]
+    },
+    {
+      "country": "Cape Verde",
+      "clients": 2000000,
+      "users": 15000000,
+      "region": "Africa",
+      "coordinates": [-24, 16]
+    },
+    {
+      "country": "Mauritania",
+      "clients": 8000000,
+      "users": 60000000,
+      "region": "Africa",
+      "coordinates": [-11, 21]
+    },
+    {
+      "country": "Western Sahara",
+      "clients": 2000000,
+      "users": 15000000,
+      "region": "Africa",
+      "coordinates": [-13, 25]
+    },
+    {
+      "country": "Eritrea",
+      "clients": 5000000,
+      "users": 40000000,
+      "region": "Africa",
+      "coordinates": [39, 15]
+    },
+    {
+      "country": "Djibouti",
+      "clients": 2000000,
+      "users": 15000000,
+      "region": "Africa",
+      "coordinates": [43, 12]
+    },
+    {
+      "country": "Somalia",
+      "clients": 10000000,
+      "users": 80000000,
+      "region": "Africa",
+      "coordinates": [46, 5]
+    },
+    {
+      "country": "Malawi",
+      "clients": 15000000,
+      "users": 120000000,
+      "region": "Africa",
+      "coordinates": [34, -13]
+    },
+    {
+      "country": "Zambia",
+      "clients": 20000000,
+      "users": 150000000,
+      "region": "Africa",
+      "coordinates": [27, -13]
+    },
+    {
+      "country": "Zimbabwe",
+      "clients": 15000000,
+      "users": 120000000,
+      "region": "Africa",
+      "coordinates": [29, -20]
+    },
+    {
+      "country": "Botswana",
+      "clients": 10000000,
+      "users": 80000000,
+      "region": "Africa",
+      "coordinates": [24, -22]
+    },
+    {
+      "country": "Namibia",
+      "clients": 8000000,
+      "users": 60000000,
+      "region": "Africa",
+      "coordinates": [18, -22]
+    },
+    {
+      "country": "Lesotho",
+      "clients": 3000000,
+      "users": 25000000,
+      "region": "Africa",
+      "coordinates": [28, -30]
+    },
+    {
+      "country": "Eswatini",
+      "clients": 2000000,
+      "users": 15000000,
+      "region": "Africa",
+      "coordinates": [31, -27]
+    },
+    {
+      "country": "Mozambique",
+      "clients": 25000000,
+      "users": 200000000,
+      "region": "Africa",
+      "coordinates": [35, -18]
+    },
+    {
+      "country": "Comoros",
+      "clients": 1000000,
+      "users": 8000000,
+      "region": "Africa",
+      "coordinates": [44, -12]
+    },
+    {
+      "country": "Mauritius",
+      "clients": 3000000,
+      "users": 25000000,
+      "region": "Africa",
+      "coordinates": [58, -20]
+    },
+    {
+      "country": "Seychelles",
+      "clients": 1000000,
+      "users": 8000000,
+      "region": "Africa",
+      "coordinates": [56, -5]
+    }
+  ],
+  "regions": {
+    "North America": {
+      "clients": 3900000000,
+      "users": 28500000000,
+      "growth": 12.5
+    },
+    "South America": {
+      "clients": 1800000000,
+      "users": 13500000000,
+      "growth": 8.3
+    },
+    "Europe": {
+      "clients": 3800000000,
+      "users": 28500000000,
+      "growth": 15.7
+    },
+    "Asia": {
+      "clients": 5800000000,
+      "users": 43500000000,
+      "growth": 22.1
+    },
+    "Africa": {
+      "clients": 1200000000,
+      "users": 9000000000,
+      "growth": 18.9
+    },
+    "Oceania": {
+      "clients": 800000000,
+      "users": 6000000000,
+      "growth": 6.2
+    }
+  },
+  "cdn_providers": {
+    "Fastly": {
+      "enabled": true,
+      "clients": 7500000000,
+      "users": 52500000000
+    },
+    "Cloudflare": {
+      "enabled": false,
+      "clients": 5000000000,
+      "users": 35000000000
+    }
+  },
+  "time_periods": {
+    "quarter": "Q4 2024",
+    "month": "Décembre 2024",
+    "week": "Semaine 52"
+  }
+} 

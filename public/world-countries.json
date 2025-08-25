@@ -1,0 +1,635 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "United States of America"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[-125, 48], [-66, 44], [-80, 25], [-125, 25], [-125, 48]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Canada"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[-125, 60], [-66, 60], [-66, 48], [-125, 48], [-125, 60]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Mexico"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[-105, 32], [-87, 32], [-87, 15], [-105, 15], [-105, 32]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Brazil"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[-75, 5], [-35, 5], [-35, -35], [-75, -35], [-75, 5]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Argentina"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[-75, -20], [-55, -20], [-55, -55], [-75, -55], [-75, -20]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "United Kingdom"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[-8, 60], [2, 60], [2, 50], [-8, 50], [-8, 60]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "France"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[-5, 51], [10, 51], [10, 42], [-5, 42], [-5, 51]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Germany"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[6, 55], [15, 55], [15, 47], [6, 47], [6, 55]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Spain"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[-10, 44], [5, 44], [5, 36], [-10, 36], [-10, 44]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Italy"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[6, 47], [18, 47], [18, 36], [6, 36], [6, 47]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Russian Federation"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[30, 70], [180, 70], [180, 50], [30, 50], [30, 70]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "China"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[73, 55], [135, 55], [135, 18], [73, 18], [73, 55]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "India"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[68, 37], [97, 37], [97, 8], [68, 8], [68, 37]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Japan"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[129, 46], [146, 46], [146, 30], [129, 30], [129, 46]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Australia"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[113, -10], [154, -10], [154, -44], [113, -44], [113, -10]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "South Africa"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[16, -22], [33, -22], [33, -35], [16, -35], [16, -22]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Egypt"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[25, 32], [37, 32], [37, 22], [25, 22], [25, 32]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Nigeria"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[3, 14], [15, 14], [15, 4], [3, 4], [3, 14]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Madagascar"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[43, -12], [51, -12], [51, -26], [43, -26], [43, -12]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Morocco"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[-13, 36], [-1, 36], [-1, 28], [-13, 28], [-13, 36]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Algeria"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[-9, 37], [12, 37], [12, 19], [-9, 19], [-9, 37]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Tunisia"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[7, 37], [12, 37], [12, 30], [7, 30], [7, 37]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Libya"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[9, 33], [25, 33], [25, 20], [9, 20], [9, 33]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Sudan"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[22, 23], [39, 23], [39, 4], [22, 4], [22, 23]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Ethiopia"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[33, 15], [48, 15], [48, 4], [33, 4], [33, 15]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Kenya"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[34, 5], [42, 5], [42, -5], [34, -5], [34, 5]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Tanzania"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[29, -1], [41, -1], [41, -12], [29, -12], [29, -1]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Uganda"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[29, 4], [35, 4], [35, -2], [29, -2], [29, 4]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Rwanda"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[29, -1], [31, -1], [31, -3], [29, -3], [29, -1]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Burundi"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[29, -3], [31, -3], [31, -5], [29, -5], [29, -3]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "DR Congo"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[12, 6], [31, 6], [31, -14], [12, -14], [12, 6]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Congo"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[11, 4], [19, 4], [19, -5], [11, -5], [11, 4]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Central African Republic"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[14, 11], [27, 11], [27, 2], [14, 2], [14, 11]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Chad"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[14, 24], [24, 24], [24, 8], [14, 8], [14, 24]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Niger"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[0, 23], [16, 23], [16, 12], [0, 12], [0, 23]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Mali"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[-12, 25], [4, 25], [4, 10], [-12, 10], [-12, 25]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Burkina Faso"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[-6, 15], [2, 15], [2, 9], [-6, 9], [-6, 15]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Ghana"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[-4, 11], [1, 11], [1, 5], [-4, 5], [-4, 11]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Togo"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[0, 11], [2, 11], [2, 6], [0, 6], [0, 11]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Benin"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[1, 12], [4, 12], [4, 6], [1, 6], [1, 12]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Cameroon"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[8, 13], [16, 13], [16, 2], [8, 2], [8, 13]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Gabon"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[8, 2], [14, 2], [14, -4], [8, -4], [8, 2]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Equatorial Guinea"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[5, 2], [11, 2], [11, -2], [5, -2], [5, 2]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "São Tomé and Príncipe"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[6, 2], [7, 2], [7, 1], [6, 1], [6, 2]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Côte d'Ivoire"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[-9, 10], [-3, 10], [-3, 5], [-9, 5], [-9, 10]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Guinea-Bissau"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[-16, 12], [-14, 12], [-14, 11], [-16, 11], [-16, 12]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Cape Verde"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[-25, 17], [-23, 17], [-23, 15], [-25, 15], [-25, 17]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Mauritania"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[-17, 27], [-5, 27], [-5, 15], [-17, 15], [-17, 27]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Western Sahara"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[-17, 28], [-9, 28], [-9, 21], [-17, 21], [-17, 28]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Eritrea"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[36, 18], [43, 18], [43, 12], [36, 12], [36, 18]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Djibouti"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[42, 13], [44, 13], [44, 11], [42, 11], [42, 13]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Somalia"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[41, 12], [51, 12], [51, -2], [41, -2], [41, 12]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Malawi"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[32, -9], [36, -9], [36, -17], [32, -17], [32, -9]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Zambia"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[22, -8], [33, -8], [33, -18], [22, -18], [22, -8]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Zimbabwe"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[25, -16], [33, -16], [33, -23], [25, -23], [25, -16]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Botswana"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[20, -18], [29, -18], [29, -27], [20, -27], [20, -18]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Namibia"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[11, -17], [25, -17], [25, -29], [11, -29], [11, -17]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Lesotho"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[27, -29], [30, -29], [30, -31], [27, -31], [27, -29]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Eswatini"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[31, -26], [32, -26], [32, -28], [31, -28], [31, -26]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Mozambique"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[30, -10], [41, -10], [41, -27], [30, -27], [30, -10]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Comoros"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[43, -12], [44, -12], [44, -13], [43, -13], [43, -12]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Mauritius"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[57, -20], [58, -20], [58, -21], [57, -21], [57, -20]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Seychelles"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[55, -4], [56, -4], [56, -5], [55, -5], [55, -4]]]
+      }
+    }
+  ]
+} 

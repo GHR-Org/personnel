@@ -1,0 +1,80 @@
+{
+  "user": {
+    "name": "Lovasoa Nantenaina",
+    "email": "lnantenaina78@gmail.com",
+    "avatar": "/avatars/shadcn.jpg"
+  },
+  "navMain": [
+    {
+      "title": "Tableau de bord",
+      "url": "/manager",
+      "icon": "IconDashboard"
+    },
+    {
+      "title": "Menus",
+      "url": "/manager/menus",
+      "icon": "IconListDetails"
+    },
+    {
+      "title": "Planning des repas",
+      "url": "/manager/planning",
+      "icon": "IconInnerShadowTop"
+    },
+    {
+      "title": "Commandes",
+      "url": "/manager/commandes",
+      "icon": "IconFileDescription"
+    }
+  ],
+  "navClouds": [
+    {
+      "title": "Suggestions du chef",
+      "icon": "IconFileWord",
+      "url": "#",
+      "items": [
+        {
+          "title": "Aujourd'hui",
+          "url": "#"
+        },
+        {
+          "title": "Par semaine",
+          "url": "#"
+        }
+      ]
+    },
+    {
+      "title": "Allergies & préférences",
+      "icon": "IconListDetails",
+      "url": "#",
+      "items": [
+        {
+          "title": "Préférences clients",
+          "url": "#"
+        },
+        {
+          "title": "Allergènes",
+          "url": "#"
+        }
+      ]
+    }
+  ],
+  "navSecondary": [
+    {
+      "title": "Paramètres",
+      "url": "/parametres/restaurant",
+      "icon": "IconSettings"
+    },
+    {
+      "title": "Aide",
+      "url": "#",
+      "icon": "IconHelp"
+    }
+  ],
+  "documents": [
+    {
+      "name": "Rapports",
+      "url": "/manager/rapports",
+      "icon": "IconReport"
+    }
+  ]
+}

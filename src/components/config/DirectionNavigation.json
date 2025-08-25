@@ -1,0 +1,37 @@
+  {
+    "user": {
+      "name": "direction",
+      "email": "ghr@ghrinc.com",
+      "avatar": "/avatars/diirection.jpg"
+    },
+    "navMain": [
+      {
+        "title": "Tableau de bord",
+        "url": "/direction",
+        "icon": "IconDashboard"
+      },
+      {
+        "title": "Personnels",
+        "url": "/direction/profil",
+        "icon": "IconUsers"
+      },
+      {
+        "title": "Chambres",
+        "url": "/direction/chambres",
+        "icon": "IconChamber"
+      },
+      {
+        "title": "Statistiques",
+        "url": "/direction/statistiques",
+        "icon": "IconChartBar"
+      },
+      {
+        "title": "Configuration",
+        "url": "/direction/configuration",
+        "icon": "IconSettings"
+      }
+    ],
+    "navClouds": [],
+    "navSecondary": [],
+    "documents": []
+  } 

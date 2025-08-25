@@ -1,0 +1,105 @@
+{
+  "user": {
+    "name": "Nom du Caissier",
+    "email": "caissier@ghrinc.com",
+    "avatar": "/avatars/caissier.jpg"
+  },
+  "navMain": [
+    {
+      "title": "Tableau de bord",
+      "url": "/caissier",
+      "icon": "IconDashboard"
+    },
+    {
+      "title": "Gestion des Caisses",
+      "url": "/caissier/invoice",
+      "icon": "IconCashBanknote",
+      "items": [
+        {
+          "title": "Suivi encaissement",
+          "url": "#",
+          "icon": "IconArrowDownRight"
+        },
+        {
+          "title": "Suivi décaissement",
+          "url": "#",
+          "icon": "IconArrowUpRight"
+        },
+        {
+          "title": "Historique des transactions",
+          "url": "/caissier",
+          "icon": "IconHistory"
+        }
+      ]
+    },
+    {
+      "title": "Paiement et Facturation",
+      "url": "/caissier/invoice/facture",
+      "icon": "IconReceipt2",
+      "items": [
+        {
+          "title": "Effectuer un Paiement",
+          "url": "#",
+          "icon": "IconCreditCard"
+        },
+        {
+          "title": "Émettre une Facture",
+          "url": "#",
+          "icon": "IconFileInvoice"
+        },
+        {
+          "title": "Logs Paiement",
+          "url": "#",
+          "icon": "IconList"
+        }
+      ]
+    },
+    {
+      "title": "Statistiques",
+      "url": "/caissier/statistiques",
+      "icon": "IconChartBar"
+    }
+  ],
+  "navClouds": [
+    {
+      "title": "Capture",
+      "icon": "IconCamera",
+      "isActive": false,
+      "url": "#",
+      "items": [
+        {
+          "title": "Propositions actives",
+          "url": "#"
+        },
+        {
+          "title": "Archivées",
+          "url": "#"
+        }
+      ]
+    }
+  ],
+  "navSecondary": [
+    {
+      "title": "Paramètres",
+      "url": "/parametres/general",
+      "icon": "IconSettings"
+    },
+    {
+      "title": "Aide",
+      "url": "#",
+      "icon": "IconHelp"
+    },
+    {
+      "title": "Recherche",
+      "url": "#",
+      "icon": "IconSearch"
+    }
+  ],
+  "documents": [
+    {
+      "name": "Bibliothèque de données",
+      "url": "/caissier/caisse",
+      "icon": "IconDatabase"
+    }
+  ]
+}

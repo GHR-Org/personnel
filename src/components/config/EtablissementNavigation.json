@@ -1,0 +1,38 @@
+{
+  "user": {
+    "name": "Etablissement",
+    "email": "modestep20.aps1@gmail.com",
+    "avatar": "/avatars/etablissement.jpg"
+  },
+  "navMain": [
+    {
+      "title": "Tableau de bord",
+      "url": "/etablissement",
+      "icon": "IconDashboard"
+    },
+    {
+      "title": "Personnel",
+      "url": "/etablissement/personnel",
+      "icon": "IconUsers"
+    },
+    {
+      "title": "Réglementation",
+      "url": "/etablissement/reglementation",
+      "icon": "IconChartBar"
+    }
+  ],
+  "navClouds": [],
+  "navSecondary": [
+    {
+      "title": "Directive",
+      "url": "/direction",
+      "icon": "IconChartBar"
+    },
+    {
+      "title": "Aide",
+      "url": "#",
+      "icon": "IconHelpCircle"
+    }
+  ],
+  "documents": []
+} 

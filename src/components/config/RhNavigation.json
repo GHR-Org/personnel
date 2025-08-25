@@ -1,0 +1,112 @@
+{
+  "user": {
+    "name": "Lovasoa Nantenaina",
+    "email": "lnantenaina78@gmail.com",
+    "avatar": "/avatars/shadcn.jpg"
+  },
+  "navMain": [
+    {
+      "title": "Tableau de bords",
+      "url": "#",
+      "icon": "IconDashboard"
+    },
+    {
+      "title": "Planning du personnel",
+      "url": "#",
+      "icon": "IconListDetails"
+    },
+    {
+      "title": "Suivi des présences",
+      "url": "/rh/surveillance/planning-personnel",
+      "icon": "IconChartBar"
+    },
+    {
+      "title": "Congés et absences",
+      "url": "/rh/surveillance/conges",
+      "icon": "IconFolder"
+    },
+    
+    {
+      "title": "Équipes",
+      "url": "/rh/personnel",
+      "icon": "IconUsers"
+    }
+  ],
+  "navClouds": [
+    {
+      "title": "Capture",
+      "icon": "IconCamera",
+      "isActive": true,
+      "url": "#",
+      "items": [
+        {
+          "title": "Propositions actives",
+          "url": "#"
+        },
+        {
+          "title": "Archivées",
+          "url": "#"
+        }
+      ]
+    },
+    {
+      "title": "Proposition",
+      "icon": "IconFileDescription",
+      "url": "#",
+      "items": [
+        {
+          "title": "Propositions actives",
+          "url": "#"
+        },
+        {
+          "title": "Archivées",
+          "url": "#"
+        }
+      ]
+    },
+    {
+      "title": "Prompts",
+      "icon": "IconFileAi",
+      "url": "#",
+      "items": [
+        {
+          "title": "Propositions actives",
+          "url": "#"
+        },
+        {
+          "title": "Archivées",
+          "url": "#"
+        }
+      ]
+    }
+  ],
+  "navSecondary": [
+    {
+      "title": "Paramètres",
+      "url": "/parametres/general",
+      "icon": "IconSettings"
+    },
+    {
+      "title": "Aide",
+      "url": "#",
+      "icon": "IconHelp"
+    },
+    {
+      "title": "Recherche",
+      "url": "#",
+      "icon": "IconSearch"
+    }
+  ],
+  "documents": [
+    {
+      "name": "Bibliothèque de données",
+      "url": "/rh/personnel",
+      "icon": "IconDatabase"
+    },
+    {
+      "name": "Rapports",
+      "url": "/rh/rapport",
+      "icon": "IconReport"
+    }
+  ]
+}

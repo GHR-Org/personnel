@@ -1,0 +1,17 @@
+/* src/styles/calendar.module.css */
+.rbc-calendar {
+  @apply text-foreground;
+}
+
+.rbc-toolbar {
+  @apply hidden;
+}
+
+.rbc-agenda-view table {
+  @apply w-full border text-sm;
+}
+
+.rbc-agenda-view td,
+.rbc-agenda-view th {
+  @apply px-2 py-1 border;
+}

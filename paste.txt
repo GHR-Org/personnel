@@ -1,0 +1,67 @@
+app/
+│
+├─ (technicien)/                  # Group layout spécifique au rôle Technicien
+│  └─ layout.tsx                  # Layout commun (sidebar technicien, thème, etc.)
+│
+│  └─ maintenance/                # Module Maintenance
+│     ├─ page.tsx                 # Page d'accueil : tableau de bord de la maintenance
+│     ├─ equipments/              # Gestion des équipements
+│     │  ├─ page.tsx              # Liste des équipements
+│     │  ├─ [id]/                 # Page d’un équipement (fiche)
+│     │  │  └─ page.tsx           
+│     │  └─ new/                  # Formulaire ajout équipement
+│     │     └─ page.tsx
+│     ├─ incidents/               # Pannes signalées
+│     │  ├─ page.tsx              # Liste des incidents signalés
+│     │  └─ [id]/page.tsx         # Détail d’un incident
+│     ├─ interventions/           # Suivi des interventions
+│     │  ├─ page.tsx              # Liste + calendrier planifié
+│     │  └─ [id]/page.tsx         # Détail intervention + affectation technicien
+│     └─ dashboard/               # Statistiques et urgences
+│        └─ page.tsx              # Widgets, KPIs, notifications, etc.
+│
+├─ components/
+│  ├─ maintenance/                # Composants UI du module maintenance
+│  │  ├─ EquipmentForm.tsx
+│  │  ├─ EquipmentCard.tsx
+│  │  ├─ IncidentCard.tsx
+│  │  ├─ TechnicianSelector.tsx
+│  │  ├─ MaintenanceCalendar.tsx
+│  │  └─ ...
+│
+├─ lib/
+│  └─ maintenance.api.ts          # API client pour les appels liés à la maintenance
+│
+├─ schemas/
+│  └─ equipmentSchema.ts          # Zod schemas (équipements, incidents, interventions…)
+│
+├─ store/
+│  └─ maintenanceStore.ts         # Zustand (si besoin de store global temporaire)
+│
+├─ types/
+│  └─ maintenance.ts              # Types et interfaces liés au module maintenance
+
+
+"prenom": "Nantenaina",
+  "role": "Receptionniste",
+   "nom": "LOVASOA",
+  "telephone": "0344583202",
+  "email": "lnantenaina78@gmail.com",
+  "mot_de_passe": "$2b$12$k2X6d3Bq7d7WPp.rCYge/e.dhOOTkOfgzaz1cWW0Wg7zcN/1PnI3i",
+  "etablissement_id": 1,
+  "poste": "Receptionniste",
+  "date_embauche": "2025-08-07",
+  "statut_compte": "active"
+
+  {
+  "prenom": "Nantenaina",
+  "role": "Manager",
+   "nom": "LOVASOA",
+  "telephone": "0344583202",
+  "email": "lnantenaina78@gmail.com",
+  "mot_de_passe": "$2b$12$9HUbJX9N1uztX7ILMP6yWeUvZrlF4BuiN/oo5i4uM8Ov8eaLOGOye",
+  "etablissement_id": 1,
+  "poste": "Manager",
+  "date_embauche": "2025-08-07",
+  "statut_compte": "active"
+}

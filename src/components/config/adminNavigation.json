@@ -1,0 +1,37 @@
+{
+  "user": {
+    "name": "Administrateur",
+    "email": "admin@ghrinc.com",
+    "avatar": "/avatars/admin.jpg"
+  },
+  "navMain": [
+    {
+      "title": "Tableau de bord",
+      "url": "/admin",
+      "icon": "IconDashboard"
+    },
+    {
+      "title": "Etablissements",
+      "url": "/admin/etablissement",
+      "icon": "IconBuilding"
+    },
+    {
+      "title": "Clients",
+      "url": "/admin/client",
+      "icon": "IconUsers"
+    },
+    {
+      "title": "Statistiques",
+      "url": "/admin/statistiques",
+      "icon": "IconChartBar"
+    },
+    {
+      "title": "Configuration",
+      "url": "/admin/configuration",
+      "icon": "IconSettings"
+    }
+  ],
+  "navClouds": [],
+  "navSecondary": [],
+  "documents": []
+} 

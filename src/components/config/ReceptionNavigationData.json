@@ -1,0 +1,100 @@
+{
+  "user": {
+    "name": "Nom du Réceptionniste",
+    "email": "reception@ghrinc.com",
+    "avatar": "/avatars/receptionniste.jpg"
+  },
+  "navMain": [
+    {
+      "title": "Tableau de bord",
+      "url": "/reception",
+      "icon": "IconDashboard"
+    },
+    {
+      "title": "Réservations",
+      "url": "/reception/reservation",
+      "icon": "IconListDetails",
+      "items": [
+        {
+          "title": "Ajouter",
+          "url": "#",
+          "icon": "IconFileDescription"
+        },
+        {
+          "title": "Modifier",
+          "url": "#",
+          "icon": "IconFileWord"
+        },
+        {
+          "title": "Clôturer",
+          "url": "#",
+          "icon": "IconReport"
+        }
+      ]
+    },
+    {
+      "title": "Suivi des Commandes",
+      "url": "#",
+      "icon": "IconListDetails"
+    },
+    {
+      "title": "Statistiques",
+      "url": "#",
+      "icon": "IconChartBar"
+    },
+    {
+      "title": "Gestion des Chambres",
+      "url": "#",
+      "icon": "IconSettings",
+      "items": [
+        {
+          "title": "Mettre à jour statut",
+          "url": "#",
+          "icon": "IconCamera"
+        }
+      ]
+    }
+  ],
+  "navClouds": [
+    {
+      "title": "Capture",
+      "icon": "IconCamera",
+      "isActive": false,
+      "url": "#",
+      "items": [
+        {
+          "title": "Propositions actives",
+          "url": "#"
+        },
+        {
+          "title": "Archivées",
+          "url": "#"
+        }
+      ]
+    }
+  ],
+  "navSecondary": [
+    {
+      "title": "Paramètres",
+      "url": "#",
+      "icon": "IconSettings"
+    },
+    {
+      "title": "Aide",
+      "url": "#",
+      "icon": "IconHelp"
+    },
+    {
+      "title": "Recherche",
+      "url": "#",
+      "icon": "IconSearch"
+    }
+  ],
+  "documents": [
+    {
+      "name": "Bibliothèque de données",
+      "url": "#",
+      "icon": "IconDatabase"
+    }
+  ]
+}
