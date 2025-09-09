@@ -1,24 +1,33 @@
-
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // src/app/layout.tsx
 
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Montserrat, Montserrat_Alternates } from "next/font/google";
+import { Josefin_Sans } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme_provider";
 import { Toaster } from "@/components/ui/sonner";
-
-// Importez votre nouveau fournisseur de React Query
 import { ReactQueryProvider } from "@/components/providers/ReactQueryProvider";
 import { AuthProvider } from "@/contexts/AuthContext";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+// Initialisez la police Montserrat avec sa propre variable
+const montserrat = Montserrat({
   subsets: ["latin"],
+  variable: "--font-montserrat",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+// Initialisez la police Montserrat_Alternates avec sa propre variable
+const montserratAlternates = Montserrat_Alternates({
   subsets: ["latin"],
+  variable: "--font-montserrat-alternates",
+  weight: ["400", "700"], // Il est recommandé de définir plusieurs poids
+});
+
+const josefinSans = Josefin_Sans({
+  subsets: ["latin"],
+  variable: "--font-josefin-sans",
+  weight: ["400", "700"], // Il est recommandé de définir plusieurs poids
+  style: ["normal", "italic"], // Inclure les styles nécessaires
 });
 
 export const metadata: Metadata = {
@@ -26,9 +35,6 @@ export const metadata: Metadata = {
   description:
     "GHR Inc. - Votre assistance de Gestion Hotêlière et Restauration",
 };
-
-// Supprimez cette ligne : const queryClient = new QueryClient();
-// L'instance de QueryClient sera créée dans le ReactQueryProvider.
 
 export default function RootLayout({
   children,
@@ -38,7 +44,7 @@ export default function RootLayout({
   return (
     <html lang="fr" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${montserrat.variable} ${josefinSans.variable} font-sans antialiased`}
         suppressHydrationWarning
       >
         <ThemeProvider
@@ -47,13 +53,12 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <AuthProvider >
-            <ReactQueryProvider> {/* Utilisez votre nouveau fournisseur ici */}
-            {children}
-          </ReactQueryProvider>
-          <Toaster />
+          <AuthProvider>
+            <ReactQueryProvider>
+              {children}
+            </ReactQueryProvider>
+            <Toaster />
           </AuthProvider>
-          
         </ThemeProvider>
       </body>
     </html>

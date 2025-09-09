@@ -4,6 +4,7 @@ import RhNavigation from "@/components/config/RhNavigation.json"
 import { SidebarProvider } from "@/components/ui/sidebar"
 import { SiteHeader } from "@/components/site-header"
 import { AuthProvider } from "@/contexts/AuthContext"
+import { ActivitySidebar } from "@/components/personnel/ActivitySidebar"
 
 export default function RHLayout({
   children,
@@ -19,6 +20,7 @@ export default function RHLayout({
             <SiteHeader />
             {children}
           </main>
+          <ActivitySidebar etablissementId={1} />
         </div>
       </SidebarProvider>
     </AuthProvider>

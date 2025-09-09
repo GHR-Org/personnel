@@ -110,6 +110,7 @@ import { Progress } from "@/components/ui/progress";
 import { RealTimePersonnelActivity } from "@/components/personnel/RealTimePersonnelActivity";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
+import { getPersonnelByIdEtab } from "@/func/api/personnel/apipersonnel";
 
 interface Personnel {
   id: number;
@@ -142,7 +143,7 @@ export default function PersonnelPage() {
   const [editingPersonnel, setEditingPersonnel] = useState<Personnel | null>(
     null
   );
-  const [isViewDialogOpen, setIsViewDialogOpen] = useState(false)
+  const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedRole, setSelectedRole] = useState<string>("all");
   const [selectedStatus, setSelectedStatus] = useState<string>("all");
@@ -156,33 +157,67 @@ export default function PersonnelPage() {
   const [createdDates, setCreatedDates] = useState<{ [id: number]: string }>(
     {}
   );
+  const [EtablissementId, setEtablissementId] = useState<number>(1);
 
   const mockPersonnelStats = {
-  nouveaux_enregistrements: [
-    { nom: "Dupont", prenom: "Jean", fonction: "Développeur", date_enregistrement: "2025-07-21T14:30:00Z" },
-    { nom: "Martin", prenom: "Sophie", fonction: "Designer", date_enregistrement: "2025-07-20T10:00:00Z" },
-  ],
-  demandes_conges_recentes: [
-    { employe: "Jean Dupont", type: "Vacances", statut: "En attente", date_demande: "2025-07-21 14:40:00" },
-    { employe: "Marie Curie", type: "Maladie", statut: "Approuvé", date_demande: "2025-07-21 13:15:00" },
-    { employe: "Pierre Dubois", type: "RTT", statut: "Refusé", date_demande: "2025-07-20 16:00:00" },
-  ],
-};
-const getStatusBadgeVariant = (status: string) => {
+    nouveaux_enregistrements: [
+      {
+        nom: "Dupont",
+        prenom: "Jean",
+        fonction: "Développeur",
+        date_enregistrement: "2025-07-21T14:30:00Z",
+      },
+      {
+        nom: "Martin",
+        prenom: "Sophie",
+        fonction: "Designer",
+        date_enregistrement: "2025-07-20T10:00:00Z",
+      },
+    ],
+    demandes_conges_recentes: [
+      {
+        employe: "Jean Dupont",
+        type: "Vacances",
+        statut: "En attente",
+        date_demande: "2025-07-21 14:40:00",
+      },
+      {
+        employe: "Marie Curie",
+        type: "Maladie",
+        statut: "Approuvé",
+        date_demande: "2025-07-21 13:15:00",
+      },
+      {
+        employe: "Pierre Dubois",
+        type: "RTT",
+        statut: "Refusé",
+        date_demande: "2025-07-20 16:00:00",
+      },
+    ],
+  };
+  const getStatusBadgeVariant = (status: string) => {
     switch (status) {
-      case "active": return "default";
-      case "inactive": return "secondary";
-      case "suspended": return "destructive";
-      default: return "outline";
+      case "active":
+        return "default";
+      case "inactive":
+        return "secondary";
+      case "suspended":
+        return "destructive";
+      default:
+        return "outline";
     }
   };
 
   const getStatusBadgeText = (status: string) => {
     switch (status) {
-      case "active": return "Actif";
-      case "inactive": return "Inactif";
-      case "suspended": return "Suspendu";
-      default: return status;
+      case "active":
+        return "Actif";
+      case "inactive":
+        return "Inactif";
+      case "suspended":
+        return "Suspendu";
+      default:
+        return status;
     }
   };
 
@@ -237,118 +272,37 @@ const getStatusBadgeVariant = (status: string) => {
       date_mise_a_jour: "2024-03-20",
     },
   ];
+  // Fonctions de récupération des données réelles
+  const fetchPersonnel = async (etablissementId: number) => {
+    setLoading(true);
+    try {
+      const data = await getPersonnelByIdEtab(etablissementId);
+      setPersonnel(data);
+    } catch (error) {
+      console.error("Échec de la récupération du personnel:", error);
+      toast.error(
+        "Échec de la récupération des données. Utilisation des données de secours."
+      );
+      // Utilisation du fallback en cas d'erreur
+      const fallbackEtab = currentEtablissement || {
+        id: etablissementId,
+        nom: "Établissement inconnu",
+      };
+      setPersonnel(getFallbackPersonnel(fallbackEtab.id, fallbackEtab.nom));
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  useEffect(()=>{
+  useEffect(() => {
     setPersonnel(getFallbackPersonnel(1, "Mon etablissement"));
+    fetchPersonnel(EtablissementId);
     setStatistics(mockPersonnelStats);
-    setCurrentEtablissement({id : 1 , nom : "Mon etablissement"})
-    setTimeout(()=>{
-      setLoading(false)
-    }, 1000)
-  }, [])
-
-  // // Récupérer l'établissement connecté
-  // useEffect(() => {
-  //   // Test de la fonction de hachage au chargement de la page
-  //   testPasswordHashing();
-
-  //   const user = getStoredUser();
-  //   console.log("🔍 Données utilisateur stockées:", user); // Debug
-
-  //   if (user) {
-  //     // Essayer différentes propriétés possibles pour l'ID de l'établissement
-  //     const etabId =
-  //       user.etablissement_id ||
-  //       user.id ||
-  //       user.etablissementId ||
-  //       user.establishment_id ||
-  //       user.sub;
-  //     const etabNom =
-  //       user.nom || user.name || user.email || "Mon établissement";
-
-  //     console.log("🔍 ID établissement trouvé:", etabId); // Debug
-  //     console.log("🔍 Nom établissement trouvé:", etabNom); // Debug
-
-  //     if (etabId) {
-  //       setCurrentEtablissement({
-  //         id: etabId,
-  //         nom: etabNom,
-  //       });
-  //     } else {
-  //       console.error(
-  //         "❌ Aucun ID d'établissement trouvé dans les données utilisateur"
-  //       );
-  //       console.error(
-  //         "❌ Structure des données:",
-  //         JSON.stringify(user, null, 2)
-  //       );
-
-  //       // Solution temporaire : utiliser l'ID utilisateur comme ID d'établissement
-  //       if (user.role === "Etablissement" && user.sub) {
-  //         console.log(
-  //           "🔄 Solution temporaire : utilisation de user.sub comme ID d'établissement"
-  //         );
-  //         setCurrentEtablissement({
-  //           id: user.sub,
-  //           nom: etabNom,
-  //         });
-  //       }
-  //     }
-  //   } else {
-  //     console.error("❌ Aucun utilisateur trouvé dans le localStorage");
-  //   }
-  // }, []);
-
-  // const fetchPersonnel = async () => {
-  //   if (!currentEtablissement) return;
-
-  //   try {
-  //     setLoading(true);
-  //     // Passer l'ID de l'établissement connecté pour récupérer uniquement son personnel
-  //     const data = await getPersonnel(currentEtablissement.id);
-  //     setPersonnel(
-  //       (data.Personnels || data) && (data.Personnels || data).length > 0
-  //         ? data.Personnels || data
-  //         : getFallbackPersonnel(
-  //             currentEtablissement.id,
-  //             currentEtablissement.nom
-  //           )
-  //     );
-  //   } catch (error) {
-  //     setPersonnel(
-  //       getFallbackPersonnel(
-  //         currentEtablissement?.id || 1,
-  //         currentEtablissement?.nom || "Mon établissement"
-  //       )
-  //     );
-  //     toast.error("API indisponible, affichage du personnel de démonstration");
-  //     console.error(error);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
-  // const fetchStatistics = async () => {
-  //   if (!currentEtablissement) return;
-
-  //   try {
-  //     const statsData = await getPersonnelStatsByEtablissement(
-  //       currentEtablissement.id
-  //     );
-  //     setStatistics(statsData);
-  //   } catch (error) {
-  //     console.error("Erreur lors du chargement des statistiques:", error);
-  //     // Statistiques de démonstration
-  //     setStatistics({
-  //       total: personnel.length,
-  //       actifs: personnel.filter((p) => p.statut_compte === "active").length,
-  //       inactifs: personnel.filter((p) => p.statut_compte === "inactive")
-  //         .length,
-  //       suspendus: personnel.filter((p) => p.statut_compte === "suspended")
-  //         .length,
-  //     });
-  //   }
-  // };
+    setCurrentEtablissement({ id: 1, nom: "Mon etablissement" });
+    setTimeout(() => {
+      setLoading(false);
+    }, 1000);
+  }, [EtablissementId]);
 
   const handleCreate = async (data: PersonnelFormData) => {
     // if (!currentEtablissement) {
@@ -811,16 +765,12 @@ const getStatusBadgeVariant = (status: string) => {
             variant="outline"
             size="sm"
             onClick={() => {
-              // fetchPersonnel();
+              fetchPersonnel(EtablissementId);
               // fetchStatistics();
             }}
           >
             <RefreshCw className="h-4 w-4 mr-2" />
             Actualiser
-          </Button>
-          <Button onClick={() => setIsCreateDialogOpen(true)}>
-            <Plus className="h-4 w-4 mr-2" />
-            Nouveau personnel
           </Button>
         </div>
       </div>
@@ -1100,7 +1050,7 @@ const getStatusBadgeVariant = (status: string) => {
                             Modifier
                           </DropdownMenuItem>
                           <DropdownMenuItem
-                          onClick={() => openViewDialog(personnel)}
+                            onClick={() => openViewDialog(personnel)}
                           >
                             <Eye className="h-4 w-4 mr-2" />
                             Voir détails
@@ -1297,19 +1247,6 @@ const getStatusBadgeVariant = (status: string) => {
         </TabsContent>
       </Tabs>
 
-      <section>
-        <div className="container mx-auto bg-background text-foreground min-h-screen">
-          <h1 className="text-3xl font-bold mb-8">
-            Tableau de bord d&apos;activité
-          </h1>
-
-          {/* Simulation des statistiques */}
-
-          {/* Le composant RealTimeActivity est affiché ici avec les données mockées */}
-          <RealTimePersonnelActivity statsPersonnel={statistics} />
-        </div>
-      </section>
-
       {/* Résumé des résultats */}
       <div className="flex items-center justify-between text-sm text-muted-foreground">
         <div>
@@ -1370,7 +1307,6 @@ const getStatusBadgeVariant = (status: string) => {
         </DialogContent>
       </Dialog>
 
-      
       <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden bg-gradient-to-br from-gray-50 to-white border-2 border-green-200 shadow-2xl">
           <DialogHeader className="bg-gradient-to-r from-green-600 to-blue-600 text-white p-6 -m-6 mb-6 rounded-t-lg">
@@ -1384,55 +1320,67 @@ const getStatusBadgeVariant = (status: string) => {
               voir informations du personnel
             </p>
           </DialogHeader>
-          { personnel.map((p) => (
-                <Card key={p.id} className="shadow-lg hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-1">
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-lg font-bold">
-                      {p.prenom} {p.nom}
-                    </CardTitle>
-                    <Badge variant={getStatusBadgeVariant(p.statut_compte)}>
-                        {getStatusBadgeText(p.statut_compte)}
-                    </Badge>
-                  </CardHeader>
-                  <CardContent className="space-y-3">
-                    <p className="text-sm text-muted-foreground flex items-center gap-2">
-                      {getRoleIcon(p.role)} {p.role} {p.poste && `(${p.poste})`}
-                    </p>
-                    <p className="text-sm text-muted-foreground flex items-center gap-2">
-                      <Mail className="h-4 w-4" /> {p.email}
-                    </p>
-                    <p className="text-sm text-muted-foreground flex items-center gap-2">
-                      <Phone className="h-4 w-4" /> {p.telephone}
-                    </p>
-                    <p className="text-sm text-muted-foreground flex items-center gap-2">
-                      <Calendar className="h-4 w-4" /> Embauché le{" "}
-                      {format(new Date(p.date_embauche), "dd/MM/yyyy", { locale: fr })}
-                    </p>
-                    <div className="flex justify-end gap-2 mt-4">
-                      <Dialog>
-                        <DialogTrigger asChild>
-                          <Button variant="outline" size="sm" onClick={() => setEditingPersonnel(p)}>
-                            <Edit className="h-4 w-4 mr-2" /> Modifier
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto">
-                            <DialogHeader>
-                                <DialogTitle>Modifier le personnel</DialogTitle>
-                                <DialogDescription>
-                                    Modifiez les informations du personnel ici. Cliquez sur enregistrer lorsque vous avez terminé.
-                                </DialogDescription>
-                            </DialogHeader>
-                            
-                        </DialogContent>
-                      </Dialog>
-                      <Button variant="destructive" size="sm" onClick={() => handleDelete(p.id)}>
-                        <Trash2 className="h-4 w-4 mr-2" /> Supprimer
+          {personnel.map((p) => (
+            <Card
+              key={p.id}
+              className="shadow-lg hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-1"
+            >
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-lg font-bold">
+                  {p.prenom} {p.nom}
+                </CardTitle>
+                <Badge variant={getStatusBadgeVariant(p.statut_compte)}>
+                  {getStatusBadgeText(p.statut_compte)}
+                </Badge>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <p className="text-sm text-muted-foreground flex items-center gap-2">
+                  {getRoleIcon(p.role)} {p.role} {p.poste && `(${p.poste})`}
+                </p>
+                <p className="text-sm text-muted-foreground flex items-center gap-2">
+                  <Mail className="h-4 w-4" /> {p.email}
+                </p>
+                <p className="text-sm text-muted-foreground flex items-center gap-2">
+                  <Phone className="h-4 w-4" /> {p.telephone}
+                </p>
+                <p className="text-sm text-muted-foreground flex items-center gap-2">
+                  <Calendar className="h-4 w-4" /> Embauché le{" "}
+                  {format(new Date(p.date_embauche), "dd/MM/yyyy", {
+                    locale: fr,
+                  })}
+                </p>
+                <div className="flex justify-end gap-2 mt-4">
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setEditingPersonnel(p)}
+                      >
+                        <Edit className="h-4 w-4 mr-2" /> Modifier
                       </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))
-            }
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto">
+                      <DialogHeader>
+                        <DialogTitle>Modifier le personnel</DialogTitle>
+                        <DialogDescription>
+                          Modifiez les informations du personnel ici. Cliquez
+                          sur enregistrer lorsque vous avez terminé.
+                        </DialogDescription>
+                      </DialogHeader>
+                    </DialogContent>
+                  </Dialog>
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={() => handleDelete(p.id)}
+                  >
+                    <Trash2 className="h-4 w-4 mr-2" /> Supprimer
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
         </DialogContent>
       </Dialog>
     </div>

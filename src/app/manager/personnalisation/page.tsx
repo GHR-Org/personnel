@@ -15,7 +15,7 @@ const RoomBuilderCanvas = dynamic(() => import("@/components/3D/RoomBuilderCanva
 
 export default function PersonalisationPage() {
   const addFurniture = useFurnitureStore((state) => state.addFurniture);
-  const loadFromStorage = useFurnitureStore((state) => state.loadFromStorage);
+  const loadFromStorage = useFurnitureStore((state) => state.loadFromDatabase);
   const furniture = useFurnitureStore((state) => state.furniture);
 
   useEffect(() => {
@@ -53,6 +53,7 @@ export default function PersonalisationPage() {
         addFurniture({
           type,
           position: [intersectPoint.x, 0, intersectPoint.z],
+          name: "TABLE N°X",
         });
       }
     },

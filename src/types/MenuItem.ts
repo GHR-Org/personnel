@@ -17,6 +17,7 @@ export interface MenuItem {
   prep_minute?: number; // Rendu optionnel
   note?: number; // Rendu optionnel
   etablissement_id: number;
+  livrable: boolean;
   // Si votre API renvoie aussi ces champs, ajoutez-les ici :
   created_at?: string;
   updated_at?: string;

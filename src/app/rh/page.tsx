@@ -1,10 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 // app/rh/page.tsx
-"use client"; // AJOUTEZ CETTE LIGNE
+"use client";
 
 import { AppSidebar } from "@/components/app-sidebar"
 import { ChartAreaInteractive } from "@/components/receptionComponents/chart-area-interactive"
-import { DataTable } from "@/components/receptionComponents/data-table"
 import { SectionCards } from "@/components/section-cards"
 import { SiteHeader } from "@/components/site-header"
 import {
@@ -16,9 +15,6 @@ import data from "./data.json"
 import RhNavigation from "@/components/config/RhNavigation.json"
 import { UserAccountsChart } from "@/components/rhcomponents/StatRh"
 import { RealTimePersonnelActivity } from "@/components/personnel/RealTimePersonnelActivity"
-
-// Vous pouvez garder mockPersonnelStats ici, il sera évalué côté client après le premier rendu
-// ou si vous voulez qu'il soit évalué une seule fois, vous pouvez le mettre en dehors du composant
 const mockPersonnelStats = {
   nouveaux_enregistrements: [
     { nom: "Dupont", prenom: "Jean", fonction: "Développeur", date_enregistrement: "2025-07-21T14:30:00Z" },
@@ -60,23 +56,11 @@ export default function Page() {
           </div>
           <div className="px-4 lg:px-6">
             {/* RealTimePersonnelActivity est un Client Component, il gérera son propre état de temps */}
-            {/* <RealTimePersonnelActivity statsPersonnel={mockPersonnelStats} /> */}
+             {/* <RealTimePersonnelActivity statsPersonnel={mockPersonnelStats} />  */}
           </div>
         </section>
 
-        <section>
-          <div className="mb-6 px-4 lg:px-6">
-            <h2 className="text-3xl font-extrabold tracking-tight text-gray-900 dark:text-gray-50 sm:text-4xl">
-              Détail du Personnel et des Données
-            </h2>
-            <p className="mt-2 text-lg text-gray-600 dark:text-gray-400">
-              Consultez et gérez les informations détaillées de vos employés, avec des options de tri et de filtrage.
-            </p>
-          </div>
-          {/* <div className="px-4 lg:px-6">
-            <DataTable data={data} />
-          </div> */}
-        </section>
+        
       </div>
     </div>
   );

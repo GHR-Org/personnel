@@ -27,6 +27,7 @@ import { Calendar } from '@/components/ui/calendar'; // Ceci est le composant Ca
 // Import des icônes de Lucide React (notez que 'Calendar' n'est plus importé ici pour éviter le conflit)
 import { CalendarIcon, User, PlusCircle, XCircle } from 'lucide-react';
 
+
 // Import des types et des données
 import { PlanningEvent, PlanningEventType, PlanningEventStatus } from '@/types/planning';
 import FormulairePlanningEvent from './FormulairePlanningEvent';
@@ -38,7 +39,7 @@ import { Calendar as BigCalendar, momentLocalizer } from 'react-big-calendar'; /
 import moment from 'moment'; // Assurez-vous que 'moment' est bien installé (pnpm add moment)
 import { Label } from '../ui/label';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-
+import '@/styles/calendar.css'; // Votre fichier CSS personnalisé pour le calendrier
 
 // Configuration du localizer pour react-big-calendar avec moment.js
 moment.locale('fr', {

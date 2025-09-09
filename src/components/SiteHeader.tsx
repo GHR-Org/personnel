@@ -1,7 +1,7 @@
 // src/components/SiteHeader.tsx
 "use client";
 
-import { BellRing, ChevronDown } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -11,14 +11,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { ScrollArea } from "@/components/ui/scroll-area";
+
+
 import Link from "next/link";
 import { toast } from "sonner";
+import { NotificationPanel } from "./notification/NotificationPanel";
 
 export default function SiteHeader() {
   const { user, logout } = useAuthContext();
@@ -32,7 +29,7 @@ export default function SiteHeader() {
     <header className="fixed max-w-screen w-full top-0 z-40 bg-background/80 backdrop-blur-lg border-b">
       <div className="flex h-17 justify-between items-center px-4 md:px-8">
         {/* Nom de l'utilisateur à gauche */}
-        <div className="flex-1 items-center mr-8 hidden md:flex"> {/* Masqué sur mobile */}
+        <div className="flex-1 items-center ml-12 hidden md:flex"> {/* Masqué sur mobile */}
           <span className="text-xl font-bold tracking-tight">
             Bonjour, {user?.prenom || "Utilisateur"} !
           </span>
@@ -43,30 +40,8 @@ export default function SiteHeader() {
 
         {/* Icônes de droite */}
         <div className="flex items-center space-x-2 md:space-x-4 pr-20">
-          {/* Notifications */}
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button variant="ghost" size="icon" className="relative mx-10">
-                <BellRing className="h-5 w-5" />
-                <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-red-500" />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-80 p-0" align="end">
-              <div className="flex items-center justify-between border-b px-4 py-2">
-                <span className="font-semibold text-sm">Notifications</span>
-                <Button variant="ghost" size="sm">
-                  Tout voir
-                </Button>
-              </div>
-              <ScrollArea className="h-[200px] p-4">
-                <div className="space-y-4">
-                  <p className="text-sm text-muted-foreground">
-                    Aucune nouvelle notification.
-                  </p>
-                </div>
-              </ScrollArea>
-            </PopoverContent>
-          </Popover>
+          {/* Notifications */} 
+          <NotificationPanel />
 
           {/* <ModeToggle /> */}
 

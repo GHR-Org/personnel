@@ -1,7 +1,8 @@
+/* eslint-disable prefer-const */
 // src/components/conges/ListeConges.tsx
 
 import React from 'react';
-import { Conge } from '@/types/conge';
+import { Conge, CongeStatut } from '@/types/conge';
 import {
   Table,
   TableBody,
@@ -11,18 +12,30 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button'; // Import du composant Button
-import { Eye, Edit, Trash2 } from 'lucide-react'; // Icônes pour les actions
+import { Button } from '@/components/ui/button';
+import { Eye, Edit, Trash2 } from 'lucide-react';
+import { format, isWeekend } from 'date-fns';
+import { fr } from 'date-fns/locale';
 
 interface ListeCongesProps {
   conges: Conge[];
-  onViewDetails: (congeId: string) => void; // Nouveau: Callback pour voir les détails
-  onEditConge: (congeId: string) => void;   // Nouveau: Callback pour modifier
-  onDeleteConge: (congeId: string) => void; // Nouveau: Callback pour supprimer
-  // Vous pouvez ajouter des permissions ici si nécessaire pour masquer/afficher les boutons
-  // canEdit?: boolean;
-  // canDelete?: boolean;
+  onViewDetails: (congeId: string) => void;
+  onEditConge: (congeId: string) => void;
+  onDeleteConge: (congeId: string) => void;
 }
+
+// Fonction pour calculer les jours ouvrés entre deux dates
+const calculateWorkingDays = (startDate: Date, endDate: Date): number => {
+  let workingDays = 0;
+  let currentDate = new Date(startDate);
+  while (currentDate <= endDate) {
+    if (!isWeekend(currentDate)) {
+      workingDays++;
+    }
+    currentDate.setDate(currentDate.getDate() + 1);
+  }
+  return workingDays;
+};
 
 const ListeConges: React.FC<ListeCongesProps> = ({
   conges,
@@ -30,16 +43,15 @@ const ListeConges: React.FC<ListeCongesProps> = ({
   onEditConge,
   onDeleteConge,
 }) => {
-
-  const getStatutBadgeVariant = (statut: Conge['statut']) => {
+  const getStatutBadgeVariant = (statut: CongeStatut) => {
     switch (statut) {
-      case 'Approuvé':
+      case CongeStatut.APPROUVER:
         return 'default';
-      case 'En attente':
+      case CongeStatut.EN_ATTENTE:
         return 'secondary';
-      case 'Refusé':
+      case CongeStatut.REFUSER:
         return 'destructive';
-      case 'Annulé':
+      case CongeStatut.ANNULER:
         return 'outline';
       default:
         return 'outline';
@@ -48,39 +60,45 @@ const ListeConges: React.FC<ListeCongesProps> = ({
 
   return (
     <div className="border w-full rounded-md overflow-hidden">
-      <Table className="w-full ">
+      <Table className="w-full">
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[150px]">Employé</TableHead>
+            <TableHead className="w-[150px]">ID Personnel</TableHead>
             <TableHead>Type de Congé</TableHead>
             <TableHead>Date Début</TableHead>
             <TableHead>Date Fin</TableHead>
             <TableHead className="text-right">Jours Ouvrés</TableHead>
             <TableHead className="text-center">Statut</TableHead>
-            <TableHead className="text-center">Actions</TableHead> {/* Nouvelle colonne */}
+            <TableHead className="text-center">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {conges.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={7} className="h-24 text-center text-muted-foreground"> {/* colSpan ajusté */}
+              <TableCell colSpan={7} className="h-24 text-center text-muted-foreground">
                 Aucun congé ou absence à afficher.
               </TableCell>
             </TableRow>
           ) : (
             conges.map((conge) => (
               <TableRow key={conge.id}>
-                <TableCell className="font-medium">{conge.nomEmploye}</TableCell>
-                <TableCell>{conge.typeConge}</TableCell>
-                <TableCell>{conge.dateDebut}</TableCell>
-                <TableCell>{conge.dateFin}</TableCell>
-                <TableCell className="text-right">{conge.dureeJoursOuvres}</TableCell>
+                <TableCell className="font-medium">{conge.personnel_id}</TableCell>
+                <TableCell>{conge.type}</TableCell>
+                <TableCell>
+                  {format(new Date(conge.dateDebut), "PPP", { locale: fr })}
+                </TableCell>
+                <TableCell>
+                  {format(new Date(conge.dateFin), "PPP", { locale: fr })}
+                </TableCell>
+                <TableCell className="text-right">
+                  {/* Appel de la fonction de calcul ici */}
+                  {calculateWorkingDays(new Date(conge.dateDebut), new Date(conge.dateFin))}
+                </TableCell>
                 <TableCell className="text-center">
-                  <Badge variant={getStatutBadgeVariant(conge.statut)}>
-                    {conge.statut}
+                  <Badge variant={getStatutBadgeVariant(conge.status)}>
+                    {conge.status}
                   </Badge>
                 </TableCell>
-                {/* Cellule des actions */}
                 <TableCell className="flex justify-center items-center space-x-2">
                   <Button
                     variant="ghost"
@@ -103,7 +121,7 @@ const ListeConges: React.FC<ListeCongesProps> = ({
                     size="sm"
                     onClick={() => onDeleteConge(conge.id)}
                     title="Supprimer le congé"
-                    className="text-red-600 hover:bg-red-100" // Couleur pour la suppression
+                    className="text-red-600 hover:bg-red-100"
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>

@@ -36,6 +36,7 @@ export const menuItemSchema = z.object({
   calories: z.number().int().min(0).optional().nullable().transform(e => ( e === 0) ? undefined : e),
   prep_minute: z.number().int().min(0).optional().nullable().transform(e => ( e === 0) ? undefined : e),
   note: z.number().int().min(1, "La note doit être entre 1 et 5").max(5, "La note doit être entre 1 et 5").optional().nullable().transform(e => (e === 0) ? undefined : e),
+  livrable: z.boolean(),
 });
 
 export type MenuItemFormValues = z.infer<typeof menuItemSchema>;

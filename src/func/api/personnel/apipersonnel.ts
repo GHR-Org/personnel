@@ -4,6 +4,11 @@
 import apiClient from "@/func/APIClient";
 import { Personnel } from "@/types/personnel";
 
+export interface GetPersonnelResponse {
+  message: string;
+  personnels: Personnel[];
+}
+
 const APIURL = process.env.NEXT_PUBLIC_API_URL
 
 export const getCurrentUser = async (): Promise<Personnel | null> => {
@@ -49,3 +54,16 @@ export const getPersonnelById = async (personnelId: number): Promise<Personnel |
         return null;
     }
 };
+
+export const getPersonnelByIdEtab = async(etablissementId: number): Promise<Personnel[]> => 
+{
+  try{
+    const response = await apiClient.get<GetPersonnelResponse>(`${APIURL}/personnel/etablissement/${etablissementId}`);
+    return response.data.personnels
+  }
+  catch(error:any)
+  {
+    console.error("Erreur lors de la récupération du personnel par ID d'établissement :", error);
+    return [];
+  }
+}

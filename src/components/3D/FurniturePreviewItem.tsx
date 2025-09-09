@@ -7,13 +7,13 @@ import * as THREE from "three";
 import { TableStatus } from "@/types/table";
 
 interface Props {
-  id: string;
+  id: number;
   name?: string;
   type: string;
   position: [number, number, number];
   rotation?: [number, number, number];
-  onClick?: (id: string) => void;
-  selectedId?: string;
+  onClick?: (id: number) => void;
+  selectedId?: number;
   status : TableStatus
 }
 

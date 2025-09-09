@@ -3,9 +3,9 @@
 
 import React from "react";
 import { useArticles } from "@/hooks/useBookingData"; // Assurez-vous que le chemin est correct
-import { Produit } from "@/types/produit"; // Assurez-vous que le type Produit est bien défini
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { Produit } from "@/types/Produit";
 
 interface ProductSelectorProps {
   etablissementId: number;

@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // src/components/caisse/PaymentSection.tsx
 import React from 'react';
 import { useForm, useFieldArray } from "react-hook-form";

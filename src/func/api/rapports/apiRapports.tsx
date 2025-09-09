@@ -25,7 +25,7 @@ export const getRapportsByEtablissement = async (etablissement_id: number): Prom
 };
 
 export const createRapport = async (payload: {
-  titre: string;
+    titre: string;
     description: string;
     type: string;
     personnel_id: number;

@@ -13,6 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+import { createRapport } from "@/func/api/rapports/apiRapports";
  // Assurez-vous que le chemin est correct
 
 interface ReportIncidentModalProps {
@@ -34,8 +35,28 @@ export function Report({
       return;
     }
 
-    // Ici, vous enverriez les données à votre backend
-    // Pour l'instant, nous allons juste afficher un toast
+    const payload = {
+        titre: reportTitle,
+        description: reportDescription,
+        type: "Personnel", // Remplacer par la valeur appropriée
+        personnel_id: 1, 
+        etablissement_id: 1,
+        statut: "En Attente" as const,
+    };
+
+    try {
+        createRapport(payload);
+        toast.success(`Rapport envoyé avec succès : (${reportTitle}) !`);
+
+        // Réinitialiser les champs et fermer la modale
+        setReportTitle("");
+        setReportDescription("");
+        onOpenChange(false);
+    } catch (error) {
+        toast.error("Échec de l'envoi du rapport. Veuillez réessayer.");
+        console.error("Erreur lors de la soumission du rapport:", error);
+    }
+    
     
     toast.success(
      `Rapport envoyé avec succès : (${reportTitle}) !`

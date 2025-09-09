@@ -17,7 +17,7 @@ function DropHandler() {
   const { camera, gl } = useThree();
   const addFurniture = useFurnitureStore((state) => state.addFurniture);
 
-  const loadFromStorage = useFurnitureStore((s) => s.loadFromStorage);
+  const loadFromStorage = useFurnitureStore((s) => s.loadFromDatabase);
 
   useEffect(() => {
     loadFromStorage();
@@ -51,6 +51,8 @@ function DropHandler() {
         addFurniture({
           type,
           position: [intersectPoint.x, 0, intersectPoint.z],
+          name: "TABLE N°X",
+          
         });
       }
     };
@@ -88,7 +90,7 @@ export default function RoomBuilderCanvas() {
         <SceneObjects />
         
       </Canvas>
-      {/* <MiniCompassOverlay /> */}
+      <MiniCompassOverlay />
     </div>
         
 

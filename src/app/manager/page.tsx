@@ -20,6 +20,7 @@ export default function RestaurantDashboard() {
           title="Gestion de la restauration" 
           description="Gérez vos menus, planifiez les repas et suivez les commandes en cours."
         />
+        
           {/* Section "Menus" - Style carte moderne */}
           
             <MenuManager />

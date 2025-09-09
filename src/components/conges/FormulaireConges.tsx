@@ -1,11 +1,14 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // src/components/conges/FormulaireConge.tsx
 
 import React, { useState, useEffect } from 'react';
-import { Conge } from '@/types/conge';
+import { CongeType } from '@/types/conge';
+import { CongeSchema } from '@/schemas/conge';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label'; // Import du Label
-import { Textarea } from '@/components/ui/textarea'; // Pour la raison
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import {
   Select,
   SelectContent,
@@ -15,243 +18,320 @@ import {
 } from '@/components/ui/select';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
-import { CalendarIcon } from 'lucide-react';
+import { CalendarIcon, ArrowRight, X } from 'lucide-react';
 import { format } from 'date-fns';
-import { cn } from '@/lib/utils'; // Pour la gestion des classes
+import { cn } from '@/lib/utils';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle
+} from "@/components/ui/card";
+import { Check, User } from "lucide-react";
+import { getPersonnelByIdEtab } from '@/func/api/personnel/apipersonnel';
+import { useForm, SubmitHandler, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from "zod";
 
-interface FormulaireCongeProps {
-  initialData?: Conge; // Optionnel pour la modification
-  onSave: (conge: Omit<Conge, 'id' | 'dateDemande' | 'statut'>) => void; // OnSave sans l'ID et dateDemande générés
-  onCancel: () => void;
+// Le type du formulaire ne contient plus le fichier
+const FormSchema = z.object({
+  type: z.nativeEnum(CongeType),
+  personnel_id: z.number().int().positive(),
+  dateDebut: z.string().datetime(),
+  dateFin: z.string().datetime(),
+  raison: z.string(),
+});
+
+type FormFields = z.infer<typeof FormSchema>;
+
+interface Personnel {
+  id: number;
+  nom: string;
+  photoUrl?: string;
 }
 
-const FormulaireConge: React.FC<FormulaireCongeProps> = ({ initialData, onSave, onCancel }) => {
-  const [formData, setFormData] = useState<Omit<Conge, 'id' | 'dateDemande' | 'statut'>>({
-    employeId: initialData?.employeId || '',
-    nomEmploye: initialData?.nomEmploye || '',
-    typeConge: initialData?.typeConge || 'Vacances', // Valeur par défaut
-    dateDebut: initialData?.dateDebut || '',
-    dateFin: initialData?.dateFin || '',
-    dureeJoursOuvres: initialData?.dureeJoursOuvres || 0,
-    raison: initialData?.raison || '',
-    commentaireManager: initialData?.commentaireManager || '',
-    fichiersJoints: initialData?.fichiersJoints || [],
+interface FormulaireCongeProps {
+  initialData?: FormFields;
+  onSave: (conge: FormData) => void; // La fonction onSave accepte maintenant FormData
+  onCancel: () => void;
+  etablissementId: number;
+}
+
+const FormulaireConge: React.FC<FormulaireCongeProps> = ({ onSave, onCancel, initialData, etablissementId }) => {
+  const [currentStep, setCurrentStep] = useState(1);
+  const [personnelList, setPersonnelList] = useState<Personnel[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [fichierJoint, setFichierJoint] = useState<File | null>(null);
+
+  const form = useForm<FormFields>({
+    resolver: zodResolver(FormSchema),
+    defaultValues: {
+      type: initialData?.type || CongeType.VACANCE,
+      personnel_id: initialData?.personnel_id || 0,
+      dateDebut: initialData?.dateDebut || '',
+      dateFin: initialData?.dateFin || '',
+      raison: initialData?.raison || '',
+    }
   });
-  const [errors, setErrors] = useState<Record<string, string>>({}); // Pour la validation
 
-  // Mettre à jour le formulaire si les données initiales changent (par ex. pour l'édition)
+  const {
+    register,
+    handleSubmit,
+    control,
+    setValue,
+    formState: { errors },
+    watch
+  } = form;
+
+  const watchedPersonnelId = watch('personnel_id');
+  const watchedDateDebut = watch('dateDebut');
+  const watchedDateFin = watch('dateFin');
+
   useEffect(() => {
-    if (initialData) {
-      setFormData({
-        employeId: initialData.employeId,
-        nomEmploye: initialData.nomEmploye,
-        typeConge: initialData.typeConge,
-        dateDebut: initialData.dateDebut,
-        dateFin: initialData.dateFin,
-        dureeJoursOuvres: initialData.dureeJoursOuvres,
-        raison: initialData.raison || '',
-        commentaireManager: initialData.commentaireManager || '',
-        fichiersJoints: initialData.fichiersJoints || [],
-      });
-    } else {
-      // Réinitialiser le formulaire pour un nouvel ajout
-      setFormData({
-        employeId: '',
-        nomEmploye: '',
-        typeConge: 'Vacances',
-        dateDebut: '',
-        dateFin: '',
-        dureeJoursOuvres: 0,
-        raison: '',
-        commentaireManager: '',
-        fichiersJoints: [],
-      });
+    const fetchPersonnel = async () => {
+      setIsLoading(true);
+      try {
+        const data = await getPersonnelByIdEtab(etablissementId);
+        setPersonnelList(data);
+      } catch (error) {
+        console.error("Échec du chargement de la liste du personnel:", error);
+        setPersonnelList([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    if (etablissementId) {
+      fetchPersonnel();
     }
-  }, [initialData]);
+  }, [etablissementId]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-    setErrors(prev => ({ ...prev, [name]: '' })); // Efface l'erreur quand le champ est modifié
+  const handlePersonnelSelect = (personnelId: number) => {
+    setValue('personnel_id', personnelId);
   };
 
-  const handleSelectChange = (name: keyof Omit<Conge, 'id' | 'dateDemande' | 'statut'>, value: string) => {
-    setFormData(prev => ({ ...prev, [name]: value as any })); // Type assertion car SelectValue est string
-    setErrors(prev => ({ ...prev, [name]: '' }));
-  };
-
-  const handleDateChange = (name: 'dateDebut' | 'dateFin', date?: Date) => {
-    setFormData(prev => ({ ...prev, [name]: date ? format(date, 'yyyy-MM-dd') : '' }));
-    setErrors(prev => ({ ...prev, [name]: '' }));
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const newErrors: Record<string, string> = {};
-
-    // Validation basique
-    if (!formData.nomEmploye.trim()) newErrors.nomEmploye = "Le nom de l'employé est requis.";
-    if (!formData.typeConge) newErrors.typeConge = "Le type de congé est requis.";
-    if (!formData.dateDebut) newErrors.dateDebut = "La date de début est requise.";
-    if (!formData.dateFin) newErrors.dateFin = "La date de fin est requise.";
-    if (formData.dateDebut && formData.dateFin && new Date(formData.dateDebut) > new Date(formData.dateFin)) {
-      newErrors.dateFin = "La date de fin ne peut pas être antérieure à la date de début.";
+  const handleNextStep = () => {
+    if (watchedPersonnelId !== 0) {
+      setCurrentStep(2);
     }
-    if (formData.dureeJoursOuvres <= 0) newErrors.dureeJoursOuvres = "La durée doit être supérieure à 0.";
-
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
-    }
-
-    onSave(formData);
   };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null;
+    setFichierJoint(file);
+  };
+
+  const removeFile = () => {
+    setFichierJoint(null);
+  };
+  
+  // À l'intérieur de votre composant
+const onSubmit: SubmitHandler<FormFields> = (data) => {
+  const formData = new FormData();
+  
+  // Ajoutez les champs requis par le backend
+  formData.append('type', data.type);
+  formData.append('personnel_id', String(data.personnel_id));
+  formData.append('dateDebut', data.dateDebut);
+  formData.append('dateFin', data.dateFin);
+  formData.append('raison', data.raison);
+  formData.append('dateDmd', new Date().toISOString());
+  
+  // Ajoutez le fichier joint.
+  // Le champ 'fichierJoin' est aussi attendu, même s'il n'est pas un fichier pour toutes les requêtes.
+  // Si le fichier est facultatif sur le backend, il vous faudra le gérer.
+  if (fichierJoint) {
+    formData.append('fichierJoin', fichierJoint);
+  }
+  
+  // Appelez votre fonction onSave avec le FormData
+  onSave(formData as any);
+};
 
   return (
-    <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
-      <div className="space-y-2">
-        <Label htmlFor="nomEmploye">Nom de l'employé</Label>
-        <Input
-          id="nomEmploye"
-          name="nomEmploye"
-          value={formData.nomEmploye}
-          onChange={handleChange}
-          required
-        />
-        {errors.nomEmploye && <p className="text-red-500 text-sm">{errors.nomEmploye}</p>}
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="employeId">ID Employé (simulé)</Label>
-        <Input
-          id="employeId"
-          name="employeId"
-          value={formData.employeId}
-          onChange={handleChange}
-          required
-        />
-        {errors.employeId && <p className="text-red-500 text-sm">{errors.employeId}</p>}
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="typeConge">Type de Congé</Label>
-        <Select
-          value={formData.typeConge}
-          onValueChange={(value) => handleSelectChange('typeConge', value)}
-          required
-        >
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="Sélectionner un type" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="Vacances">Vacances</SelectItem>
-            <SelectItem value="Maladie">Maladie</SelectItem>
-            <SelectItem value="RTT">RTT</SelectItem>
-            <SelectItem value="Congé Parental">Congé Parental</SelectItem>
-            <SelectItem value="Formation">Formation</SelectItem>
-            <SelectItem value="Autre">Autre</SelectItem>
-          </SelectContent>
-        </Select>
-        {errors.typeConge && <p className="text-red-500 text-sm">{errors.typeConge}</p>}
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="dateDebut">Date de Début</Label>
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button
-              variant={"outline"}
-              className={cn(
-                "w-full justify-start text-left font-normal",
-                !formData.dateDebut && "text-muted-foreground"
-              )}
-            >
-              <CalendarIcon className="mr-2 h-4 w-4" />
-              {formData.dateDebut ? format(new Date(formData.dateDebut), "PPP") : <span>Sélectionner une date</span>}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="start">
-            <Calendar
-              mode="single"
-              selected={formData.dateDebut ? new Date(formData.dateDebut) : undefined}
-              onSelect={(date) => handleDateChange('dateDebut', date)}
-              initialFocus
-            />
-          </PopoverContent>
-        </Popover>
-        {errors.dateDebut && <p className="text-red-500 text-sm">{errors.dateDebut}</p>}
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="dateFin">Date de Fin</Label>
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button
-              variant={"outline"}
-              className={cn(
-                "w-full justify-start text-left font-normal",
-                !formData.dateFin && "text-muted-foreground"
-              )}
-            >
-              <CalendarIcon className="mr-2 h-4 w-4" />
-              {formData.dateFin ? format(new Date(formData.dateFin), "PPP") : <span>Sélectionner une date</span>}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="start">
-            <Calendar
-              mode="single"
-              selected={formData.dateFin ? new Date(formData.dateFin) : undefined}
-              onSelect={(date) => handleDateChange('dateFin', date)}
-              initialFocus
-            />
-          </PopoverContent>
-        </Popover>
-        {errors.dateFin && <p className="text-red-500 text-sm">{errors.dateFin}</p>}
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="dureeJoursOuvres">Durée (Jours Ouvrés)</Label>
-        <Input
-          id="dureeJoursOuvres"
-          name="dureeJoursOuvres"
-          type="number"
-          value={formData.dureeJoursOuvres}
-          onChange={handleChange}
-          required
-          min="1"
-        />
-        {errors.dureeJoursOuvres && <p className="text-red-500 text-sm">{errors.dureeJoursOuvres}</p>}
-      </div>
-
-      <div className="space-y-2 md:col-span-2">
-        <Label htmlFor="raison">Raison / Description</Label>
-        <Textarea
-          id="raison"
-          name="raison"
-          value={formData.raison}
-          onChange={handleChange}
-          placeholder="Détails de la demande (optionnel)"
-        />
-      </div>
-
-      {initialData && ( // Commentaire manager n'apparaît qu'en modification
-        <div className="space-y-2 md:col-span-2">
-          <Label htmlFor="commentaireManager">Commentaire du Manager</Label>
-          <Textarea
-            id="commentaireManager"
-            name="commentaireManager"
-            value={formData.commentaireManager}
-            onChange={handleChange}
-            placeholder="Ajouter un commentaire (pour les managers)"
-          />
+    <div className="p-4 space-y-6">
+      <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2">
+          <div className={`p-2 rounded-full border ${currentStep === 1 ? 'border-blue-500' : 'border-gray-300'}`}>
+            <User className={`h-4 w-4 ${currentStep === 1 ? 'text-blue-500' : 'text-gray-500'}`} />
+          </div>
+          <p className="text-sm font-medium">Sélection du Personnel</p>
         </div>
+        <div className="flex-grow h-px bg-gray-300"></div>
+        <div className="flex items-center gap-2">
+          <div className={`p-2 rounded-full border ${currentStep === 2 ? 'border-blue-500' : 'border-gray-300'}`}>
+            <CalendarIcon className={`h-4 w-4 ${currentStep === 2 ? 'text-blue-500' : 'text-gray-500'}`} />
+          </div>
+          <p className="text-sm font-medium">Demande de Congé</p>
+        </div>
+      </div>
+
+      {isLoading ? (
+        <div className="text-center text-gray-500">Chargement de la liste du personnel...</div>
+      ) : (
+        <>
+          {currentStep === 1 && (
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <p className="md:col-span-2 lg:col-span-4 text-muted-foreground">Veuillez sélectionner le personnel pour lequel vous souhaitez créer une demande de congé.</p>
+                {personnelList.length > 0 ? (
+                  personnelList.map((personnel) => (
+                    <Card
+                      key={personnel.id}
+                      onClick={() => handlePersonnelSelect(personnel.id)}
+                      className={cn("cursor-pointer hover:border-blue-500 transition-colors relative", watchedPersonnelId === personnel.id && 'border-blue-500 ring-2 ring-blue-500')}
+                    >
+                      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">{personnel.nom}</CardTitle>
+                        {watchedPersonnelId === personnel.id && (
+                          <Check className="h-4 w-4 text-blue-500" />
+                        )}
+                      </CardHeader>
+                      <CardContent>
+                        <div className="text-xs text-muted-foreground">ID: {personnel.id}</div>
+                      </CardContent>
+                    </Card>
+                  ))
+                ) : (
+                  <p className="md:col-span-2 lg:col-span-4 text-center text-muted-foreground">Aucun personnel trouvé pour cet établissement.</p>
+                )}
+              </div>
+              <div className="flex justify-end pt-4">
+                <Button onClick={handleNextStep} disabled={watchedPersonnelId === 0}>
+                  Suivant <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </div>
+            </>
+          )}
+        </>
       )}
 
-      <div className="md:col-span-2 flex justify-end gap-2 pt-4">
-        <Button type="button" variant="outline" onClick={onCancel}>Annuler</Button>
-        <Button type="submit">Enregistrer</Button>
-      </div>
-    </form>
+      {currentStep === 2 && (
+        <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="md:col-span-2">
+            <h4 className="text-lg font-semibold">Demande de congé pour ID : {watchedPersonnelId}</h4>
+            <CardDescription>Remplissez les informations ci-dessous pour ajouter un congé.</CardDescription>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="type">Type de Congé</Label>
+            <Controller
+              control={control}
+              name="type"
+              render={({ field }) => (
+                <Select
+                  value={field.value}
+                  onValueChange={field.onChange}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Sélectionner un type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.values(CongeType).map((type) => (
+                      <SelectItem key={type} value={type}>{type}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
+            {errors.type && <p className="text-red-500 text-sm">{errors.type.message}</p>}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="dateDebut">Date de Début</Label>
+            <Controller
+              control={control}
+              name="dateDebut"
+              render={({ field }) => (
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant={"outline"} className={cn("w-full justify-start text-left font-normal", !field.value && "text-muted-foreground")}>
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {field.value ? format(new Date(field.value), "PPP") : <span>Sélectionner une date</span>}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={field.value ? new Date(field.value) : undefined}
+                      onSelect={(date) => {
+                        field.onChange(date ? date.toISOString() : '');
+                      }}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+              )}
+            />
+            {errors.dateDebut && <p className="text-red-500 text-sm">{errors.dateDebut.message}</p>}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="dateFin">Date de Fin</Label>
+            <Controller
+              control={control}
+              name="dateFin"
+              render={({ field }) => (
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant={"outline"} className={cn("w-full justify-start text-left font-normal", !field.value && "text-muted-foreground")}>
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {field.value ? format(new Date(field.value), "PPP") : <span>Sélectionner une date</span>}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={field.value ? new Date(field.value) : undefined}
+                      onSelect={(date) => field.onChange(date ? date.toISOString() : '')}
+                      initialFocus
+                      disabled={(date) => watchedDateDebut ? date < new Date(watchedDateDebut) : false}
+                    />
+                  </PopoverContent>
+                </Popover>
+              )}
+            />
+            {errors.dateFin && <p className="text-red-500 text-sm">{errors.dateFin.message}</p>}
+          </div>
+          
+          <div className="space-y-2 md:col-span-2">
+            <Label htmlFor="raison">Raison / Description</Label>
+            <Textarea
+              id="raison"
+              {...register('raison')}
+              placeholder="Détails de la demande (optionnel)"
+            />
+            {errors.raison && <p className="text-red-500 text-sm">{errors.raison.message}</p>}
+          </div>
+
+          <div className="space-y-2 md:col-span-2">
+            <Label htmlFor="fichierJoin">Fichier joint</Label>
+            <div className="flex items-center gap-2">
+              <Input
+                id="fichierJoin"
+                type="file"
+                onChange={handleFileChange}
+              />
+              {fichierJoint && (
+                <div className="flex items-center gap-2 border p-2 rounded">
+                  <p className="text-sm truncate">{fichierJoint.name}</p>
+                  <Button type="button" variant="ghost" size="icon" onClick={removeFile}>
+                    <X className="h-4 w-4 text-red-500" />
+                  </Button>
+                </div>
+              )}
+            </div>
+            {/* Les erreurs pour le fichier sont gérées par la validation back-end */}
+          </div>
+
+          <div className="md:col-span-2 flex justify-end gap-2 pt-4">
+            <Button type="button" variant="outline" onClick={() => setCurrentStep(1)}>Précédent</Button>
+            <Button type="submit">Enregistrer</Button>
+          </div>
+        </form>
+      )}
+    </div>
   );
 };
 

@@ -64,6 +64,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     "/rh",
     "/rh/rapport",
     "/rh/surveillance",
+    "/rh/surveillance/conges",
+    "/rh/surveillance/planning-personnel",
     "/rh/personnel",
     "/reservations/restaurant",
     "/parametres",

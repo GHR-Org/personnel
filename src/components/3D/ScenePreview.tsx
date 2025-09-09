@@ -6,8 +6,8 @@ import { Wall } from "./Wall";
 import { useFurnitureStore } from "@/lib/stores/furniture-store";
 
 interface Props {
-  onClick: (id: string) => void;
-  selectedId?: string;
+  onClick: (id: number) => void;
+  selectedId?: number;
 }
 
 export function ScenePreviewContent({ onClick, selectedId }: Props) {

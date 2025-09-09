@@ -61,6 +61,7 @@ export function MenuItemForm({ open, onClose, onSubmit, initialData, Etablisseme
       calories: undefined, // Consistant avec le transform de Zod
       prep_minute: undefined, // Consistant avec le transform de Zod
       note: undefined, // Consistant avec le transform de Zod
+      livrable : true
     },
   });
 
@@ -83,6 +84,7 @@ export function MenuItemForm({ open, onClose, onSubmit, initialData, Etablisseme
         calories: undefined, // Utiliser undefined pour un champ optionnel/nullable vide
         prep_minute: undefined,
         note: undefined,
+        livrable : true
       });
       setIngredientInput("");
       setTagInput("");
@@ -422,6 +424,23 @@ export function MenuItemForm({ open, onClose, onSubmit, initialData, Etablisseme
                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                   <div className="space-y-0.5">
                     <FormLabel className="text-base">Disponible ?</FormLabel>
+                  </div>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="livrable"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                  <div className="space-y-0.5">
+                    <FormLabel className="text-base">Livrable ?</FormLabel>
                   </div>
                   <FormControl>
                     <Switch

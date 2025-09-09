@@ -86,6 +86,7 @@ export default function MenuManager() {
       calories: menu.calories,
       prep_minute: menu.prep_minute,
       note: menu.note,
+      livrable : menu.livrable
       // L'ID est stocké dans l'état `menuToEdit` pour être utilisé par `handleSubmitMenu`
       // Il n'est pas directement un champ du formulaire `MenuItemFormValues` mais c'est l'ID du plat à modifier
       // On peut l'ajouter si `MenuItemFormValues` avait un champ `id` optionnel, ou le gérer ici.
@@ -106,6 +107,7 @@ export default function MenuManager() {
       payload.append("type", formData.type);
       payload.append("prix", formData.prix.toString());
       payload.append("disponible", formData.disponible.toString());
+      payload.append("livrable", formData.livrable.toString());
 
       payload.append("ingredients", JSON.stringify(formData.ingredients || []));
       payload.append("tags", JSON.stringify(formData.tags || []));
@@ -246,7 +248,7 @@ export default function MenuManager() {
           </Card>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full p-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 pb-6">
           <Card
             className="cursor-pointer hover:shadow-md transition flex flex-col items-center justify-center p-4 min-h-[200px]"
             onClick={handleOpenCreateForm}
@@ -262,7 +264,7 @@ export default function MenuManager() {
           {menus.map((menu) => (
             <Card
               key={menu.id}
-              className="cursor-pointer hover:shadow-md transition-shadow duration-200 h-auto"
+              className="cursor-pointer hover:shadow-md transition-shadow duration-200 h-auto w-100"
               onClick={() => handleViewDetails(menu)}
             >
               <CardHeader className="flex flex-row items-start justify-between space-x-2 p-4">

@@ -1,50 +1,57 @@
+// src/lib/stores/furniture-store.ts
+"use client"
 import { create } from "zustand";
 import {
   FurnitureItem,
   FurnitureData,
   FurnitureType,
   TableStatus,
+  FurnitureApiPostData
 } from "@/types/table";
+import {
+  getFurniture,
+  postFurniture,
+  updateFurniture as apiUpdateFurniture,
+  deleteFurniture,
+  UpdateFurnitureByStatus,
+  UpdateFurnitureByName,
+} from "@/func/api/table/APIFurniture";
+import { getCurrentUser } from "@/func/api/personnel/apipersonnel";
 
 export interface FurnitureWithoutId {
   type: FurnitureType;
   position: [number, number, number];
   rotation?: [number, number, number];
   scale?: number | [number, number, number];
-  name?: string;
+  name: string | "Table N°X";
 }
 
-interface FurnitureStore {
-  // Scène 3D
-  furniture: FurnitureItem[];
-  selected: string | null;
-  tableCount: number;
 
-  // Panneau preview
+
+
+interface FurnitureStore {
+  furniture: FurnitureItem[];
+  selected: number | null;
+  tableCount: number;
   previewFurniture: FurnitureData[];
   selectedItem: FurnitureData | null;
   previewOpen: boolean;
 
-  // Manipulations
-  addFurniture: (item: FurnitureWithoutId) => void;
-  setSelected: (id: string | null) => void;
-  updateFurniture: (id: string, data: Partial<FurnitureData>) => void;
-  updateFurnitureStatus: (id: string, status: TableStatus) => void;
-  updateFurnitureRotation: (id: string, rotation: [number, number, number]) => void;
-  updateFurnitureName: (id: string, name: string) => void;
-  removeFurniture: (id: string) => void;
+  addFurniture: (item: FurnitureWithoutId) => Promise<void>;
+  setSelected: (id: number | null) => void;
+  updateFurniture: (id: number, data: Partial<FurnitureData>) => Promise<void>;
+  updateFurnitureStatus: (id: number, status: TableStatus) => Promise<void>;
+  updateFurnitureRotation: (id: number, rotation: [number, number, number]) => Promise<void>;
+  updateFurnitureName: (id: number, name: string) => Promise<void>;
+  removeFurniture: (id: number) => Promise<void>;
   clearFurniture: () => void;
-
-  // Preview panel
   setPreviewFurniture: (f: FurnitureData[]) => void;
   setSelectedItem: (item: FurnitureData | null) => void;
   openDrawer: (item: FurnitureData) => void;
   closeDrawer: () => void;
-  updateTableStatus: (id: string, status: TableStatus) => void;
-
-  // Storage
+  updateTableStatus: (id: number, status: TableStatus) => void;
   saveToStorage: () => void;
-  loadFromStorage: () => void;
+  loadFromDatabase: () => Promise<void>;
 }
 
 export const defaultScaleMap: Record<FurnitureType, number> = {
@@ -56,6 +63,14 @@ export const defaultScaleMap: Record<FurnitureType, number> = {
   exterieur: 1.7,
 };
 
+const getIdEtablissement = async (): Promise<number> => {
+  const user = await getCurrentUser();
+  return user?.etablissement_id ?? 1; 
+}
+const etablissement_id = getIdEtablissement();
+
+    
+
 export const useFurnitureStore = create<FurnitureStore>((set, get) => ({
   furniture: [],
   selected: null,
@@ -63,9 +78,9 @@ export const useFurnitureStore = create<FurnitureStore>((set, get) => ({
   previewFurniture: [],
   selectedItem: null,
   previewOpen: false,
+  // Valeur par défaut
 
-  addFurniture: (item) => {
-    const id = crypto.randomUUID();
+  addFurniture: async (item) => {
     let name = item.name;
     let count = get().tableCount;
 
@@ -74,82 +89,101 @@ export const useFurnitureStore = create<FurnitureStore>((set, get) => ({
       name = `Table N°${count}`;
     }
 
-    const newItem: FurnitureItem = {
-      id,
-      type: item.type,
-      position: item.position,
-      rotation: item.rotation ?? [0, 0, 0],
-      name,
-      status: TableStatus.LIBRE,
-    };
+    try {
+      // Préparation des données pour l'API
+      const newFurnitureDbFormat: FurnitureApiPostData= {
+        id: undefined, // ID will be assigned by the backend
+        nom: name,
+        type: item.type,
+        status: TableStatus.LIBRE,
+        position: { x: item.position[0], y: item.position[1], z: item.position[2] },
+        rotation: { x: item.rotation?.[0] ?? 0, y: item.rotation?.[1] ?? 0, z: item.rotation?.[2] ?? 0 },
+        client_id: 0,
+        etablissement_id : await etablissement_id,
+      };
 
-    const updated = [...get().furniture, newItem];
-    localStorage.setItem("room-layout", JSON.stringify(updated));
-    set({
-      furniture: updated,
-      tableCount: count,
-      previewFurniture: updated,
-    });
+      // Étape 1 : Appel à l'API pour ajouter le meuble.
+      await postFurniture(newFurnitureDbFormat);
+
+      // Étape 2 : Lancer un re-chargement complet des données depuis la base de données.
+      await get().loadFromDatabase(); 
+    } catch (error) {
+      console.error("Erreur lors de l'ajout du meuble via l'API :", error);
+    }
   },
 
   setSelected: (id) => set({ selected: id }),
 
-  updateFurniture: (id, data) => {
-    set((state) => {
-      const updated = state.furniture.map((item) =>
-        item.id === id ? { ...item, ...data } : item
-      );
-
-      localStorage.setItem("room-layout", JSON.stringify(updated));
-
-      const previewUpdated = state.previewFurniture.map((item) =>
-        item.id === id ? { ...item, ...data } : item
-      );
-
-      const updatedSelected =
-        state.selectedItem?.id === id
-          ? { ...state.selectedItem, ...data }
-          : state.selectedItem;
-
-      return {
-        furniture: updated,
-        previewFurniture: previewUpdated,
-        selectedItem: updatedSelected,
+  updateFurniture: async (id, data) => {
+    try {
+      // Préparation des données pour l'API
+      const updatedData: Partial<Omit<FurnitureApiPostData, 'id'>> = {
+        nom: data.name, // Mappage du nom
+        type: data.type, // Mappage du type
+        status: data.status, // Mappage du statut
+        position: data.position ? { x: data.position[0], y: data.position[1], z: data.position[2] } : undefined,
+        rotation: data.rotation ? { x: data.rotation[0], y: data.rotation[1], z: data.rotation[2] } : undefined,
       };
-    });
+
+      // Appel à l'API pour mettre à jour
+      await apiUpdateFurniture(id, updatedData);
+
+      // Mise à jour du store si l'appel API a réussi
+      set((state) => {
+        const updated = state.furniture.map((item) =>
+          item.id === id ? { ...item, ...data } : item
+        );
+        const previewUpdated = state.previewFurniture.map((item) =>
+          item.id === id ? { ...item, ...data } : item
+        );
+        const updatedSelected =
+          state.selectedItem?.id === id ? { ...state.selectedItem, ...data } : state.selectedItem;
+
+        return {
+          furniture: updated,
+          previewFurniture: previewUpdated,
+          selectedItem: updatedSelected,
+        };
+      });
+    } catch (error) {
+      console.error("Erreur lors de la mise à jour du meuble via l'API :", error);
+    }
   },
 
-  updateFurnitureStatus: (id, status) => {
-    get().updateFurniture(id, { status });
+  updateFurnitureStatus: async (id, status) => {
+    await UpdateFurnitureByStatus(id, status);
+    get().loadFromDatabase();
+
+  },
+  updateFurnitureRotation: async (id, rotation) => get().updateFurniture(id, { rotation }),
+  updateFurnitureName: async (id, name) => {
+    await UpdateFurnitureByName(id, name);
+    get().loadFromDatabase();
+    
   },
 
-  updateFurnitureRotation: (id, rotation) => {
-    get().updateFurniture(id, { rotation });
-  },
+  removeFurniture: async (id) => {
+    try {
+      const success = await deleteFurniture(id);
+      if (success) {
+        set((state) => {
+          const updated = state.furniture.filter((f) => f.id !== id);
+          const previewUpdated = state.previewFurniture.filter((f) => f.id !== id);
 
-  updateFurnitureName: (id, name) => {
-    get().updateFurniture(id, { name });
-  },
-
-  removeFurniture: (id) => {
-    set((state) => {
-      const updated = state.furniture.filter((f) => f.id !== id);
-      const previewUpdated = state.previewFurniture.filter((f) => f.id !== id);
-
-      localStorage.setItem("room-layout", JSON.stringify(updated));
-
-      return {
-        furniture: updated,
-        previewFurniture: previewUpdated,
-        selected: state.selected === id ? null : state.selected,
-        selectedItem:
-          state.selectedItem?.id === id ? null : state.selectedItem,
-      };
-    });
+          return {
+            furniture: updated,
+            previewFurniture: previewUpdated,
+            selected: state.selected === id ? null : state.selected,
+            selectedItem: state.selectedItem?.id === id ? null : state.selectedItem,
+          };
+        });
+      }
+    } catch (error) {
+      console.error("Erreur lors de la suppression du meuble via l'API :", error);
+    }
   },
 
   clearFurniture: () => {
-    localStorage.removeItem("room-layout");
     set({
       furniture: [],
       previewFurniture: [],
@@ -159,31 +193,20 @@ export const useFurnitureStore = create<FurnitureStore>((set, get) => ({
     });
   },
 
-  setPreviewFurniture: (furniture) => {
-    localStorage.setItem("furniture", JSON.stringify(furniture));
-    set({ previewFurniture: furniture });
-  },
-
+  setPreviewFurniture: (furniture) => set({ previewFurniture: furniture }),
   setSelectedItem: (item) => set({ selectedItem: item }),
-
   openDrawer: (item) => set({ selectedItem: item, previewOpen: true }),
-
   closeDrawer: () => set({ selectedItem: null, previewOpen: false }),
 
   updateTableStatus: (id, status) => {
     const updated = get().previewFurniture.map((item) =>
       item.id === id ? { ...item, status } : item
     );
-
     const selected = get().selectedItem;
     set({
       previewFurniture: updated,
-      selectedItem:
-        selected?.id === id ? { ...selected, status } : selected,
+      selectedItem: selected?.id === id ? { ...selected, status } : selected,
     });
-
-    localStorage.setItem("furniture", JSON.stringify(updated));
-
     get().updateFurnitureStatus(id, status);
   },
 
@@ -192,28 +215,34 @@ export const useFurnitureStore = create<FurnitureStore>((set, get) => ({
     localStorage.setItem("room-layout", JSON.stringify(furniture));
   },
 
-  loadFromStorage: () => {
-    const raw = localStorage.getItem("room-layout");
-    if (!raw) return;
-
-    try {
-      const parsed: FurnitureItem[] = JSON.parse(raw);
-      const updated = parsed.map((item) =>
-        (item.type === "table" || item.type === "exterieur") &&
-        item.status === undefined
-          ? { ...item, status: TableStatus.LIBRE }
-          : item
-      );
-
-      const tableCount = updated.filter((f) => f.type === "table").length;
-
-      set({
-        furniture: updated,
-        previewFurniture: updated,
-        tableCount,
+  loadFromDatabase: async () => {
+  try {
+    // getFurniture retourne maintenant un tableau, pas un objet contenant un tableau.
+    const Etablissement_id = await etablissement_id;
+    const furnitureFromDb = await getFurniture(Etablissement_id ); 
+    
+    // Le code de mappage fonctionnera maintenant car furnitureFromDb est un tableau.
+     const updated = furnitureFromDb.map((item) => {
+        // Le format de l'API a des propriétés plates (positionX, positionY, etc.)
+        // Nous les convertissons en tableaux pour le store.
+        return {
+          id: item.id,
+          name: item.nom,
+          type: item.type,
+          status: item.status,
+          position: [item.positionX, item.positionY, item.positionZ] as [number, number, number],
+          rotation: [item.rotationX, item.rotationY, item.rotationZ] as [number, number, number],
+        };
       });
-    } catch (e) {
-      console.error("Erreur lors du chargement des données :", e);
-    }
-  },
+    const tableCount = updated.filter((f) => f.type === "table").length;
+
+    set({
+      furniture: updated,
+      previewFurniture: updated,
+      tableCount,
+    });
+  } catch (e) {
+    console.error("Erreur lors du chargement des données depuis la base de données :", e);
+  }
+},
 }));

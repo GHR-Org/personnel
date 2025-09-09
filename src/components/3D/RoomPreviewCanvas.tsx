@@ -15,11 +15,11 @@ import { Environment, useProgress } from "@react-three/drei"; // <-- Import de E
 export default function RoomBuilderCanvas() {
   const [fullyLoaded, setFullyLoaded] = useState(false);
   const furniture = useFurnitureStore((state) => state.furniture);
-  const [selectedId, setSelectedId] = useState<string | undefined>(undefined);
-  const loadFromStorage = useFurnitureStore((s) => s.loadFromStorage);
+  const [selectedId, setSelectedId] = useState<number | undefined>(undefined);
+  const loadFromStorage = useFurnitureStore((s) => s.loadFromDatabase);
   const { progress, loaded } = useProgress();
 
-  const handleClick = (id: string) => {
+  const handleClick = (id: number) => {
     const item = furniture.find((f) => f.id === id);
     if (item) useFurnitureStore.getState().openDrawer(item);
   };

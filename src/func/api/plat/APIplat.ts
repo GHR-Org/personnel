@@ -15,7 +15,6 @@ export const getPlatsByEtablissement = async (etablissement_id: number): Promise
         
         // Accédez à la propriété 'plats' qui est le tableau
         const platsData = response.data.plats;
-        console.log(platsData)
 
         const parsedData = platsData.map(item => ({
             ...item,
@@ -48,9 +47,11 @@ export const getPlatById = async (plat_id: string, etablissement_id: string): Pr
 
 export const createPlat = async (payload: FormData): Promise<MenuItem> => {
     try {
+        console.table(payload)
         const response = await apiClient.post<MenuItem>(`${APIUrl}/plat`, payload, {
             
         });
+        console.log(response.data)
         console.log(`Plat created successfully with ID: ${response.data.id}`);
         return response.data;
     } catch (error) {
