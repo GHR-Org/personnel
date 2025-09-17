@@ -1,3 +1,4 @@
+// src/components/auth/AuthProvider.tsx
 "use client";
 
 import React, {
@@ -11,6 +12,8 @@ import React, {
 import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { Personnel } from "@/types/personnel";
+import { useTheme } from "next-themes";
+import Image from "next/image";
 
 interface AuthContextType {
   user: Personnel | null;
@@ -35,18 +38,71 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const router = useRouter();
   const pathname = usePathname();
   const { getCurrentUser, redirectByRole } = useAuth();
+  
+
+  const loadingMessages = [
+    "Chargement de la page",
+    "Chargement des données, veuillez patienter",
+    "Nous y sommes presque",
+    "Encore quelques instants",
+  ];
+  const [currentMessage, setCurrentMessage] = useState(loadingMessages[0]);
+  const [messageIndex, setMessageIndex] = useState(0);
+  const [dots, setDots] = useState("");
+
+  // Gère le changement de logo en fonction du thème
+  const { theme } = useTheme();
+  const [logoSrc, setLogoSrc] = useState('/logo/dark.png');
+  useEffect(() => {
+    if (theme === 'dark') {
+      setLogoSrc('/logo/dark.png');
+    } else {
+      setLogoSrc('/logo/white.png');
+    }
+  }, [theme]);
+
+  // Gère l'affichage des messages de chargement
+  useEffect(() => {
+    if (loading || !isAuthorized) {
+      const messageInterval = setInterval(() => {
+        setMessageIndex((prevIndex) => (prevIndex + 1) % loadingMessages.length);
+      }, 3000); // Change de message toutes les 3 secondes
+
+      return () => clearInterval(messageInterval);
+    }
+  }, [loading, isAuthorized, loadingMessages.length]);
+
+  // Met à jour le message affiché
+  useEffect(() => {
+    setCurrentMessage(loadingMessages[messageIndex]);
+  }, [messageIndex, loadingMessages]);
+
+  // ---
+  // Gère l'effet de machine à écrire pour les points de suspension
+  useEffect(() => {
+    if (loading || !isAuthorized) {
+      const dotsInterval = setInterval(() => {
+        setDots((prevDots) => {
+          if (prevDots.length >= 3) {
+            return "";
+          }
+          return prevDots + ".";
+        });
+      }, 500); // Ajoute un point toutes les 0,5 secondes
+
+      return () => clearInterval(dotsInterval);
+    }
+  }, [loading, isAuthorized]);
+  // ---
+
   const publicRoutes = new Set([
     "/login",
     "/forgot-password",
     "/reset-password",
-    // Note : On retire "/" des routes publiques car il est géré différemment pour les utilisateurs connectés.
-    // L'ajout dans chaque set de rôle (ci-dessous) le rendra accessible à tous les rôles.
+    "/"
   ]);
 
-  // J'ai ajouté "/" à chaque ensemble de routes pour que les utilisateurs connectés
-  // de n'importe quel rôle puissent y accéder sans être redirigés.
   const CaissierRoutes = new Set([
-    "/",
     "/caissier",
     "/caissier/caisse",
     "/caissier/invoice",
@@ -60,7 +116,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     "/parametres/help",
   ]);
   const RhRoutes = new Set([
-    
     "/rh",
     "/rh/rapport",
     "/rh/surveillance",
@@ -69,7 +124,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     "/rh/personnel",
     "/reservations/restaurant",
     "/parametres",
-    "/",  
+    "/",
     "/parametres/general",
     "/parametres/profil",
     "/parametres/notifications",
@@ -77,7 +132,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     "/parametres/help",
   ]);
   const ReceptionRoutes = new Set([
-    "/",
     "/reception/dashboard",
     "/reception/reservation",
     "/reception",
@@ -95,7 +149,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     "/parametres/help",
   ]);
   const TechnicienRoutes = new Set([
-    "/",
     "/maintenance",
     "/maintenance/equipements",
     "/maintenance/incidents",
@@ -107,9 +160,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     "/parametres/security",
     "/parametres/help",
     "/maintenance/interventions/calendrier",
+    "/maintenance/documentation"
   ]);
   const ManagerRoutes = new Set([
-    "/",
     "/manager",
     "/manager/personnalisation",
     "/manager/commande",
@@ -128,7 +181,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const hasCheckedPath = useRef<string | null>(null);
 
   const checkAuthorization = useCallback(async () => {
-    // Si le chemin a déjà été vérifié, on ne fait rien
     if (hasCheckedPath.current === pathname) {
       if (!loading && isAuthorized) {
         return;
@@ -141,13 +193,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const accessToken = localStorage.getItem("access_token_ghr");
 
     try {
-      // 1. Gérer les routes publiques
       if (publicRoutes.has(pathname)) {
         if (accessToken) {
           try {
             const userData = await getCurrentUser();
             if (userData?.role) {
-              // Si un token existe sur une route publique, on redirige vers le dashboard du rôle
               redirectByRole(userData, router);
               return;
             }
@@ -164,14 +214,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         return;
       }
 
-      // 2. Gérer les routes privées
       if (!accessToken) {
         router.replace("/login");
         setLoading(false);
         return;
       }
 
-      // 3. Récupérer les données utilisateur et vérifier le rôle
       const userData = await getCurrentUser();
       setUser(userData);
 
@@ -235,8 +283,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     <AuthContext.Provider value={{ user, loading, logout }}>
       {loading || !isAuthorized ? (
         <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500 dark:border-blue-400"></div>
-          <p className="mt-4 text-lg font-medium">Chargement sécurisé...</p>
+          <Image
+            src={logoSrc}
+            alt="Logo de l'application"
+            width={150}
+            height={150}
+            className="mb-4 animate-pulse"
+          />
+          <p className="mt-4 text-xl font-medium text-center">{currentMessage}{dots}</p>
         </div>
       ) : (
         children

@@ -35,7 +35,7 @@ export default function CalendarPage() {
         openDetailsDrawer={(res) => alert(`Détails réservation: ${res.first_name} ${res.last_name}`)}
         openEditReservationModal={(res) => alert(`Modifier réservation: ${res.id}`)}
         handleCheckInClient={(id) => alert(`Check-in client réservation ${id}`)}
-        openArrhesModal={(res) => alert(`Arrhes réservation: ${res.id}`)}
+        openarheeModal={(res) => alert(`arhee réservation: ${res.id}`)}
         handleCancelReservation={(id) => alert(`Annuler réservation: ${id}`)}
         handleCheckoutReservation={(id) => alert(`Checkout réservation: ${id}`)}
         handleRequestCleaning={(roomId) => alert(`Demande nettoyage chambre: ${roomId}`)}

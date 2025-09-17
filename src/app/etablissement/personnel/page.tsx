@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { getPersonnel, createPersonnel, updatePersonnel, deletePersonnel, getPersonnelStats, getPersonnelStatsByEtablissement } from "@/lib/func/api/etablissement/personnel";
 import { getStoredUser } from "@/lib/func/api/auth";
 import { PersonnelFormData } from "@/types/personnel";
-import { testPasswordHashing } from "@/lib/password-utils";
+import { testPasswordHashing } from "../../../../password-utils";
 import { 
   User, Plus, Search, Filter, Edit, Trash2, Eye, MoreHorizontal, 
   Mail, Phone, Building, Users, Target, TrendingUp, CheckCircle,

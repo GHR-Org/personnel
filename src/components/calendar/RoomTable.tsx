@@ -16,11 +16,11 @@ import {
 import { IconEdit, IconX, IconLogin2, IconLogout2, IconTrash } from '@tabler/icons-react';
 import { toast } from 'sonner';
 import { ReservationStatut } from "@/lib/enum/ReservationStatus";
-import type { BookingEvent } from "@/schemas/reservation";
 import type { View } from 'react-big-calendar';
 // L'import de useEtablissementId n'est plus nécessaire ici
 // import "@/styles/calendar.css"; 
 import "@/styles/calendar.css";
+import { BookingEvent } from '@/types/reservation';
 
 
 moment.locale('fr');
@@ -43,16 +43,16 @@ interface RoomTableProps {
   isDetailsDrawerOpen: boolean;
   openEditReservationModal: (reservation: BookingEvent) => void;
   handleCloseReservationSheet: () => void;
-  handleCheckInClient: (id: string) => void;
-  openArrhesModal: (reservation: BookingEvent) => void;
-  handleCancelReservation: (id: string) => void;
-  handleCheckoutReservation: (id: string) => void;
-  handleRequestCleaning: (roomId: string) => void;
+  handleCheckInClient: (id: number | undefined) => void;
+  openarheeModal: (reservation: BookingEvent) => void;
+  handleCancelReservation: (id: number ) => void;
+  handleCheckoutReservation: (id: number | undefined) => void;
+  handleRequestCleaning: (roomId: number | undefined) => void;
   openReportIncidentModal: (reservation: BookingEvent) => void;
-  handleDeleteReservation: (id: string) => void;
-  onSelectSlot: (data: { date_arrivee: string; date_depart: string; chambre_id: number; }) => void;
+  handleDeleteReservation: (id: number | undefined) => void;
+  onSelectSlot: (data: { date_arrivee: string; date_depart: string; chambre_id: number | undefined; }) => void;
   reservationToView: BookingEvent | null;
-  onSendConfirmation: (reservationId: string) => Promise<void>;
+  onSendConfirmation: (reservationId: number) => Promise<void>;
   onBookingUpdated: (updatedReservation: BookingEvent) => void;
 }
 
@@ -62,7 +62,7 @@ const RoomTable: React.FC<RoomTableProps> = ({
   openDetailsDrawer,
   openEditReservationModal,
   handleCheckInClient,
-  openArrhesModal,
+  openarheeModal,
   handleCancelReservation,
   handleCheckoutReservation,
   handleRequestCleaning,
@@ -122,8 +122,8 @@ const RoomTable: React.FC<RoomTableProps> = ({
           >
             <IconLogin2 className="mr-2 h-4 w-4" /> Faire arriver le client
           </ContextMenuItem>
-          <ContextMenuItem onClick={() => openArrhesModal(reservation)}>
-            Voir les arrhes
+          <ContextMenuItem onClick={() => openarheeModal(reservation)}>
+            Voir les arhee
           </ContextMenuItem>
           <ContextMenuItem onClick={() => openDetailsDrawer(reservation)}>
             Détails de la réservation
@@ -148,7 +148,7 @@ const RoomTable: React.FC<RoomTableProps> = ({
           </ContextMenuItem>
           <ContextMenuSeparator />
           <ContextMenuItem
-            onClick={() => handleRequestCleaning(reservation.chambre_id.toString())}
+            onClick={() => handleRequestCleaning(reservation.chambre_id)}
           >
             Demander nettoyage
           </ContextMenuItem>
@@ -174,7 +174,7 @@ const RoomTable: React.FC<RoomTableProps> = ({
     openDetailsDrawer,
     openEditReservationModal,
     handleCheckInClient,
-    openArrhesModal,
+    openarheeModal,
     handleCancelReservation,
     handleCheckoutReservation,
     handleRequestCleaning,

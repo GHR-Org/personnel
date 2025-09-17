@@ -28,9 +28,9 @@ export const mockReservations: BookingFormData[] = [
       { libelle: "Mini-bar", prixUnitaire: 15000, quantite: 1 },
       { libelle: "Service de blanchisserie", prixUnitaire: 5000, quantite: 2 },
     ],
-    montantAttribuer: 50000, // Arrhes déjà payées
-    datePaiementArrhes: new Date('2025-03-01'),
-    modePaiementArrhes: "Virement",
+    montantAttribuer: 50000, // arhee déjà payées
+    datePaiementarhee: new Date('2025-03-01'),
+    modePaiementarhee: "Virement",
     commentaireSejour: "Client VIP, demande oreillers supplémentaires.",
     typeResa: "Normale",
     media: "Téléphone",
@@ -58,9 +58,9 @@ export const mockReservations: BookingFormData[] = [
       { libelle: "Nuitée (x2)", prixUnitaire: 60000, quantite: 2 },
       { libelle: "Dîner au restaurant", prixUnitaire: 25000, quantite: 1 },
     ],
-    montantAttribuer: 0, // Pas d'arrhes
-    datePaiementArrhes: undefined,
-    modePaiementArrhes: undefined,
+    montantAttribuer: 0, // Pas d'arhee
+    datePaiementarhee: undefined,
+    modePaiementarhee: undefined,
     commentaireSejour: "Voyage d'affaires.",
     typeResa: "Entreprise",
     media: "Email",
@@ -90,9 +90,9 @@ export const mockReservations: BookingFormData[] = [
       { libelle: "Location de vélo (jour 2)", prixUnitaire: 10000, quantite: 1 },
       { libelle: "Panier pique-nique", prixUnitaire: 20000, quantite: 2 },
     ],
-    montantAttribuer: 100000, // Arrhes
-    datePaiementArrhes: new Date('2025-06-15'),
-    modePaiementArrhes: "Carte Bancaire",
+    montantAttribuer: 100000, // arhee
+    datePaiementarhee: new Date('2025-06-15'),
+    modePaiementarhee: "Carte Bancaire",
     commentaireSejour: "Famille avec enfants.",
     typeResa: "Famille",
     media: "Booking.com",

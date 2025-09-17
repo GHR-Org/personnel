@@ -17,7 +17,6 @@ import { Badge } from "@/components/ui/badge";
 
 import { TableStatus } from "@/types/table";
 import { useFurnitureStore } from "@/lib/stores/furniture-store";
-import { Ghost } from "lucide-react";
 import { CommandeForm } from "./CommandForm";
 
 // Fonction pour obtenir les classes CSS en fonction du statut

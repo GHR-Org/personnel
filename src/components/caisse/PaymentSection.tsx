@@ -60,7 +60,7 @@ export function PaymentSection({
           <span>{montantTotalDu.toFixed(2)} Ar</span>
         </div>
         <div className="flex justify-between items-center text-lg font-semibold border-b pb-2">
-          <span>Déjà Payé (Arrhes):</span>
+          <span>Déjà Payé (arhee):</span>
           <span>{montantDejaPaye.toFixed(2)} Ar</span>
         </div>
         <div className="flex justify-between items-center text-lg font-semibold border-b pb-2">

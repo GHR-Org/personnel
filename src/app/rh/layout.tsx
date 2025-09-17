@@ -1,30 +1,41 @@
+// src/app/maintenance/layout.tsx
+"use client";
 
-import { AppSidebar } from "@/components/app-sidebar"
-import RhNavigation from "@/components/config/RhNavigation.json"
-import { SidebarProvider } from "@/components/ui/sidebar"
-import { SiteHeader } from "@/components/site-header"
-import { AuthProvider } from "@/contexts/AuthContext"
-import { ActivitySidebar } from "@/components/personnel/ActivitySidebar"
+import SiteHeader from "@/components/SiteHeader";
+import { LayoutProvider, useLayout } from "@/contexts/LayoutContext";
+import { cn } from "@/lib/utils";
+import { StoreInitializer } from '@/components/StoreInitializer'; // Importez le StoreInitializer
+import SidebarRh from "@/components/rhcomponents/SidebarRh";
 
-export default function RHLayout({
+const MainContent = ({ children }: { children: React.ReactNode }) => {
+  const { isCollapsed } = useLayout();
+
+  return (
+    <div
+      className={cn(
+        "flex-1 transition-all duration-300",
+        isCollapsed ? "ml-20" : "ml-64"
+      )}
+    >
+      <SiteHeader />
+      <main className="flex-1 p-8 pt-14">{children}</main>
+    </div>
+  );
+};
+
+export default function MaintenanceLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
-    <AuthProvider>
-      <SidebarProvider>
-        <div className="flex w-full min-h-screen ">
-          <AppSidebar data={RhNavigation} />
-          <main className="flex-1 overflow-y-auto w-full">
-            <SiteHeader />
-            {children}
-          </main>
-          <ActivitySidebar etablissementId={1} />
+    <LayoutProvider>
+      <StoreInitializer>
+        <div className="flex">
+          <SidebarRh />
+          <MainContent>{children}</MainContent>
         </div>
-      </SidebarProvider>
-    </AuthProvider>
-      
-    
+      </StoreInitializer>
+    </LayoutProvider>
   );
-} 
+}

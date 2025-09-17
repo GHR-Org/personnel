@@ -50,9 +50,9 @@ import {
 import { cn } from "@/lib/utils";
 
 import { ReservationStatut } from "@/lib/enum/ReservationStatus"; 
-import type { BookingEvent, ArticleItem, ArrhesAndComment } from "@/types/reservation";
+import type { BookingEvent, ArticleItem, arheeAndComment } from "@/types/reservation";
 import { ReservationDetailsDrawer } from "./ReservationDetailsDrawer";
-import { ViewArrhesModal } from "../modals/ViewArrhesModal";
+import { ViewarheeModal } from "../modals/ViewarheeModal";
 import { ViewArticlesModal } from "./ViewArticleModal";
 
 const statusVariants: Record<ReservationStatut, string> = {
@@ -78,7 +78,7 @@ export function ReservationsTable({ reservations }: ReservationsTableProps) {
 
   const [selectedReservation, setSelectedReservation] = useState<BookingEvent | null>(null); 
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-   const [isArrhesModalOpen, setIsArrhesModalOpen] = useState(false);
+   const [isarheeModalOpen, setIsarheeModalOpen] = useState(false);
    const [isArticlesModalOpen, setIsArticlesModalOpen] = useState(false);
 
   // Fonction pour gérer la vue des articles
@@ -90,14 +90,14 @@ export function ReservationsTable({ reservations }: ReservationsTableProps) {
     setIsArticlesModalOpen(false);
     setSelectedReservation(null);
   };
-  //  gérer la modale d'arrhes
-    const handleViewArrhes = (reservation: BookingEvent) => {
+  //  gérer la modale d'arhee
+    const handleViewarhee = (reservation: BookingEvent) => {
     setSelectedReservation(reservation);
-    setIsArrhesModalOpen(true);
+    setIsarheeModalOpen(true);
   };
 
-  const handleCloseArrhesModal = () => {
-    setIsArrhesModalOpen(false);
+  const handleClosearheeModal = () => {
+    setIsarheeModalOpen(false);
     setSelectedReservation(null);
   };
 
@@ -250,11 +250,11 @@ export function ReservationsTable({ reservations }: ReservationsTableProps) {
                 <span>Voir les articles</span>
               </DropdownMenuItem>
               <DropdownMenuItem
-                onClick={() => handleViewArrhes(reservation)}
+                onClick={() => handleViewarhee(reservation)}
                 disabled={!reservation.arhee?.montant}
               >
                 <Eye className="mr-2 h-4 w-4" />
-                <span>Voir les arrhes</span>
+                <span>Voir les arhee</span>
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => handleEdit(reservation)}>
                 <Edit className="mr-2 h-4 w-4" />
@@ -420,9 +420,9 @@ export function ReservationsTable({ reservations }: ReservationsTableProps) {
         />
       )}
       {selectedReservation && (
-        <ViewArrhesModal
-          open={isArrhesModalOpen}
-          onOpenChange={handleCloseArrhesModal}
+        <ViewarheeModal
+          open={isarheeModalOpen}
+          onOpenChange={handleClosearheeModal}
           reservation={selectedReservation}
         />
       )}

@@ -16,7 +16,7 @@ import {
 } from "@/lib/func/api/etablissement/personnel";
 import { getStoredUser } from "@/lib/func/api/auth";
 import { PersonnelFormData } from "@/types/personnel";
-import { testPasswordHashing } from "@/lib/password-utils";
+import { testPasswordHashing } from "../../../../password-utils";
 import {
   User,
   Plus,

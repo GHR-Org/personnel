@@ -42,7 +42,7 @@ export function CaisseSummaryCard({
           <span className="font-semibold">{formatCurrency(montantTotalDu)}</span>
         </div>
         <div className="flex justify-between items-center">
-          <span className="text-muted-foreground">Arrhes Déjà Payées:</span>
+          <span className="text-muted-foreground">arhee Déjà Payées:</span>
           <span className="font-semibold">{formatCurrency(montantDejaPaye)}</span>
         </div>
         <div className="flex justify-between items-center">

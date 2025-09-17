@@ -17,29 +17,22 @@ import {
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { IconPrinter, IconMail } from "@tabler/icons-react";
-
-// Importez BookingEvent et ReservationStatut de votre schéma
-import { BookingEvent, BookingManuel } from "@/schemas/reservation";
 import { ReservationStatut } from "@/lib/enum/ReservationStatus";
 import { Client } from "@/types/client";
+import { BookingEvent } from "@/types/reservation";
 
-// Fonction de garde de type pour vérifier si une réservation est de type BookingManuel
-function isBookingManuel(reservation: BookingEvent): reservation is BookingManuel {
-  return (reservation as BookingManuel).civilite !== undefined;
-}
 
-// Définition des props pour la boîte de dialogue de détails
 interface ReservationDetailsDialogProps {
   open: boolean;
   onClose: () => void;
   reservation: BookingEvent | null;
   clientDetails?: Client | null;
-  onSendConfirmation: (reservationId: string) => Promise<void>;
+  onSendConfirmation: (reservationId: number) => Promise<void>;
   onEdit: (reservation: BookingEvent, clientDetails?: Client | null) => void;
-  onCheckIn: (id: string) => void;
-  onCheckout: (id: string) => void;
-  onCancel: (id: string) => void;
-  onDelete: (id: string) => void;
+  onCheckIn: (id: number | undefined) => void;
+  onCheckout: (id: number | undefined) => void;
+  onCancel: (id: number ) => void;
+  onDelete: (id: number | undefined) => void;
   onBookingUpdated: (updatedReservation: BookingEvent) => void;
   onBookingDeleted: () => void;
 }
@@ -62,6 +55,10 @@ export function ReservationDetailsDrawer({
     return null;
   }
 
+  // Fusionner les données pour un affichage cohérent
+  const displayReservation = { ...reservation, ...clientDetails };
+  const displayClient = displayReservation;
+
   const handlePrint = () => {
     window.print();
   };
@@ -78,25 +75,17 @@ export function ReservationDetailsDrawer({
     }
   };
 
-  // Calculs financiers
   const totalArticlesPrice = (reservation.articles ?? []).reduce(
     (sum: number, item: any) => sum + item.prix * item.quantite,
     0
   );
 
-  const finalTotalPrice = reservation.montant !== undefined && reservation.montant !== null ? reservation.montant : totalArticlesPrice;
+  // Utiliser la valeur de `arhee.montant` si elle existe
+  const depositPaid = reservation.arhee?.montant !== undefined && reservation.arhee?.montant !== null ? reservation.arhee.montant : 0;
+  
+  const finalTotalPrice = reservation.arhee?.montant!== undefined && reservation.arhee?.montant !== null ? reservation.arhee?.montant : totalArticlesPrice;
 
-  const depositPaid =
-    reservation.montant !== undefined &&
-    reservation.montant !== null &&
-    reservation.date_paiement &&
-    reservation.mode_paiement && reservation.mode_paiement !== 'NON_RENSEIGNE'
-      ? reservation.montant
-      : 0;
   const remainingAmount = finalTotalPrice - depositPaid;
-
-  // Déterminer les informations du client à afficher
-  const displayClient = isBookingManuel(reservation) && clientDetails ? clientDetails : reservation;
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -106,30 +95,8 @@ export function ReservationDetailsDrawer({
           <DialogDescription>Consultez les informations détaillées de la réservation N° {reservation.id}</DialogDescription>
         </DialogHeader>
 
-        {/* Contenu de la réservation à imprimer */}
         <div ref={printRef} className="flex-1 overflow-y-auto px-6 print:p-0 print:overflow-visible">
           <div className="reservation-print-area p-6 bg-white dark:bg-gray-900 shadow-md rounded-lg print:shadow-none print:rounded-none">
-            <div className="flex justify-between items-start mb-6">
-              <div>
-                <h1 className="text-3xl font-bold text-primary">RÉSERVATION</h1>
-                <p className="text-sm text-muted-foreground">N°:
-                  <span className="font-semibold">{reservation.id}</span>
-                </p>
-                {isBookingManuel(reservation) && reservation.date_reservation && (
-                  <p className="text-sm text-muted-foreground">
-                    Date de réservation: <span className="font-semibold">{format(new Date(reservation.date_reservation), "dd MMMM yyyy", { locale: fr })}</span>
-                  </p>
-                )}
-              </div>
-              <div className="text-right">
-                <h2 className="text-xl font-semibold">Nom de l&apos;hotel</h2>
-                <p className="text-sm text-muted-foreground">Adresse et Ville de l&apos;hotel</p>
-                <p className="text-sm text-muted-foreground">Telephone et email</p>
-              </div>
-            </div>
-
-            <Separator className="my-6" />
-
             <div className="mb-6">
               <h3 className="text-md font-semibold text-muted-foreground">Client:</h3>
               <p className="font-semibold">
@@ -139,7 +106,7 @@ export function ReservationDetailsDrawer({
               {displayClient.phone && <p className="text-sm text-muted-foreground">{displayClient.phone}</p>}
               {displayClient.pays && <p className="text-sm text-muted-foreground">{displayClient.pays}</p>}
             </div>
-
+            
             <Separator className="my-6" />
 
             <div className="mb-6">
@@ -147,40 +114,40 @@ export function ReservationDetailsDrawer({
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <p className="text-sm text-muted-foreground">Arrivée:</p>
-                  <p className="font-semibold">{format(new Date(reservation.date_arrivee), "dd MMMM yyyy", { locale: fr })}</p>
+                  <p className="font-semibold">{format(new Date(displayReservation.date_arrivee), "dd MMMM yyyy", { locale: fr })}</p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Départ:</p>
-                  <p className="font-semibold">{format(new Date(reservation.date_depart), "dd MMMM yyyy", { locale: fr })}</p>
+                  <p className="font-semibold">{format(new Date(displayReservation.date_depart), "dd MMMM yyyy", { locale: fr })}</p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Chambre:</p>
-                  <p className="font-semibold">{reservation.chambre_id || "N/A"}</p>
+                  <p className="font-semibold">{displayReservation.chambre_id || "N/A"}</p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Nombre d&apos;adultes:</p>
-                  <p className="font-semibold">{reservation.nbr_adultes}</p>
+                  <p className="font-semibold">{displayReservation.nbr_adultes}</p>
                 </div>
-                {reservation.nbr_enfants !== undefined && (
+                {displayReservation.nbr_enfants !== undefined && (
                   <div>
                     <p className="text-sm text-muted-foreground">Nombre d&apos;enfants:</p>
-                    <p className="font-semibold">{reservation.nbr_enfants}</p>
+                    <p className="font-semibold">{displayReservation.nbr_enfants}</p>
                   </div>
                 )}
                 <div>
                   <p className="text-sm text-muted-foreground">Statut:</p>
-                  <p className="font-semibold">{reservation.status}</p>
+                  <p className="font-semibold">{displayReservation.status}</p>
                 </div>
               </div>
             </div>
 
             {/* Section Articles */}
-            {reservation.articles && reservation.articles.length > 0 && (
+            {displayReservation.articles && displayReservation.articles.length > 0 && (
               <>
                 <Separator className="my-6" />
                 <div className="mb-6">
                   <h3 className="text-md font-semibold text-muted-foreground">Articles Réservés:</h3>
-                  {reservation.articles.map((article: any, index: number) => (
+                  {displayReservation.articles.map((article: any, index: number) => (
                     <div key={index} className="flex justify-between text-sm text-muted-foreground mb-1">
                       <p className="font-semibold">{article.nom} (x{article.quantite})</p>
                       <p>{(article.prix * article.quantite).toLocaleString('mg-MG', { style: 'currency', currency: 'MGA' })}</p>
@@ -196,9 +163,9 @@ export function ReservationDetailsDrawer({
 
             <Separator className="my-6" />
 
-            {/* Section Paiement & Arrhes */}
+            {/* Section Paiement & arhee */}
             <div className="mb-6">
-              <h3 className="text-md font-semibold text-muted-foreground">Paiement & Arrhes:</h3>
+              <h3 className="text-md font-semibold text-muted-foreground">Paiement & arhee:</h3>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <p className="text-sm text-muted-foreground">Montant total du séjour:</p>
@@ -206,20 +173,20 @@ export function ReservationDetailsDrawer({
                 </div>
                 {depositPaid > 0 && (
                   <div>
-                    <p className="text-sm text-muted-foreground">Arrhes payées:</p>
+                    <p className="text-sm text-muted-foreground">arhee payées:</p>
                     <p className="font-semibold">{depositPaid.toLocaleString('mg-MG', { style: 'currency', currency: 'MGA' })}</p>
                   </div>
                 )}
-                {reservation.date_paiement && (
+                {displayReservation.arhee?.date_paiement && (
                   <div>
-                    <p className="text-sm text-muted-foreground">Date de paiement arrhes:</p>
-                    <p className="font-semibold">{format(new Date(reservation.date_paiement), "dd MMMM yyyy", { locale: fr })}</p>
+                    <p className="text-sm text-muted-foreground">Date de paiement arhee:</p>
+                    <p className="font-semibold">{format(new Date(displayReservation.arhee.date_paiement), "dd MMMM yyyy", { locale: fr })}</p>
                   </div>
                 )}
-                {reservation.mode_paiement && reservation.mode_paiement !== 'NON_RENSEIGNE' && (
+                {displayReservation.arhee?.mode_paiement && displayReservation.arhee?.mode_paiement !== 'NON_RENSEIGNE' && (
                   <div>
-                    <p className="text-sm text-muted-foreground">Méthode de paiement des arrhes:</p>
-                    <p className="font-semibold">{reservation.mode_paiement}</p>
+                    <p className="text-sm text-muted-foreground">Méthode de paiement des arhee:</p>
+                    <p className="font-semibold">{displayReservation.arhee.mode_paiement}</p>
                   </div>
                 )}
                 <div>
@@ -231,10 +198,10 @@ export function ReservationDetailsDrawer({
               </div>
             </div>
 
-            {reservation.commentaireSejour && (
+            {displayReservation.arhee?.commentaire && (
               <div className="mt-6 text-sm text-muted-foreground">
                 <p className="font-semibold">Commentaires:</p>
-                <p className="whitespace-pre-wrap">{reservation.commentaireSejour}</p>
+                <p className="whitespace-pre-wrap">{displayReservation.arhee.commentaire}</p>
               </div>
             )}
 
@@ -243,12 +210,11 @@ export function ReservationDetailsDrawer({
             </div>
           </div>
         </div>
-
         <DialogFooter className=" flex-wrap w-full mt-4 border-t p-4 bg-background flex flex-row justify-between print:hidden">
+          {/* ... (Boutons de la footer) ... */}
           <Button variant="outline" onClick={() => onEdit(reservation, clientDetails)}>
             Modifier
           </Button>
-
           {reservation.status === ReservationStatut.PREVUE && (
             <Button variant="default" onClick={() => onCheckIn(reservation.id)}>
               Check-in
@@ -259,7 +225,6 @@ export function ReservationDetailsDrawer({
               Check-out
             </Button>
           )}
-          
           <Button
             className="bg-red-500 hover:bg-red-600 text-white"
             onClick={() => onDelete(reservation.id)}

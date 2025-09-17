@@ -200,3 +200,39 @@
   .print\:m-0 { margin: 0 !important; }
   .print\:overflow-visible { overflow: visible !important; }
 }
+
+/* Thème Manager (Violet) */
+.theme-manager {
+    --primary: oklch(50% 0.15 300); /* Un beau violet profond */
+    --primary-foreground: oklch(95% 0.05 300); /* Blanc légèrement teinté */
+    --secondary: oklch(75% 0.05 300);
+    --secondary-foreground: oklch(25% 0.05 300);
+    --ring: var(--primary);
+}
+
+/* Thème Réceptionniste (Bleu) */
+.theme-receptionniste {
+    --primary: oklch(50% 0.15 240); /* Un bleu vif */
+    --primary-foreground: oklch(95% 0.05 240);
+    --secondary: oklch(75% 0.05 240);
+    --secondary-foreground: oklch(25% 0.05 240);
+    --ring: var(--primary);
+}
+
+/* Thème Maintenance (Orange) */
+.theme-technicien {
+    --primary: oklch(65% 0.2 60); /* Un orange énergique */
+    --primary-foreground: oklch(10% 0.05 60);
+    --secondary: oklch(85% 0.05 60);
+    --secondary-foreground: oklch(15% 0.05 60);
+    --ring: var(--primary);
+}
+
+/* Thème RH (Jaune) */
+.theme-rh {
+    --primary: oklch(38.022% 0.10576 143.878); /* Un jaune apaisant */
+    --primary-foreground: oklch(89.793% 0.0477 151.933);
+    --secondary: oklch(80% 0.05 140);
+    --secondary-foreground: oklch(31.699% 0.06049 102.649);
+    --ring: var(--primary);
+}

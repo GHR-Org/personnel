@@ -87,7 +87,7 @@ export default function CaissePage() {
   React.useEffect(() => {
     if (selectedReservation) {
       const articlesTotal = selectedReservation.articles.reduce((sum, item) => sum + (item.prixUnitaire * item.quantite), 0);
-      const arrhesPayees = selectedReservation.montantAttribuer || 0;
+      const arheePayees = selectedReservation.montantAttribuer || 0;
 
       const existingCaisseTransaction = mockCaisseTransactions.find(
         (trans) => trans.reservationId === selectedReservation.id
@@ -102,7 +102,7 @@ export default function CaissePage() {
         form.reset({
           reservationId: selectedReservation.id || "",
           montantTotalDu: existingCaisseTransaction?.montantTotalDu || articlesTotal,
-          montantDejaPaye: existingCaisseTransaction?.montantDejaPaye || arrhesPayees,
+          montantDejaPaye: existingCaisseTransaction?.montantDejaPaye || arheePayees,
           paiements: existingCaisseTransaction?.paiements || [],
           statutCaisse: existingCaisseTransaction?.statutCaisse || "Soldée",
           dateTransaction: existingCaisseTransaction?.dateTransaction || new Date(),
@@ -113,7 +113,7 @@ export default function CaissePage() {
         form.reset({
           reservationId: selectedReservation.id || "",
           montantTotalDu: articlesTotal,
-          montantDejaPaye: arrhesPayees,
+          montantDejaPaye: arheePayees,
           paiements: existingCaisseTransaction ? existingCaisseTransaction.paiements : [],
           statutCaisse: existingCaisseTransaction ? existingCaisseTransaction.statutCaisse : "Ouverte",
           dateTransaction: existingCaisseTransaction ? existingCaisseTransaction.dateTransaction : new Date(),

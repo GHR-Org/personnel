@@ -50,7 +50,7 @@ export const createReservationColumns = ({ onSelectReservation }: ColumnsProps):
   },
   {
     accessorKey: "montantAttribuer",
-    header: "Arrhes",
+    header: "arhee",
     cell: ({ row }) => {
       const amount = parseFloat(row.getValue("montantAttribuer"));
       return amount.toLocaleString('mg-MG', { style: 'currency', currency: 'MGA' });

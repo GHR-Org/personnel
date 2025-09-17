@@ -22,7 +22,7 @@ import { Button } from "@/components/ui/button";
 // import { useIsMobile } from "@/hooks/use-mobile"; // Commenté car non utilisé dans l'extrait fourni
 import { AddBookingModal } from "@/components/modals/AddBookingModal";
 import { ReservationDetailsDrawer } from "@/components/reservationComponents/ReservationDetailsDrawer";
-import { ViewArrhesModal } from "@/components/modals/ViewArrhesModal";
+import { ViewarheeModal } from "@/components/modals/ViewarheeModal";
 import {
   ContextMenu,
   ContextMenuContent,
@@ -387,13 +387,13 @@ export function RoomCalendar() {
   // États pour les modales
   const [isReservationModalOpen, setIsReservationModalOpen] = useState(false);
   const [isDetailsDrawerOpen, setIsDetailsDrawerOpen] = useState(false);
-  const [isArrhesModalOpen, setIsArrhesModalOpen] = useState(false);
+  const [isarheeModalOpen, setIsarheeModalOpen] = useState(false);
   const [isReportIncidentModalOpen, setIsReportIncidentModalOpen] = useState(false);
 
   const [prefilledDataForNewReservation, setPrefilledDataForNewReservation] = useState<{ roomNumber: number; date: Date } | null>(null);
   const [reservationToEdit, setReservationToEdit] = useState<Reservation | null>(null);
   const [reservationToView, setReservationToView] = useState<Reservation | null>(null);
-  const [arrhesToView, setArrhesToView] = useState<Reservation | null>(null);
+  const [arheeToView, setarheeToView] = useState<Reservation | null>(null);
   const [reservationForReport, setReservationForReport] = useState<Reservation | null>(null);
 
   // --- Calcul de la plage de dates ---
@@ -500,9 +500,9 @@ export function RoomCalendar() {
     setIsDetailsDrawerOpen(true);
   };
 
-  const openArrhesModal = (reservation: Reservation) => {
-    setArrhesToView(reservation);
-    setIsArrhesModalOpen(true);
+  const openarheeModal = (reservation: Reservation) => {
+    setarheeToView(reservation);
+    setIsarheeModalOpen(true);
     setIsDetailsDrawerOpen(false); // Ferme le tiroir si ouvert
   };
 
@@ -515,12 +515,12 @@ export function RoomCalendar() {
   const handleCloseReservationSheet = () => {
     setIsReservationModalOpen(false);
     setIsDetailsDrawerOpen(false);
-    setIsArrhesModalOpen(false);
+    setIsarheeModalOpen(false);
     setIsReportIncidentModalOpen(false);
     setPrefilledDataForNewReservation(null);
     setReservationToEdit(null);
     setReservationToView(null);
-    setArrhesToView(null);
+    setarheeToView(null);
     setReservationForReport(null);
   };
 
@@ -843,9 +843,9 @@ export function RoomCalendar() {
                         <IconLogin2 className="mr-2 h-4 w-4" /> Faire arriver le client
                       </ContextMenuItem>
                       <ContextMenuItem
-                        onClick={() => openArrhesModal(reservation)}
+                        onClick={() => openarheeModal(reservation)}
                       >
-                        Voir les arrhes
+                        Voir les arhee
                       </ContextMenuItem>
                       <ContextMenuItem
                         onClick={() => openDetailsDrawer(reservation)}
@@ -946,10 +946,10 @@ export function RoomCalendar() {
         onBookingDeleted={handleBookingDeleted}
       />
 
-      <ViewArrhesModal
-        open={isArrhesModalOpen}
+      <ViewarheeModal
+        open={isarheeModalOpen}
         onClose={handleCloseReservationSheet}
-        reservation={arrhesToView}
+        reservation={arheeToView}
       />
 
       {/* Modale pour le rapport d'incident */}

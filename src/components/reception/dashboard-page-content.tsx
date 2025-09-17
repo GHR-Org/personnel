@@ -4,9 +4,8 @@
 
 "use client";
 import React, { useState, useCallback } from "react";
-import type { BookingEvent, BookingFormInputs } from "@/schemas/reservation";
+import type { BookingFormInputs } from "@/schemas/reservation";
 import { ReservationStatut } from "@/lib/enum/ReservationStatus";
-import { Civilite } from "@/lib/enum/Civilite";
 import { ModeCheckin } from "@/lib/enum/ModeCheckin";
 import { ModePaiment } from "@/lib/enum/ModePaiment";
 import { v4 as uuidv4 } from "uuid";
@@ -14,7 +13,7 @@ import { toast } from "sonner";
 import RoomTable from "@/components/calendar/RoomTable";
 import { AddBookingModal } from "@/components/modals/AddBookingModal";
 import { ReportIncidentModal } from "@/components/modals/ReportIncidentModal";
-import { ViewArrhesModal } from "@/components/modals/ViewArrhesModal";
+import { ViewarheeModal } from "@/components/modals/ViewArrhesModal";
 import { ReservationDetailsDrawer } from "@/components/reservationComponents/ReservationDetailsDrawer";
 import FiltresReservations, { ReservationFilters } from "@/components/reservationComponents/FiltresReservation";
 import { Client } from "@/types/client";
@@ -28,6 +27,11 @@ import "@/styles/calendar.css";
 
 // Importation de `cn` pour une gestion plus propre des classes
 import { cn } from "@/lib/utils"; 
+import { BookingEvent } from "@/types/reservation";
+import { useQueryClient } from "@tanstack/react-query";
+import { sendBookingConfirmation } from "@/func/api/reservation/apireservation";
+import { useAuth } from "@/hooks/useAuth";
+import { getCurrentUser } from "@/func/api/personnel/apipersonnel";
 
 interface RoomTableRoom {
   id: number;
@@ -48,16 +52,17 @@ const DashboardPageContent = () => {
   const [isDetailsDrawerOpen, setIsDetailsDrawerOpen] = useState(false);
   const [reservationToView, setReservationToView] = useState<BookingEvent | null>(null);
   const [clientDetailsToViewOrEdit, setClientDetailsToViewOrEdit] = useState<Client | null>(null);
-  const [isArrhesModalOpen, setIsArrhesModalOpen] = useState(false);
-  const [arrhesToView, setArrhesToView] = useState<BookingEvent | null>(null);
+  const [isarheeModalOpen, setIsarheeModalOpen] = useState(false);
+  const [arheeToView, setarheeToView] = useState<BookingEvent | null>(null);
   const [isReportIncidentModalOpen, setIsReportIncidentModalOpen] = useState(false);
   const [reservationForReport, setReservationForReport] = useState<BookingEvent | null>(null);
+  const queryClient = useQueryClient();
 
   const resetModalsStates = useCallback(() => {
     setPrefilledDataForNewReservation(null);
     setReservationToEdit(null);
     setReservationToView(null);
-    setArrhesToView(null);
+    setarheeToView(null);
     setReservationForReport(null);
     setClientDetailsToViewOrEdit(null);
   }, []);
@@ -78,8 +83,8 @@ const DashboardPageContent = () => {
     },
     [resetModalsStates]
   );
-  const createBookingMutation = useCreateBookingMutation();
-  const updateBookingMutation = useUpdateBookingMutation();
+  const createBookingMutation = useCreateBookingMutation(etablissementId);
+  const updateBookingMutation = useUpdateBookingMutation(etablissementId);
 
   const openDetailsDrawer = useCallback(async (reservation: BookingEvent) => {
     setReservationToView(reservation);
@@ -98,47 +103,133 @@ const DashboardPageContent = () => {
       setClientDetailsToViewOrEdit(null);
     }
   }, []);
-  const openEditReservationModal = useCallback(async (reservation: BookingEvent) => { /* ... */ }, []);
-  const openArrhesModal = useCallback((reservation: BookingEvent) => { /* ... */ }, []);
+  const openEditReservationModal = useCallback(async (reservation: BookingEvent) => {
+  // 1. Fermer le tiroir de détails si il est ouvert
+  handleOpenChange(setIsDetailsDrawerOpen, false);
+  
+  // 2. Mettre la réservation à éditer dans l'état
+  setReservationToEdit(reservation);
+  
+  // 3. Récupérer les données du client si elles existent
+  if (reservation.client_id) {
+    try {
+      const client = await getClientById(reservation.client_id);
+      setClientDetailsToViewOrEdit(client);
+    } catch (error) {
+      console.error("Erreur lors de la récupération des détails du client pour l'édition :", error);
+      toast.error("Impossible de charger les informations du client.");
+      setClientDetailsToViewOrEdit(null);
+    }
+  } else {
+    setClientDetailsToViewOrEdit(null);
+  }
+  
+  // 4. Ouvrir la modale d'ajout/modification
+  handleOpenChange(setIsReservationModalOpen, true);
+}, [handleOpenChange]);
+
+
+  const openarheeModal = useCallback((reservation: BookingEvent) => { /* ... */ }, []);
   const openReportIncidentModal = useCallback((reservation: BookingEvent) => { /* ... */ }, []);
   const handleSaveReservation = useCallback(
     (newReservationData: BookingFormInputs) => {
-      if (reservationToEdit) {
-        updateBookingMutation.mutate(newReservationData, {
-          onSuccess: () => {
-            toast.success("Réservation mise à jour avec succès !");
-            handleOpenChange(setIsReservationModalOpen, false);
-          },
-          onError: (error) => {
-            toast.error("Échec de la mise à jour de la réservation.");
-            console.error("Erreur de mise à jour:", error);
-          },
-        });
-      } else {
-        createBookingMutation.mutate(newReservationData, {
-          onSuccess: () => {
-            toast.success("Réservation ajoutée avec succès !");
-            handleOpenChange(setIsReservationModalOpen, false);
-          },
-          onError: (error) => {
-            toast.error("Échec de l'ajout de la réservation.");
-            console.error("Erreur de création:", error);
-          },
-        });
-      }
+        if (reservationToEdit) {
+            updateBookingMutation.mutate({ id: reservationToEdit.id, updateData: newReservationData }, {
+                onSuccess: () => {
+                    toast.success("Réservation mise à jour avec succès !");
+                    handleOpenChange(setIsReservationModalOpen, false);
+                    queryClient.invalidateQueries({
+                        queryKey: ["reservations", etablissementId],
+                    });
+                },
+                onError: (error) => {
+                    toast.error("Échec de la mise à jour de la réservation.");
+                    console.error("Erreur de mise à jour:", error);
+                },
+            });
+        } else {
+            createBookingMutation.mutate(newReservationData, {
+                onSuccess: () => {
+                    toast.success("Réservation ajoutée avec succès !");
+                    handleOpenChange(setIsReservationModalOpen, false);
+                    queryClient.invalidateQueries({
+                        queryKey: ["reservations", etablissementId],
+                    });
+                },
+                onError: (error) => {
+                    toast.error("Échec de l'ajout de la réservation.");
+                    console.error("Erreur de création:", error);
+                },
+            });
+        }
     },
-    [handleOpenChange, reservationToEdit, createBookingMutation, updateBookingMutation]
-  );
+    [handleOpenChange, reservationToEdit, createBookingMutation, updateBookingMutation, queryClient, etablissementId]
+);
   const updateReservationStatus = useCallback((reservationId: string, newStatus: ReservationStatut, message: string) => { /* ... */ }, []);
-  const handleCheckInClient = useCallback((reservationId: string) => { /* ... */ }, [updateReservationStatus]);
-  const handleCheckoutReservation = useCallback((reservationId: string) => { /* ... */ }, [updateReservationStatus]);
-  const handleCancelReservation = useCallback((reservationId: string) => { /* ... */ }, [updateReservationStatus]);
+  const handleCheckInClient = useCallback((reservationId: number | undefined) => { /* ... */ }, [updateReservationStatus]);
+  const handleCheckoutReservation = useCallback((reservationId: number | undefined) => { /* ... */ }, [updateReservationStatus]);
+  const handleCancelReservation = useCallback(async (reservationId: number) => { 
+    const user = await getCurrentUser();
+    if (!user || !user.id) {
+      toast.error("Utilisateur non authentifié. Impossible de confirmer la réservation.");
+      return;
+    }
+
+    try {
+      const statusData = {
+        status: ReservationStatut.ANNULEE,
+        personnel_id: user.id, // Maintenant user.id est accessible
+      };
+      await sendBookingConfirmation(reservationId, statusData);
+      queryClient.invalidateQueries({
+        queryKey: ["reservations", etablissementId],
+      });
+      toast.success(`Réservation n° ${reservationId} annulé avec succès !`);
+
+    } catch (error) {
+      console.error("Erreur lors de l'envoi de la confirmation:", error);
+      toast.error("Échec de l'envoi de la confirmation de réservation.");
+    }
+  }, [updateReservationStatus]);
   const handleFilterChange = useCallback((filters: ReservationFilters) => { /* ... */ }, []);
-  const handleDeleteReservation = useCallback((reservationId: string) => { /* ... */ }, [handleOpenChange]);
-  const handleRequestCleaning = useCallback((roomId: string) => { /* ... */ }, []);
-  const handleSelectSlotForNewReservation = useCallback((data: { date_arrivee: string; date_depart: string; chambre_id: number }) => { /* ... */ }, []);
-  const handleBookingUpdated = useCallback((updatedReservation: BookingEvent) => { /* ... */ }, []);
-  const onSendConfirmation = useCallback(async (reservationId: string) => { /* ... */ }, []);
+  const handleDeleteReservation = useCallback((reservationId: number | undefined) => { /* ... */ }, [handleOpenChange]);
+  const handleRequestCleaning = useCallback((roomId: number | undefined) => { /* ... */ }, []);
+  const handleSelectSlotForNewReservation = useCallback((data: { date_arrivee: string; date_depart: string; chambre_id: number | undefined }) => { /* ... */ }, []);
+  const handleBookingUpdated = useCallback((updatedReservation: BookingEvent) => {
+    // Invalide la requête pour rafraîchir les données du calendrier
+    queryClient.invalidateQueries({
+      queryKey: ["reservations", etablissementId],
+    });
+    // Ferme le drawer après la mise à jour
+    handleOpenChange(setIsDetailsDrawerOpen, false);
+    setReservationToView(updatedReservation);
+  }, [queryClient, etablissementId, handleOpenChange]);
+
+  const onSendConfirmation = useCallback(async (reservationId: number) => {
+    // 1. Attendez la résolution de la promesse pour obtenir l'objet utilisateur
+    const user = await getCurrentUser();
+
+    if (!user || !user.id) {
+      toast.error("Utilisateur non authentifié. Impossible de confirmer la réservation.");
+      return;
+    }
+
+    try {
+      const statusData = {
+        status: ReservationStatut.CONFIRMEE,
+        personnel_id: user.id, // Maintenant user.id est accessible
+      };
+      await sendBookingConfirmation(reservationId, statusData);
+      queryClient.invalidateQueries({
+        queryKey: ["reservations", etablissementId],
+      });
+      toast.success("Confirmation de réservation envoyée avec succès !");
+
+    } catch (error) {
+      console.error("Erreur lors de l'envoi de la confirmation:", error);
+      toast.error("Échec de l'envoi de la confirmation de réservation.");
+    }
+  }, [getCurrentUser]);
   const handleBookingDeleted = useCallback(() => { /* ... */ }, [handleOpenChange]);
 
   const rooms: RoomTableRoom[] = roomsData?.map((room) => ({
@@ -200,7 +291,7 @@ const DashboardPageContent = () => {
             openEditReservationModal={openEditReservationModal}
             handleCloseReservationSheet={() => handleOpenChange(setIsDetailsDrawerOpen, false)}
             handleCheckInClient={handleCheckInClient}
-            openArrhesModal={openArrhesModal}
+            openarheeModal={openarheeModal}
             handleCancelReservation={handleCancelReservation}
             handleCheckoutReservation={handleCheckoutReservation}
             handleRequestCleaning={handleRequestCleaning}
@@ -238,10 +329,10 @@ const DashboardPageContent = () => {
         onSendConfirmation={onSendConfirmation}
       />
       
-      <ViewArrhesModal
-        open={isArrhesModalOpen}
-        onOpenChange={(status) => handleOpenChange(setIsArrhesModalOpen, status)}
-        reservation={arrhesToView}
+      <ViewarheeModal
+        open={isarheeModalOpen}
+        onOpenChange={(status) => handleOpenChange(setIsarheeModalOpen, status)}
+        reservation={arheeToView}
       />
       
       {isReportIncidentModalOpen && reservationForReport && (
@@ -251,6 +342,11 @@ const DashboardPageContent = () => {
           reservation={reservationForReport}
         />
       )}
+      <ViewarheeModal 
+        open={isarheeModalOpen}
+        onOpenChange={(status) => handleOpenChange(setIsarheeModalOpen, status)}
+        reservation={arheeToView}
+      />
     </div>
   );
 };

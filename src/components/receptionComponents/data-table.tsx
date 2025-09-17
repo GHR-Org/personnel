@@ -285,7 +285,7 @@
 //         // mais ne nuisent pas si vous voulez être explicite.
 //         const dataToSend: CreateBookingData = {
 //             ...validatedData, // Utilisez le validatedData directement si les types sont corrects
-//             // Assurez-vous que datePaiementArrhes, dateArrivee, dateDepart sont des strings ici
+//             // Assurez-vous que datePaiementarhee, dateArrivee, dateDepart sont des strings ici
 //             // Si votre schéma Zod les transforme en Date objets, vous devrez les reconvertir en ISO string
 //             // Exemple: dateArrivee: validatedData.dateArrivee instanceof Date ? validatedData.dateArrivee.toISOString() : validatedData.dateArrivee,
 //         };

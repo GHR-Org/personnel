@@ -47,7 +47,7 @@ export function BookingForm({ onSave, onCancel, onClose }: BookingFormProps) {
         ...data,
         client_id: clientId,
         articles: data.articles || [],
-        arrhes: data.arrhes || {
+        arhee: data.arhee || {
             montant: 0,
             date_paiement: "",
             mode_paiement: "",

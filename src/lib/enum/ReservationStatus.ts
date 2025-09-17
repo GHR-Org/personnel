@@ -1,8 +1,8 @@
 export enum ReservationStatut {
-  CONFIRMEE = "Confirmée",
+  CONFIRMEE = "Confirmé",
   ARRIVEE = "Arrivée",
-  TERMINEE = "Terminée",
-  ANNULEE = "Annulée",
+  TERMINEE = "Terminé",
+  ANNULEE = "Annulé",
   EN_ATTENTE = "En Attente",
   NON_RENSEIGNE = "Non renseigné",
   PREVUE = "Prévue"

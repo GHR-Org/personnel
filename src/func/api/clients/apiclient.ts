@@ -115,22 +115,22 @@ export const deleteClient = async (clientId: number): Promise<boolean> => {
  * @returns Une promesse qui résout à une liste de clients (un ou aucun).
  */
 export const getClientByEmail = async (email: string): Promise<Client[]> => {
-  if (!email) {
-    return [];
-  }
-  try {
-    const response = await apiClient.get<GetClientResponse>(
-      `${APIURL}/clientemail/${email}`
-    );
-    // L'API renvoie un seul client, on le met dans un tableau
-    return [response.data.clients];
-  } catch (error: any) {
-    // Si l'API renvoie une erreur (ex: 404), on retourne un tableau vide
-    if (error.response && error.response.status === 404) {
-      console.log("Client non trouvé pour l'email:", email);
-      return [];
-    }
-    console.error("Erreur lors de la recherche de client par email :", error);
-    throw error;
-  }
+  if (!email) {
+    return [];
+  }
+  try {
+    const response = await apiClient.get<GetClientsResponse>(
+      `${APIURL}/clientemail/${email}`
+    );
+    // Retourne directement le tableau 'clients'
+    return response.data.clients;
+  } catch (error: any) {
+    // Si l'API renvoie une erreur (ex: 404), on retourne un tableau vide
+    if (error.response && error.response.status === 404) {
+      console.log("Client non trouvé pour l'email:", email);
+      return [];
+    }
+    console.error("Erreur lors de la recherche de client par email :", error);
+    throw error;
+  }
 };

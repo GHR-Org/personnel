@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // ============================================================================
 // PANNEAU DE NOTIFICATIONS
 // ============================================================================
@@ -293,7 +295,7 @@ export function NotificationPanel() {
           variant="ghost"
           size="icon"
           className={cn(
-            "relative h-11 w-11 rounded-full transition-all duration-300 ease-out",
+            "relative h-9 w-9 rounded-full transition-all duration-300 ease-out",
             "hover:bg-muted",
             "focus:ring-2 focus:ring-primary focus:ring-offset-2",
             "active:scale-95 transform",
@@ -306,7 +308,7 @@ export function NotificationPanel() {
         >
           <IconBell
             className={cn(
-              "h-6 w-6 transition-all duration-300",
+              "h-[1.2rem] w-[1.2rem] transition-all duration-300",
               filteredUnreadCount > 0
                 ? "text-foreground scale-110"
                 : "text-muted-foreground hover:text-foreground"

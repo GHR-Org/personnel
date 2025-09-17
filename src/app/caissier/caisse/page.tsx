@@ -14,8 +14,6 @@ import { CheckoutActions } from '@/components/caisse/CheckoutActions';
 import { InvoiceDetailsCard } from '@/components/caisse/InvoiceDetailsCard';
 import { CaisseSummaryCard } from '@/components/caisse/CaisseSummaryCard';
 
-// Importez vos schémas et types
-import { BookingFormData } from '@/schemas/reservation';
 import { CaisseTransactionFormData, caisseTransactionSchema, PaiementItem } from '@/schemas/caisse';
 import { InvoiceFormData } from '@/schemas/invoice';
 
@@ -31,6 +29,7 @@ import { DataTable } from '@/components/ui/data-table';
 import { createReservationColumns } from '@/components/caisse/Column';
 import { Button } from '@/components/ui/button';
 import { IconPrinter } from '@tabler/icons-react';
+import { BookingFormData } from '@/schemas/booking';
 
 export default function CaissePage() {
   const [selectedReservation, setSelectedReservation] = React.useState<BookingFormData | null>(null);
@@ -67,7 +66,7 @@ export default function CaissePage() {
       // Si soldée, réinitialiser le formulaire pour éviter des valeurs en conflit,
       // mais garder la réservation sélectionnée et charger la facture.
       form.reset({
-        reservationId: reservation.id || "",
+        reservationId: reservation.id,
         montantTotalDu: 0, // Ou le montant total de la facture soldée si vous voulez l'afficher
         montantDejaPaye: 0,
         paiements: [],
@@ -86,8 +85,8 @@ export default function CaissePage() {
 
   React.useEffect(() => {
     if (selectedReservation) {
-      const articlesTotal = selectedReservation.articles.reduce((sum, item) => sum + (item.prixUnitaire * item.quantite), 0);
-      const arrhesPayees = selectedReservation.montantAttribuer || 0;
+      const articlesTotal = selectedReservation.articles.reduce((sum: number, item: { prixUnitaire: number; quantite: number; }) => sum + (item.prixUnitaire * item.quantite), 0);
+      const arheePayees = selectedReservation.montantAttribuer || 0;
 
       const existingCaisseTransaction = mockCaisseTransactions.find(
         (trans) => trans.reservationId === selectedReservation.id
@@ -102,7 +101,7 @@ export default function CaissePage() {
         form.reset({
           reservationId: selectedReservation.id || "",
           montantTotalDu: existingCaisseTransaction?.montantTotalDu || articlesTotal,
-          montantDejaPaye: existingCaisseTransaction?.montantDejaPaye || arrhesPayees,
+          montantDejaPaye: existingCaisseTransaction?.montantDejaPaye || arheePayees,
           paiements: existingCaisseTransaction?.paiements || [],
           statutCaisse: existingCaisseTransaction?.statutCaisse || "Soldée",
           dateTransaction: existingCaisseTransaction?.dateTransaction || new Date(),
@@ -113,7 +112,7 @@ export default function CaissePage() {
         form.reset({
           reservationId: selectedReservation.id || "",
           montantTotalDu: articlesTotal,
-          montantDejaPaye: arrhesPayees,
+          montantDejaPaye: arheePayees,
           paiements: existingCaisseTransaction ? existingCaisseTransaction.paiements : [],
           statutCaisse: existingCaisseTransaction ? existingCaisseTransaction.statutCaisse : "Ouverte",
           dateTransaction: existingCaisseTransaction ? existingCaisseTransaction.dateTransaction : new Date(),
@@ -202,11 +201,11 @@ export default function CaissePage() {
 
     const generatedInvoice: InvoiceFormData = {
       invoiceNumber: `INV-${Date.now().toString().slice(-6)}`,
-      dateIssued: new Date(),
-      dueDate: new Date(),
+      dateIssued: new Date().toISOString(),
+      dueDate: new Date().toISOString(),
       clientName: `${selectedReservation.civilite} ${selectedReservation.prenom} ${selectedReservation.nom}`,
       clientAddress: `${selectedReservation.adresse}, ${selectedReservation.codePostal} ${selectedReservation.ville}, ${selectedReservation.pays}`,
-      items: selectedReservation.articles.map(article => ({
+      items: selectedReservation.articles.map(article as any => ({
         description: article.libelle,
         quantity: article.quantite,
         unitPrice: article.prixUnitaire,
@@ -217,7 +216,7 @@ export default function CaissePage() {
       taxAmount: 0,
       totalAmount: montantTotalDu,
       paymentStatus: "Payée",
-      paymentMethod: data.paiements.map(p => p.mode).join(", ") || "Non spécifié",
+      paymentMethod: data.paiements.map((p: { mode: any; }) => p.mode).join(", ") || "Non spécifié",
       notes: data.notes || "Transaction finalisée.",
       recordedBy: "Caissier Actuel",
       reservationId: selectedReservation.id || "",

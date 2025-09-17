@@ -30,7 +30,7 @@ interface AddBookingModalProps {
   onSaveBooking: (data: BookingFormInputs) => void;
   reservationToEdit?: BookingManuel | null;
   prefilledData?: Partial<BookingFormInputs> & Partial<ClientFormInputs> | null;
-  onSendConfirmation?: (reservationId: string) => Promise<void>;
+  onSendConfirmation?: (reservationId: number) => Promise<void>;
   clientDetails?: Client | null;
 }
 
@@ -73,7 +73,7 @@ export function AddBookingModal({
         mode_checkin,
         code_checkin,
         articles,
-        arrhes,
+        arhee,
       } = prefilledData;
       return {
         date_arrivee,
@@ -86,19 +86,21 @@ export function AddBookingModal({
         mode_checkin,
         code_checkin,
         articles,
-        arrhes,
+        arhee,
       };
     }
     return null;
   });
 
-  const [clientId, setClientId] = useState<number | undefined>(isEditMode && clientDetails ? clientDetails.id : undefined);
+  const [clientId, setClientId] = useState<number>(isEditMode && clientDetails ? clientDetails.id : 0);
   const [step, setStep] = useState<"client-select" | "client-create" | "reservation">("client-select"); // Mettre à jour les étapes
   const [isLoading, setIsLoading] = useState(false);
 
   // Logique pour la sélection d'un client existant
   const handleSelectClient = (selectedClientId: number) => {
+    console.log("Client sélectionné avec l'ID:", selectedClientId);
     setClientId(selectedClientId);
+    
     setStep("reservation"); // Passe directement au formulaire de réservation
   };
 
@@ -107,6 +109,7 @@ export function AddBookingModal({
     setIsLoading(true);
     try {
       const newClient = await postClient(clientData);
+      
       setClientId(newClient.id);
       setStep("reservation"); // Passe au formulaire de réservation après la création
       toast.success(`Client ${newClient.first_name} ${newClient.last_name} créé avec succès.`);

@@ -31,7 +31,7 @@ interface BookingCellProps {
   onCancel: () => void;
   onCheckout: () => void;
   onDelete: () => void;
-  onViewArrhes: () => void;
+  onViewarhee: () => void;
   onReportIncident: () => void;
   onRequestCleaning: () => void;
 }
@@ -48,7 +48,7 @@ export function BookingCell({
   onCancel,
   onCheckout,
   onDelete,
-  onViewArrhes,
+  onViewarhee,
   onReportIncident,
   onRequestCleaning,
 }: BookingCellProps) {
@@ -79,7 +79,7 @@ export function BookingCell({
       <ContextMenuContent>
         <ContextMenuItem onClick={onEdit}>Modifier la fiche</ContextMenuItem>
         <ContextMenuItem onClick={onDetails}>Détails</ContextMenuItem>
-        <ContextMenuItem onClick={onViewArrhes}>Voir les arrhes</ContextMenuItem>
+        <ContextMenuItem onClick={onViewarhee}>Voir les arhee</ContextMenuItem>
         <ContextMenuSeparator />
         <ContextMenuItem
           onClick={onCheckIn}

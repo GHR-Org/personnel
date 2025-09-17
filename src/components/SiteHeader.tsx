@@ -4,7 +4,7 @@
 import { ChevronDown } from "lucide-react";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,13 +12,18 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-
 import Link from "next/link";
 import { toast } from "sonner";
 import { NotificationPanel } from "./notification/NotificationPanel";
+import ModeToggle from "./modetoggle";
+
+import { useState } from "react"; // <-- 1. On importe useState
+import { Sheet, SheetContent } from "@/components/ui/sheet"; // <-- 2. On importe Sheet
+import { UserProfilePanel } from "./UserProfilePanel"; // <-- 3. On importe notre nouveau composant
 
 export default function SiteHeader() {
   const { user, logout } = useAuthContext();
+  const [isProfilePanelOpen, setIsProfilePanelOpen] = useState(false); // <-- 4. Nouvel état pour le panneau
 
   const handleLogout = () => {
     logout();
@@ -29,7 +34,7 @@ export default function SiteHeader() {
     <header className="fixed max-w-screen w-full top-0 z-40 bg-background/80 backdrop-blur-lg border-b">
       <div className="flex h-17 justify-between items-center px-4 md:px-8">
         {/* Nom de l'utilisateur à gauche */}
-        <div className="flex-1 items-center ml-12 hidden md:flex"> {/* Masqué sur mobile */}
+        <div className="flex-1 items-center ml-12 hidden md:flex">
           <span className="text-xl font-bold tracking-tight">
             Bonjour, {user?.prenom || "Utilisateur"} !
           </span>
@@ -39,24 +44,21 @@ export default function SiteHeader() {
         <div className="flex-1 md:hidden"></div>
 
         {/* Icônes de droite */}
-        <div className="flex items-center space-x-2 md:space-x-4 pr-20">
-          {/* Notifications */} 
+        <div className="flex items-center justify-between pr-20">
+          {/* Notifications */}
           <NotificationPanel />
-
-          {/* <ModeToggle /> */}
 
           {/* Menu de l'utilisateur */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
                 variant="ghost"
-                className="relative h-9 w-9 rounded-full"
+                className="relative rounded-full"
               >
                 <Avatar className="h-9 w-9">
-                  <AvatarImage src="/placeholder-user.jpg" alt="Avatar utilisateur" />
                   <AvatarFallback>{user?.prenom?.[0] || 'U'}</AvatarFallback>
                 </Avatar>
-                <ChevronDown className="h-4 w-4 ml-2" />
+                <ChevronDown className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56" align="end" forceMount>
@@ -69,11 +71,12 @@ export default function SiteHeader() {
                 </p>
               </div>
               <div className="border-t my-1" />
-              <Link href="/parametres/profil">
-                <DropdownMenuItem>
-                  Mon Profil
-                </DropdownMenuItem>
-              </Link>
+              {/* Le bouton "Mon Profil" ouvre maintenant le panneau latéral */}
+              <DropdownMenuItem 
+                onSelect={() => setIsProfilePanelOpen(true)} // <-- 5. On ouvre le panneau ici
+              >
+                Mon Profil
+              </DropdownMenuItem>
               <Link href="/parametres/security">
                 <DropdownMenuItem>
                   Sécurité
@@ -90,8 +93,15 @@ export default function SiteHeader() {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+          <ModeToggle/>
         </div>
       </div>
+      {/* 6. On intègre le composant du panneau ici */}
+      <Sheet open={isProfilePanelOpen} onOpenChange={setIsProfilePanelOpen}>
+        <SheetContent>
+            <UserProfilePanel />
+        </SheetContent>
+      </Sheet>
     </header>
   );
 }

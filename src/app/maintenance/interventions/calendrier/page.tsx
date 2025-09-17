@@ -39,11 +39,11 @@ export default function CalendarPage() {
                 
                 {/* Bouton de retour vers la page principale des interventions */}
                 <Button variant="outline" asChild>
-                    <Link href="/interventions">
+                    <Link href="/maintenance/interventions">
                         <ArrowLeft className="h-4 w-4 mr-2" />
                         Retour à la liste
                     </Link>
-                </Button>
+                </Button>   
             </div>
 
             <Card>

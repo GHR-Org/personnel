@@ -1,5 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import apiClient from "@/func/APIClient";
+import { getCurrentUser } from "../personnel/apipersonnel";
+import { Commande } from "@/components/manager-restaurant/MobileOrderTracker";
+
 
 
 const APIUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api"; // Replace with actual etablissement ID retrieval logic
@@ -117,3 +120,64 @@ export const getCommandesByEtablissement = async (etablissement_id: string): Pro
     }
 };
 
+const getIdEtablissement = async (): Promise<number> => {
+    const user = await getCurrentUser();
+    return user?.etablissement_id ?? 1; // Assure-toi d'avoir une valeur par défaut ou de gérer l'erreur
+};
+
+export const getOrders = async (): Promise<Commande[]> => {
+    try {
+        const etablissement_id = await getIdEtablissement();
+
+        // On utilise la fonction qui récupère toutes les commandes de l'établissement
+        // Tu peux ajouter un filtre ici si ton API permet de distinguer les commandes "mobiles"
+        const response = await apiClient.get(`${APIUrl}/commande/etablissement/${etablissement_id }`);
+
+        // La réponse de l'API est un objet avec une clé "commandes"
+        const commandes = response.data.commandes;
+
+        if (!commandes) {
+            console.error("API response is missing 'commandes' array");
+            return [];
+        }
+
+        // On mappe les données de l'API pour qu'elles correspondent au type `Commande`
+        const mappedCommandes: Commande[] = commandes.map((cmd: any) => ({
+            id: cmd.id,
+            montant: cmd.montant,
+            description: cmd.description,
+            date: cmd.date,
+            status: cmd.status,
+            client_id: cmd.client_id,
+            details: cmd.details,
+        }));
+        
+        console.log(`Successfully fetched ${mappedCommandes.length} commandes.`);
+        return mappedCommandes;
+    } catch (error) {
+        console.error("Error fetching orders:", error);
+        throw error;
+    }
+};
+
+/**
+ * 
+ * @param commande_id 
+ * @param new_status 
+ * @param etablissement_id 
+ * @returns 
+ */
+export const updateCommandeStatus = async (
+  commande_id: string,
+  new_status: string,
+): Promise<any> => {
+  try {
+    const response = await apiClient.patch(
+      `${APIUrl}/commande/${commande_id}/status/${new_status}`);
+    console.log(`Statut de la commande ${commande_id} mis à jour : ${new_status}`);
+    return response.data;
+  } catch (error) {
+    console.error("Erreur lors de la mise à jour du statut de la commande :", error);
+    throw error;
+  }
+};

@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { testPasswordHashing } from "@/lib/password-utils";
+import { testPasswordHashing } from "../../../password-utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";

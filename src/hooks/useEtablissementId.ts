@@ -25,6 +25,7 @@ export const useEtablissementId = () => {
         } else {
           console.error("ID de l'établissement introuvable pour l'utilisateur.");
           setEtablissementId(0);
+        
         }
       } catch (error) {
         console.error("Erreur lors de la récupération de l'ID de l'établissement :", error);

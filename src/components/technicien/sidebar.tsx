@@ -2,7 +2,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import {
   LayoutDashboard,
@@ -18,6 +18,9 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { useLayout } from "@/contexts/LayoutContext";
+import Image from "next/image";
+import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
 
 const navItems = [
   {
@@ -42,7 +45,7 @@ const navItems = [
   },
   {
     label: "Planning",
-    href: "/maintenance/planning",
+    href: "/maintenance/interventions/calendrier",
     icon: <ClipboardList className="h-5 w-5" />,
   },
 ];
@@ -51,7 +54,20 @@ export default function Sidebar() {
   const pathname = usePathname();
   const { logout } = useAuthContext();
   const { isCollapsed, toggleSidebar } = useLayout();
-
+  const { theme } = useTheme();
+  const router = useRouter();
+      const [logoSrc, setLogoSrc] = useState('/logo/dark.png');
+      useEffect(() => {
+        if (theme === 'dark') {
+          setLogoSrc('/logo/dark.png');
+        } else {
+          setLogoSrc('/logo/white.png');
+        }
+      }, [theme]);
+  
+  const handleClick = () => {
+    router.push("/maintenance/documentation");
+  }
   return (
     <aside
       className={cn(
@@ -67,10 +83,18 @@ export default function Sidebar() {
         )}
       >
         {!isCollapsed && (
-          <h1 className="text-xl font-bold tracking-tight whitespace-nowrap">
-            GHR Technicien
-          </h1>
-        )}
+                  <div className="flex items-center justify-center gap-2">
+                  <Image
+                    src={logoSrc}
+                    alt="Logo de l'application"
+                    width={40} // Ajuste la taille comme tu le souhaites
+                    height={40} // Ajuste la taille comme tu le souhaites
+                />
+                <h1 className="text-xl font-bold tracking-tight whitespace-nowrap">
+                    Technicien
+                </h1>
+            </div>
+                )}
         <Button
           variant="default"
           size="icon"
@@ -123,6 +147,7 @@ export default function Sidebar() {
               variant="outline"
               size="sm"
               className="w-full mt-2 text-xs"
+              onClick={handleClick}
             >
               Documentation
             </Button>

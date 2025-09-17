@@ -4,10 +4,11 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getBookings, createBooking, updateBooking } from "@/func/api/reservation/apireservation";
 import { getRooms } from "@/func/api/chambre/apiroom";
 import { getClientById } from "@/func/api/clients/apiclient";
-import type { BookingEvent, BookingFormInputs } from "@/schemas/reservation";
+import type { BookingFormInputs } from "@/schemas/reservation";
 import type { room as RoomType } from "@/types/room";
 import { Produit } from "@/types/Produit";
 import { getAllProduits } from "@/func/api/produit/apiproduit";
+import { BookingEvent } from "@/types/reservation";
 
 // Importez l'énumération si vous en avez besoin pour les mutations
 // import { ReservationStatut } from "@/lib/enum/ReservationStatus";
@@ -70,12 +71,13 @@ export const useArticles = (etablissementId: number, isEnabled: boolean) => {
  * Hook de mutation pour créer une nouvelle réservation.
  * Invalide le cache des réservations après une création réussie.
  */
-export const useCreateBookingMutation = () => {
+export const useCreateBookingMutation = (etablissementId: number) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (newBooking: BookingFormInputs) => createBooking(newBooking),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["bookings"] });
+      // Invalide la requête avec la même clé que useBookings
+      queryClient.invalidateQueries({ queryKey: ["bookings", etablissementId] });
     },
   });
 };
@@ -87,9 +89,13 @@ export const useCreateBookingMutation = () => {
 export const useUpdateBookingMutation = (etablissementId: number) => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (updatedBooking: BookingFormInputs) => updateBooking(updatedBooking, etablissementId),
+    // La fonction mutationFn reçoit maintenant un objet avec 'id' et 'updateData'
+    mutationFn: ({ id, updateData }: { id: number | undefined; updateData: BookingFormInputs }) =>
+      updateBooking(id, updateData),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["bookings"] });
+      // Invalide la requête pour rafraîchir les données
+      queryClient.invalidateQueries({ queryKey: ["bookings", etablissementId] });
+      // L'invalidation de la requête "bookings" suffira
     },
   });
 };

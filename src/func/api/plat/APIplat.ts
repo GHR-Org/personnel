@@ -45,6 +45,23 @@ export const getPlatById = async (plat_id: string, etablissement_id: string): Pr
     }
 }
 
+export type PlatApiResponse = {
+  message: string;
+  plat: MenuItem;
+};
+export const getPlatByIdPlat = async (plat_id: string, etablissement_id: string): Promise<PlatApiResponse> => {
+    try {
+        const response = await apiClient.get<PlatApiResponse>(`${APIUrl}/plat/${plat_id}`, {
+            params: { etablissement_id }
+        });
+        console.log(`Fetched plat with ID: ${plat_id}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching plat by ID:", error);
+        throw error;
+    }
+};
+
 export const createPlat = async (payload: FormData): Promise<MenuItem> => {
     try {
         console.table(payload)

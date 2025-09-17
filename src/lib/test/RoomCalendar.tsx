@@ -88,7 +88,7 @@ export interface RoomCalendarProps {
   openDetailsDrawer: (reservation: BookingEvent) => void;
   openEditReservationModal: (reservation: BookingEvent) => void;
   handleCheckInClient: (id: string) => void;
-  openArrhesModal: (reservation: BookingEvent) => void;
+  openarheeModal: (reservation: BookingEvent) => void;
   handleCancelReservation: (id: string) => void;
   handleCheckoutReservation: (id: string) => void;
   handleRequestCleaning: (roomId: string) => void;
@@ -179,7 +179,7 @@ export default function RoomCalendar(props: RoomCalendarProps) {
     openDetailsDrawer,
     openEditReservationModal,
     handleCheckInClient,
-    openArrhesModal,
+    openarheeModal,
     handleCancelReservation,
     handleCheckoutReservation,
     handleRequestCleaning,

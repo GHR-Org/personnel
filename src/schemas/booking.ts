@@ -12,6 +12,7 @@ export const bookingFormSchema = z.object({
   etablissement_id: z.coerce.number().min(1, "Établissement requis"),
   mode_checkin: z.string().optional(),
   code_checkin: z.string().nullable().optional(),
+  id : z.string(),
   
   // NOUVEAU: Ajoutez le nom du client ici
   clientName: z.string().min(1, "Nom du client requis").optional(), 

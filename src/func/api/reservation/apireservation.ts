@@ -3,7 +3,7 @@
 
 import apiClient from "@/func/APIClient";
 
-import { BookingManuelSchema, UpdateBookingDataSchema, UpdateBookingStatutDataSchema, BookingFormInputs } from "@/schemas/reservation";
+import { BookingManuelSchema, BookingFormInputs, UpdateBookingStatutDataSchema, UpdateBookingData } from "@/schemas/reservation";
 import { z } from "zod";
 import axios, { AxiosResponse } from "axios";
 
@@ -11,11 +11,6 @@ import axios, { AxiosResponse } from "axios";
 export type BookingManuel = z.infer<typeof BookingManuelSchema>;
 
 export type CreateBookingData = BookingFormInputs;
-// UpdateBookingData est le type pour les données envoyées lors de la mise à jour partielle d'une réservation
-export type UpdateBookingData = z.infer<typeof UpdateBookingDataSchema>;
-// UpdateBookingStatutData est le type pour la mise à jour du statut
-export type UpdateBookingStatutData = z.infer<typeof UpdateBookingStatutDataSchema>;
-
 
 interface ApiClientResponse<T> extends AxiosResponse {
   data: T;
@@ -38,6 +33,8 @@ interface UpdateReservationResponse {
 
 const APIURL = process.env.NEXT_PUBLIC_API_URL;
 
+export type UpdateBookingStatutData = z.infer<typeof UpdateBookingStatutDataSchema>;
+
 
 export const getBookings = async (etablissement_id: number): Promise<BookingManuel[]> => {
   try {
@@ -57,10 +54,12 @@ export const createBooking = async (
   bookingData: CreateBookingData 
 ): Promise<BookingManuel> => {
   try {
+    console.log("Données de réservation envoyées:", bookingData);
     const response = await apiClient.post<CreateReservationResponse>(
       `${APIURL}/reservation`, // Endpoint pour la création
       bookingData
     );
+    console.table(response.data.reservation)
     return response.data.reservation;
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
@@ -72,55 +71,6 @@ export const createBooking = async (
     }
   }
 };
-
-// --- Mettre à jour une réservation existante ---
-export const updateBooking = async (
-  id: string,
-  updateData: UpdateBookingData
-): Promise<BookingManuel> => {
-  try {
-  
-
-    const response = await apiClient.patch<UpdateReservationResponse>( // PATCH est généralement utilisé pour les mises à jour partielles
-      `${APIURL}/reservation/${id}`,
-      updateData
-    );
-    return response.data.reservation; // Assurez-vous que votre API renvoie l'objet réservation mis à jour
-  } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      console.error("Erreur lors de la mise à jour de la réservation:", error.response?.data || error.message);
-      throw new Error(error.response?.data?.message || "Erreur inconnue lors de la mise à jour de la réservation.");
-    } else {
-      console.error("Erreur inattendue lors de la mise à jour de la réservation:", error);
-      throw new Error("Une erreur inattendue est survenue lors de la mise à jour de la réservation.");
-    }
-  }
-};
-
-// --- Mettre à jour le statut d'une réservation ---
-export const updateBookingStatus = async (
-  id: string,
-  statusData: UpdateBookingStatutData 
-): Promise<BookingManuel> => {
-  try {
-    
-
-    const response = await apiClient.patch<UpdateReservationResponse>(
-      `${APIURL}/reservation/${id}/status`,
-      statusData
-    );
-    return response.data.reservation;
-  } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      console.error("Erreur lors de la mise à jour du statut de la réservation:", error.response?.data || error.message);
-      throw new Error(error.response?.data?.message || "Erreur inconnue lors de la mise à jour du statut de la réservation.");
-    } else {
-      console.error("Erreur inattendue lors de la mise à jour du statut de la réservation:", error);
-      throw new Error("Une erreur inattendue est survenue lors de la mise à jour du statut de la réservation.");
-    }
-  }
-};
-
 // --- Supprimer une réservation ---
 export const deleteBooking = async (id: string): Promise<void> => {
   try {
@@ -133,6 +83,67 @@ export const deleteBooking = async (id: string): Promise<void> => {
     } else {
       console.error("Erreur inattendue lors de la suppression de la réservation:", error);
       throw new Error("Une erreur inattendue est survenue lors de la suppression de la réservation.");
+    }
+  }
+};
+/**
+ * Met à jour une réservation existante.
+ * @param id L'ID de la réservation à mettre à jour.
+ * @param updateData Les données de mise à jour.
+ * @returns La réservation mise à jour.
+ */
+export const updateBooking = async (
+  id: number | undefined,
+  updateData: UpdateBookingData
+): Promise<BookingManuel> => {
+  try {
+    const response = await apiClient.patch<BookingManuel>( // 1. Changez le type générique de la réponse ici
+      `${APIURL}/reservation/${id}`,
+      updateData
+    );
+    return response.data; // 2. Retournez le corps de la réponse, pas l'objet entier
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      const apiErrorMessage = (error.response?.data as { message?: string })?.message;
+
+      console.error(
+        "Erreur lors de la mise à jour de la réservation:",
+        apiErrorMessage || error.response?.data || error.message
+      );
+
+      throw new Error(apiErrorMessage || "Erreur inconnue lors de la mise à jour de la réservation.");
+    } else {
+      console.error("Erreur inattendue lors de la mise à jour de la réservation:", error);
+      throw new Error("Une erreur inattendue est survenue lors de la mise à jour de la réservation.");
+    }
+  }
+};
+interface ConfirmationResponse {
+  message: string;
+}
+/**
+ * 
+ * @param reservationId 
+ * @param statusData
+ * @returns 
+ */
+export const sendBookingConfirmation = async (
+  reservationId: number,
+  statusData: UpdateBookingStatutData // Ajout du paramètre 'statusData'
+): Promise<ConfirmationResponse> => {
+  try {
+    const response = await apiClient.patch<ConfirmationResponse>(
+      `${APIURL}/reservation/${reservationId}`,
+      statusData // Le corps de la requête PATCH
+    );
+    return response.data;
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      console.error("Erreur lors de l'envoi de la confirmation:", error.response?.data || error.message);
+      throw new Error(error.response?.data?.message || "Erreur inconnue lors de l'envoi de la confirmation.");
+    } else {
+      console.error("Erreur inattendue lors de l'envoi de la confirmation:", error);
+      throw new Error("Une erreur inattendue est survenue lors de l'envoi de la confirmation.");
     }
   }
 };

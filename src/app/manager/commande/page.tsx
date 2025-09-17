@@ -4,6 +4,7 @@
 
 import { OrderTracker } from "@/components/manager-restaurant/OrderTracker";
 import { OrderCardStats } from "@/components/manager-restaurant/OrderCardStats";
+import { MobileOrderTracker } from "@/components/manager-restaurant/MobileOrderTracker";
 
 // Données de commandes factices
 const data = [
@@ -66,8 +67,13 @@ export default function CommandePage() {
 
         {/* Section du tableau des commandes */}
         <div className="bg-card text-card-foreground border rounded-xl shadow-lg p-6 col-span-full">
-          <h2 className="text-xl font-bold">Commandes</h2>
+          <h2 className="text-xl font-bold">Commandes via les chambres</h2>
           <OrderTracker />
+        </div>
+        {/* Section du tableau des commandes */}
+        <div className="bg-card text-card-foreground border rounded-xl shadow-lg p-6 col-span-full">
+          <h2 className="text-xl font-bold">Commandes via en ligne</h2>
+          <MobileOrderTracker />
         </div>
         
       </main>

@@ -71,9 +71,8 @@ interface AppState {
   interventions: Intervention[];
   isLoadingEquipments: boolean;
   isLoadingIncidents: boolean;
-  isLoadingInterventions: boolean; // <-- Nouvel état de chargement
+  isLoadingInterventions: boolean;
   establishmentId: number | null;
-  // Note: hasFetchedEquipments et hasFetchedIncidents sont supprimés
 
   addEquipment: (equipment: Omit<Equipment, "id">) => Promise<void>;
   addIncident: (incident: IncidentFormValues) => void;
@@ -87,13 +86,14 @@ interface AppState {
     updatedData: Partial<Equipment>
   ) => Promise<void>;
   updateIntervention: (id: string, updates: InterventionUpdate) => void;
+  updateIncident: (id: string, updates: Partial<Incident>) => void;
 
   deleteIntervention: (id: string) => void;
   deleteEquipment: (id: string) => Promise<void>;
 
   fetchIncidents: () => Promise<void>;
   fetchEquipments: () => Promise<void>;
-  fetchInterventions: () => Promise<void>; // <-- Nouvelle action pour le fetch
+  fetchInterventions: () => Promise<void>;
 
   setEstablishmentId: (id: number | null) => void;
   initializeStore: () => Promise<void>;
@@ -159,6 +159,10 @@ export const useAppStore = create<AppState>()(
             set((state) => ({
               incidents: [...state.incidents, createdIncident],
             }));
+            // Mettre à jour l'équipement en "En panne"
+            get().updateEquipment(createdIncident.equipement_id, {
+              status: "En panne",
+            });
           } else {
             toast.error("Format de réponse de l'API inattendu.");
           }
@@ -174,45 +178,30 @@ export const useAppStore = create<AppState>()(
             ...newIntervention,
             id: `INT-${uuidv4()}`,
           };
-          
+          // Mettre à jour l'équipement en "En Maintenance"
+          const incident = state.incidents.find(
+            (inc) => inc.id === createdIntervention.incident_Id
+          );
+          if (incident) {
+            get().updateEquipment(incident.equipement_id, {
+              status: "En Maintenance",
+            });
+          }
           return {
             interventions: [...state.interventions, createdIntervention],
           };
         });
       },
 
-      updateIntervention: (id, updates) => {
+      // Fonctions de mise à jour et suppression
+      updateIncident: (id, updates) => {
         set((state) => ({
-          interventions: state.interventions.map((intervention) =>
-            intervention.id === id
-              ? { ...intervention, ...updates }
-              : intervention
+          incidents: state.incidents.map((incident) =>
+            incident.id === id ? { ...incident, ...updates } : incident
           ),
         }));
-        
       },
 
-      deleteIntervention: (id) => {
-        set((state) => ({
-          interventions: state.interventions.filter(
-            (intervention) => intervention.id !== id
-          ),
-        }));
-        
-      },
-
-      deleteEquipment: async (id) => {
-        try {
-          await apiEquipement.deleteEquipement(id);
-          set((state) => ({
-            equipments: state.equipments.filter((equip) => equip.id !== id),
-          }));
-          
-        } catch (error) {
-          console.error("Échec de la suppression de l'équipement :", error);
-          toast.error("Échec de la suppression de l'équipement.");
-        }
-      },
       updateEquipment: async (id, updatedData) => {
         try {
           const equipmentToUpdate = get().equipments.find(
@@ -230,18 +219,76 @@ export const useAppStore = create<AppState>()(
               equip.id === id ? updatedEquipment : equip
             ),
           }));
-          
         } catch (error) {
           console.error("Échec de la mise à jour de l'équipement :", error);
           toast.error("Échec de la mise à jour de l'équipement.");
         }
       },
 
-      // --- Fonctions de fetch (simplifiées sans les drapeaux hasFetched) ---
+      updateIntervention: (id, updates) => {
+        // Met à jour localement l'intervention d'abord
+        set((state) => ({
+          interventions: state.interventions.map((intervention) =>
+            intervention.id === id
+              ? { ...intervention, ...updates }
+              : intervention
+          ),
+        }));
+
+        // Si le statut est "Terminée", on déclenche les mises à jour en chaîne
+        if (updates.status === "Terminée") {
+          const currentIntervention = get().interventions.find(
+            (interv) => interv.id === id
+          );
+
+          if (currentIntervention) {
+            // Étape 1 : Mettre à jour l'incident
+            const incident = get().incidents.find(
+              (inc) => inc.id === currentIntervention.incident_Id
+            );
+
+            if (incident) {
+              get().updateIncident(incident.id, { status: "Fermé" });
+
+              // Étape 2 : Mettre à jour l'équipement
+              const equipment = get().equipments.find(
+                (eq) => eq.id === incident.equipement_id
+              );
+
+              if (equipment) {
+                get().updateEquipment(equipment.id, {
+                  status: "Fonctionnel",
+                });
+              }
+            }
+          }
+        }
+      },
+
+      deleteIntervention: (id) => {
+        set((state) => ({
+          interventions: state.interventions.filter(
+            (intervention) => intervention.id !== id
+          ),
+        }));
+      },
+
+      deleteEquipment: async (id) => {
+        try {
+          await apiEquipement.deleteEquipement(id);
+          set((state) => ({
+            equipments: state.equipments.filter((equip) => equip.id !== id),
+          }));
+        } catch (error) {
+          console.error("Échec de la suppression de l'équipement :", error);
+          toast.error("Échec de la suppression de l'équipement.");
+        }
+      },
+
+      // Fonctions de fetch (simplifiées sans les drapeaux hasFetched)
       fetchEquipments: async () => {
         const establishmentId = get().establishmentId;
         if (!establishmentId) {
-          // Gérer le cas où l'ID n'est pas encore disponible
           return;
         }
         set({ isLoadingEquipments: true });
@@ -258,27 +305,23 @@ export const useAppStore = create<AppState>()(
       },
 
       fetchIncidents: async () => {
-        set({ isLoadingIncidents: true });
-        try {
-          const response = await apiIncident.getIncidents(); // `getIncidents` renverra maintenant le tableau directement
-          
-          set({
-            incidents: response, // <- Mettez à jour l'état avec la réponse directe
-            isLoadingIncidents: false,
-          });
-        } catch (error) {
-          console.error("Échec de la récupération des incidents :", error);
-          set({ isLoadingIncidents: false });
-          toast.error("Échec de la récupération des incidents.");
-        }
-      },
+        set({ isLoadingIncidents: true });
+        try {
+          const response = await apiIncident.getIncidents();
+          set({
+            incidents: response,
+            isLoadingIncidents: false,
+          });
+        } catch (error) {
+          console.error("Échec de la récupération des incidents :", error);
+          set({ isLoadingIncidents: false });
+          toast.error("Échec de la récupération des incidents.");
+        }
+      },
 
-      // --- Nouvelle fonction de fetch pour les interventions (locale) ---
       fetchInterventions: async () => {
-        // Pour l'instant, pas de call API. On pourrait charger des données par défaut ou rien.
-        // Cette fonction sera mise à jour une fois l'API prête.
         set({ isLoadingInterventions: true });
-        await new Promise((resolve) => setTimeout(resolve, 500)); // Simule un temps de chargement
+        await new Promise((resolve) => setTimeout(resolve, 500));
         set({ isLoadingInterventions: false });
       },
 
@@ -291,6 +334,7 @@ export const useAppStore = create<AppState>()(
           set({ establishmentId });
         }
       },
+
       getIncidentById: (id: string) => {
         return get().incidents.find((incident) => incident.id === id);
       },

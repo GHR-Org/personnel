@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   IconCalendar,
   IconUsers,
@@ -12,6 +12,7 @@ import {
   IconChevronLeft,
   IconChevronDown,
   IconFileReport,
+  IconLogout,
 } from '@tabler/icons-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
@@ -19,6 +20,8 @@ import { Button } from '../ui/button';
 import { useRouter, usePathname } from 'next/navigation';
 import { useLayout } from '@/contexts/LayoutContext';
 import { ScrollArea } from "@/components/ui/scroll-area";
+import Image from 'next/image';
+import { useTheme } from 'next-themes';
 
 // Définition des types pour les éléments de navigation
 type NavItem = {
@@ -54,6 +57,16 @@ export function Sidebar() {
   const pathname = usePathname();
   const { isCollapsed, toggleSidebar } = useLayout();
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
+  const { theme } = useTheme();
+    const [logoSrc, setLogoSrc] = useState('/logo/dark.png');
+    useEffect(() => {
+      if (theme === 'dark') {
+        setLogoSrc('/logo/dark.png');
+      } else {
+        setLogoSrc('/logo/white.png');
+      }
+    }, [theme]);
+  
 
   const handleLogout = async () => {
     localStorage.removeItem("access_token_ghr");
@@ -78,9 +91,17 @@ export function Sidebar() {
         )}
       >
         {!isCollapsed && (
-          <h1 className="text-xl font-bold tracking-tight whitespace-nowrap">
-            GHR Réception
-          </h1>
+          <div className="flex items-center justify-center gap-2">
+          <Image
+            src={logoSrc}
+            alt="Logo de l'application"
+            width={40} // Ajuste la taille comme tu le souhaites
+            height={40} // Ajuste la taille comme tu le souhaites
+        />
+        <h1 className="text-xl font-bold tracking-tight whitespace-nowrap">
+            Réception
+        </h1>
+    </div>
         )}
         <Button
           variant="ghost"
@@ -183,7 +204,7 @@ export function Sidebar() {
           onClick={handleLogout}
         >
           {!isCollapsed && "Se déconnecter"}
-          {isCollapsed && <IconChevronLeft size={20} className="h-5 w-5 rotate-180" />}
+          {isCollapsed && <IconLogout size={20} className="h-5 w-5 rotate-180" />}
         </Button>
       </div>
     </aside>

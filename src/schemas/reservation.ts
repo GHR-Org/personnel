@@ -14,8 +14,8 @@ export const ArticleItemSchema = z.object({
   total: z.number().min(0),
 });
 
-// Schéma pour les arrhes
-export const ArrhesSchema = z.object({
+// Schéma pour les arhee
+export const arheeSchema = z.object({
   montant: z.number().min(0, "Le montant ne peut pas être négatif.").default(0),
   date_paiement: z.string().optional(),
   mode_paiement: z.nativeEnum(ModePaiment).optional(),
@@ -24,8 +24,8 @@ export const ArrhesSchema = z.object({
 
 // Schéma principal de la réservation
 export const BookingManuelSchema = z.object({
-  id: z.string().uuid().optional(),
-  client_id: z.number().optional(), // L'ID du client est géré séparément
+  id: z.number(), // Pour les mises à jour, l'ID peut être fourni
+  client_id: z.number().int().positive("L'id du client est requis"), // L'ID du client est géré séparément
   date_arrivee: z.string().min(1, "La date d'arrivée est requise."),
   date_depart: z.string().min(1, "La date de départ est requise."),
   duree: z.number().min(1, "La durée doit être d'au moins 1 nuit."),
@@ -37,8 +37,30 @@ export const BookingManuelSchema = z.object({
   code_checkin: z.string().optional(),
   
   articles: z.array(ArticleItemSchema).optional(),
-  arrhes: ArrhesSchema.optional(),
+  arhee: arheeSchema.optional(),
 });
 
 export type BookingFormInputs = z.infer<typeof BookingManuelSchema>;
 export type BookingManuel = z.infer<typeof BookingManuelSchema>;
+
+export const UpdateBookingStatutDataSchema = z.object({
+  status: z.nativeEnum(ReservationStatut),
+  personnel_id: z.number().int().positive("L'ID du personnel est requis pour la traçabilité."),
+});
+export type UpdateBookingStatutData = z.infer<typeof UpdateBookingStatutDataSchema>;
+export const UpdateBookingDataSchema = z.object({
+  date_arrivee: z.string().optional(),
+  date_depart: z.string().optional(),
+  duree: z.number().optional(),
+  nbr_adultes: z.number().optional(),
+  nbr_enfants: z.number().optional(),
+  status: z.nativeEnum(ReservationStatut).optional(),
+  chambre_id: z.number().optional(),
+  mode_checkin: z.nativeEnum(ModeCheckin).optional(),
+  code_checkin: z.string().optional(),
+  articles: z.array(ArticleItemSchema).optional(),
+  arhee: arheeSchema.optional(),
+});
+
+// Type TypeScript déduit pour la mise à jour partielle
+export type UpdateBookingData = z.infer<typeof UpdateBookingDataSchema>;

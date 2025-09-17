@@ -1,4 +1,4 @@
-// components/modals/ViewArrhesModal.tsx
+// components/modals/ViewarheeModal.tsx
 "use client";
 
 import * as React from "react";
@@ -13,49 +13,49 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { BookingFormInputs } from "@/schemas/reservation";
+import { BookingEvent } from "@/types/reservation";
 
-interface ViewArrhesModalProps {
+interface ViewarheeModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  reservation: BookingFormInputs | null;
+  reservation: BookingEvent | null;
 }
 
-export function ViewArrhesModal({ open, onOpenChange, reservation }: ViewArrhesModalProps) {
+export function ViewarheeModal({ open, onOpenChange, reservation }: ViewarheeModalProps) {
   if (!reservation) {
     return null;
   }
 
-  const hasArrhes = reservation.montant !== undefined && reservation.montant !== null && reservation.montant > 0;
+  const hasarhee = reservation.arhee?.montant !== undefined && reservation.arhee?.montant !== null && reservation.arhee?.montant > 0;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Détails des Arrhes</DialogTitle>
+          <DialogTitle>Détails des arhee</DialogTitle>
           <DialogDescription>
-            Informations sur les arrhes versées pour la réservation de {reservation.first_name} {reservation.last_name}.
+            Informations sur les arhee versées pour la réservation de {reservation.first_name} {reservation.last_name}.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
-          {hasArrhes ? (
+          {hasarhee ? (
             <>
               <div className="grid grid-cols-3 items-center gap-4">
                 <span className="text-sm font-medium text-muted-foreground">Montant:</span>
                 <span className="col-span-2 text-sm font-semibold">
-                  {reservation.montant?.toLocaleString('fr-FR', { style: 'currency', currency: 'MGA' })}
+                  {reservation.arhee?.montant?.toLocaleString('fr-FR', { style: 'currency', currency: 'MGA' })}
                 </span>
               </div>
               <div className="grid grid-cols-3 items-center gap-4">
                 <span className="text-sm font-medium text-muted-foreground">Date de paiement:</span>
                 <span className="col-span-2 text-sm">
-                  {reservation.date_paiement ? format(new Date(reservation.date_paiement), "dd MMMM yyyy", { locale: fr }) : "Non spécifiée"}
+                  {reservation.arhee?.date_paiement ? format(new Date(reservation.arhee?.date_paiement), "dd MMMM yyyy", { locale: fr }) : "Non spécifiée"}
                 </span>
               </div>
               <div className="grid grid-cols-3 items-center gap-4">
                 <span className="text-sm font-medium text-muted-foreground">Mode de paiement:</span>
                 <span className="col-span-2 text-sm">
-                  {reservation.mode_paiement || "Non spécifié"}
+                  {reservation.arhee?.mode_paiement || "Non spécifié"}
                 </span>
               </div>
             </>
