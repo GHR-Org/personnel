@@ -10,7 +10,7 @@ const NotFound404: React.FC = () => (
     <h2 className="text-2xl font-semibold mb-2">Oups… Cette page n&apos;existe pas !</h2>
     <p className="text-lg mb-6 text-center max-w-lg">
       On dirait que tu t&apos;es perdu.<br />
-      La ressource demandée est introuvable.<br />
+      La page que tu cherches est en réparation.<br />
       Reviens à l&apos;accueil et continue l’aventure !
     </p>
     <Link
