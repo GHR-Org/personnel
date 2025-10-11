@@ -392,7 +392,7 @@ import NotFound404 from "../../../components/404";
 //   );
 // }
 
-export default RegisterPage(){
+export default function RegisterPage(){
   return (
     <>
     <NotFound404 />
