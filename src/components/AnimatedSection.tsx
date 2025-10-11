@@ -20,13 +20,13 @@ export function AnimatedSection({ children }: { children: React.ReactNode }) {
         {
           opacity: 1,
           y: 0,
-          duration: 1,
+          duration: 2,
           ease: 'power2.out',
           scrollTrigger: {
             trigger: sectionRef.current,
             start: 'top 80%', // Déclenche l'animation lorsque le haut de la section est à 80% de la fenêtre d'affichage
             toggleActions: 'play none none none',
-            once: true, // L'animation ne se déclenche qu'une seule fois
+            once: false, // L'animation ne se déclenche qu'une seule fois
           },
         }
       );

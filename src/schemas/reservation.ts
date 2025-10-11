@@ -1,5 +1,4 @@
 // schemas/reservation.ts
-
 import { ModeCheckin } from "@/lib/enum/ModeCheckin";
 import { ModePaiment } from "@/lib/enum/ModePaiment";
 import { ReservationStatut } from "@/lib/enum/ReservationStatus";

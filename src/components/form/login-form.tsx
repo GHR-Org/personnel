@@ -1,8 +1,8 @@
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-"use client"; // Indique que ce composant est un composant client de Next.js
+"use client"; 
 
-import { useState } from "react"; 
+import { useEffect, useState } from "react"; 
 import { useRouter } from "next/navigation"; 
 import { cn } from "@/lib/utils"; 
 import { Button } from "@/components/ui/button"; 
@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import { Eye, EyeOff } from "lucide-react";
 
 import { useAuth } from "@/hooks/useAuth";
+import { useTheme } from "next-themes";
 
 /**
  * Composant de formulaire de connexion pour le personnel.
@@ -31,6 +32,15 @@ export function LoginForm({
 
   const router = useRouter(); 
   const { loginPersonnel } = useAuth(); 
+  const {theme} = useTheme()
+  const [logoSrc, setLogoSrc] = useState('/logo/dark.png');
+          useEffect(() => {
+            if (theme === 'dark') {
+              setLogoSrc('/logo/dark.png');
+            } else {
+              setLogoSrc('/logo/white.png');
+            }
+          }, [theme]);
 
   // --- Fonctions de gestion des événements ---
 
@@ -192,8 +202,8 @@ export function LoginForm({
           <div className="hidden bg-muted md:block relative">
             <img
               alt="background"
-              className="w-full h-full object-cover brightness-50" // Remplir l'espace et assombrir l'image
-              src="/image/Login_Img.jpg" // Chemin de l'image de fond
+              className="w-full h-full object-cover animate-pulse" // Remplir l'espace et assombrir l'image
+              src={logoSrc} // Chemin de l'image de fond
             />
           </div>
         </CardContent>

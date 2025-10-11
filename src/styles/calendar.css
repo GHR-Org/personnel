@@ -237,18 +237,18 @@
   color: var(--primary-foreground);
   padding: 0.3rem 0.5rem;
   font-size: 0.82rem;
-  font-weight: 500;
+  font-weight: 700;
   border: none;
   user-select: none;
   transition: background-color 0.3s ease;
 }
 
 .rbc-event:hover {
-  background-color: oklch(0.6 0.20 45); /* Une nuance plus foncée du primaire */
+  background-color: oklch(27.502% 0.15996 265.634); /* Une nuance plus foncée du primaire */
 }
 
 .rbc-selected {
-  background-color: oklch(0.55 0.25 45); /* Encore plus foncée pour la sélection */
+  background-color: oklch(30.281% 0.16668 264.496); /* Encore plus foncée pour la sélection */
 }
 
 .rbc-event-content {

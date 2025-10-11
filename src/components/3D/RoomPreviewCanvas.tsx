@@ -42,6 +42,7 @@ export default function RoomBuilderCanvas() {
     if (!canvas) return;
 
     const handleLost = (e: Event) => {
+      // gestion d'erreur si l'affichage ne s'effectue pas
       e.preventDefault();
       console.warn("⚠️ WebGL context lost");
     };

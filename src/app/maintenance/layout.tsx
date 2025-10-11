@@ -18,7 +18,7 @@ const MainContent = ({ children }: { children: React.ReactNode }) => {
       )}
     >
       <SiteHeader />
-      <main className="flex-1 p-8 pt-16">{children}</main>
+      <main className="flex-1 p-8 pt-18">{children}</main>
     </div>
   );
 };

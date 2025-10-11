@@ -49,7 +49,11 @@ export const getBookings = async (etablissement_id: number): Promise<BookingManu
   }
 };
 
-// --- Créer une nouvelle réservation ---
+/**
+ * 
+ * @param bookingData 
+ * @returns 
+ */
 export const createBooking = async (
   bookingData: CreateBookingData 
 ): Promise<BookingManuel> => {

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 // src/components/auth/AuthProvider.tsx
 "use client";
 
@@ -114,6 +115,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     "/parametres/notifications",
     "/parametres/security",
     "/parametres/help",
+    "/"
   ]);
   const RhRoutes = new Set([
     "/rh",
@@ -124,12 +126,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     "/rh/personnel",
     "/reservations/restaurant",
     "/parametres",
-    "/",
     "/parametres/general",
     "/parametres/profil",
     "/parametres/notifications",
     "/parametres/security",
     "/parametres/help",
+    "/"
   ]);
   const ReceptionRoutes = new Set([
     "/reception/dashboard",
@@ -147,6 +149,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     "/parametres/notifications",
     "/parametres/security",
     "/parametres/help",
+    "/"
   ]);
   const TechnicienRoutes = new Set([
     "/maintenance",
@@ -160,7 +163,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     "/parametres/security",
     "/parametres/help",
     "/maintenance/interventions/calendrier",
-    "/maintenance/documentation"
+    "/maintenance/documentation",
+    "/"
   ]);
   const ManagerRoutes = new Set([
     "/manager",
@@ -176,6 +180,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     "/parametres/notifications",
     "/parametres/security",
     "/parametres/help",
+    "/"
   ]);
 
   const hasCheckedPath = useRef<string | null>(null);

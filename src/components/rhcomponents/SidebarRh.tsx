@@ -20,6 +20,9 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { useLayout } from "@/contexts/LayoutContext";
+import Image from "next/image";
+import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
 
 // Données de navigation pour les RH
 const navItems = [
@@ -64,6 +67,17 @@ export default function SidebarRh() {
   const pathname = usePathname();
   const { logout } = useAuthContext();
   const { isCollapsed, toggleSidebar } = useLayout();
+  const { theme } = useTheme();
+
+        const [logoSrc, setLogoSrc] = useState('/logo/dark.png');
+        useEffect(() => {
+          if (theme === 'dark') {
+            setLogoSrc('/logo/dark.png');
+          } else {
+            setLogoSrc('/logo/white.png');
+          }
+        }, [theme]);
+        
 
   return (
     <aside
@@ -79,11 +93,19 @@ export default function SidebarRh() {
           isCollapsed && "justify-center"
         )}
       >
-        {!isCollapsed && (
-          <h1 className="text-xl font-bold tracking-tight whitespace-nowrap">
-            GHR RH
-          </h1>
-        )}
+         {!isCollapsed && (
+                          <div className="flex items-center justify-center gap-2">
+                          <Image
+                            src={logoSrc}
+                            alt="Logo de l'application"
+                            width={40} // Ajuste la taille comme tu le souhaites
+                            height={40} // Ajuste la taille comme tu le souhaites
+                        />
+                        <h1 className="text-xl font-bold tracking-tight whitespace-nowrap">
+                            Technicien
+                        </h1>
+                    </div>
+                        )}
         <Button
           variant="default"
           size="icon"

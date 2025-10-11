@@ -1,9 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 // src/app/layout.tsx
-// Make sure there is NO "use client" directive here
-
 import type { Metadata } from "next";
-import { Montserrat, Montserrat_Alternates } from "next/font/google";
+import { Montserrat} from "next/font/google";
 import { Josefin_Sans } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme_provider";
@@ -12,18 +9,13 @@ import { ReactQueryProvider } from "@/components/providers/ReactQueryProvider";
 import { AuthProvider } from "@/contexts/AuthContext";
 import ThemeClassProvider from "@/contexts/ThemeClassProvider";
 
-// Initialisez la police Montserrat avec sa propre variable
+// Initialisation de la police Montserrat avec sa propre variable
 const montserrat = Montserrat({
     subsets: ["latin"],
     variable: "--font-montserrat",
 });
 
-// Initialisez la police Montserrat_Alternates avec sa propre variable
-const montserratAlternates = Montserrat_Alternates({
-    subsets: ["latin"],
-    variable: "--font-montserrat-alternates",
-    weight: ["400", "700"],
-});
+// Initialisation de la police JoseFin_Sans avec sa propre variable
 
 const josefinSans = Josefin_Sans({
     subsets: ["latin"],
@@ -55,14 +47,11 @@ export default function RootLayout({
                     disableTransitionOnChange
                 >
                     <ReactQueryProvider>
-                    
+                    {/* Appel à l'AuhtProvider pour la vérification des rôles */}
                     <AuthProvider>
-                        
                             <ThemeClassProvider />
                             {children}
-                        
-                    </AuthProvider>
-                        
+                    </AuthProvider> 
                     </ReactQueryProvider>
                 </ThemeProvider>
                 <Toaster />

@@ -52,8 +52,8 @@ import { cn } from "@/lib/utils";
 import { ReservationStatut } from "@/lib/enum/ReservationStatus"; 
 import type { BookingEvent, ArticleItem, arheeAndComment } from "@/types/reservation";
 import { ReservationDetailsDrawer } from "./ReservationDetailsDrawer";
-import { ViewarheeModal } from "../modals/ViewarheeModal";
 import { ViewArticlesModal } from "./ViewArticleModal";
+import { ViewarheeModal } from "../modals/ViewArrhesModal";
 
 const statusVariants: Record<ReservationStatut, string> = {
   [ReservationStatut.EN_ATTENTE]: "bg-yellow-100 text-yellow-800 border-yellow-300",

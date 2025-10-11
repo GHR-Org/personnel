@@ -75,7 +75,7 @@ export default function InterventionsPage() {
                 </CardContent>
             </Card>
 
-            {/* 🟢 Affichage de la modale de détails si une intervention est sélectionnée */}
+            {/*  Affichage de la modale de détails si une intervention est sélectionnée */}
             {selectedIntervention && (
                 <InterventionDetailsModal 
                     intervention={selectedIntervention}

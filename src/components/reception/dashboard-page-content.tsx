@@ -265,7 +265,7 @@ const DashboardPageContent = () => {
     <div className="h-full w-full relative p-4 sm:p-6 lg:p-8"> {/* Modification ici */}
       <div className="flex flex-col sm:flex-row justify-between sm:items-center my-2"> {/* Modification ici */}
         <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-primary dark:text-gray-50 pb-4 sm:pb-0">
-          Détail des Opérations
+         Calendrier des chambres
         </h2>
       </div>
       
@@ -275,7 +275,7 @@ const DashboardPageContent = () => {
       />
       
       {reservationsToDisplay.length === 0 && rooms.length === 0 ? (
-        <div className="flex flex-col items-center justify-center h-full text-center p-4"> {/* Modification ici */}
+        <div className="flex flex-col items-center justify-center h-full text-center p-4">
           <p className="text-lg text-gray-600 dark:text-gray-400">
             Aucune donnée disponible pour le moment.
           </p>

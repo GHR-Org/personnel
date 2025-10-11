@@ -72,7 +72,7 @@ export function MenuItemForm({ open, onClose, onSubmit, initialData, Etablisseme
   useEffect(() => {
     if (open) {
       form.reset(initialData || {
-        etablissement_id: Etablissement_id, // Assurez-vous que l'ID est toujours défini à la réinitialisation
+        etablissement_id: Etablissement_id, // l'ID est toujours défini à la réinitialisation
         libelle: "",
         description: "",
         image_url: null,
@@ -81,7 +81,7 @@ export function MenuItemForm({ open, onClose, onSubmit, initialData, Etablisseme
         prix: 0,
         disponible: true,
         tags: [],
-        calories: undefined, // Utiliser undefined pour un champ optionnel/nullable vide
+        calories: undefined, // Utilisation undefined pour un champ optionnel/nullable vide
         prep_minute: undefined,
         note: undefined,
         livrable : true
