@@ -1,4 +1,7 @@
 "use client";
+
+import NotFound404 from "../../../components/404";
+
 // import { Alert } from "@/components/ui/alert";
 // import { Button } from "@/components/ui/button";
 // import { Card } from "@/components/ui/card";
@@ -388,9 +391,6 @@
 //     </div>
 //   );
 // }
-"use client"
-
-import NotFound404 from "../../../components/404"
 
 export default RegisterPage(){
   return (
