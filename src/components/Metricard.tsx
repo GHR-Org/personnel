@@ -1,4 +1,4 @@
-import { IconTrendingDown, IconTrendingUp } from "@tabler/icons-react";
+import { IconTrendingDown, IconTrendingUp, IconProps } from "@tabler/icons-react"; // Importation de IconProps pour référence
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
@@ -9,9 +9,13 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import * as React from "react";
-import { cn } from "@/lib/utils"; // Assurez-vous d'avoir ce fichier utilitaire pour `cn`
+import { cn } from "@/lib/utils"; 
 
-type IconType = React.FC<React.SVGProps<SVGSVGElement> & { className?: string }>; 
+// 🎯 Type simple pour l'icône afin d'éviter le conflit ForwardRefExoticComponent/IconProps
+// React.ComponentType<any> est le plus tolérant et acceptera l'icône Tabler.
+type IconType = React.ComponentType<any>; 
+
+
 interface MetricCardProps {
   title: string;
   value: string;
@@ -19,9 +23,9 @@ interface MetricCardProps {
   isTrendingUp: boolean;
   footerText: string;
   footerDescription: string;
-  icon: IconType; // Composant icône passé en prop
-  iconColorClass?: string; // Gardons celle-ci pour la couleur de l'icône si besoin
-  cardClasses?: string; // Nouvelle prop pour les classes de la carte elle-même
+  icon: IconType; // Type simplifié
+  iconColorClass?: string; 
+  cardClasses?: string; 
 }
 
 export function MetricCard({
@@ -33,13 +37,12 @@ export function MetricCard({
   footerDescription,
   icon: IconComponent,
   iconColorClass,
-  cardClasses, // Accepter la nouvelle prop
+  cardClasses, 
 }: MetricCardProps) {
   const TrendIcon = isTrendingUp ? IconTrendingUp : IconTrendingDown;
   const badgeVariant = isTrendingUp ? "outline" : "destructive";
 
   return (
-    // Appliquer la prop cardClasses ici
     <Card className={cn("@container/card", cardClasses)}>
       <CardHeader>
         <CardDescription>{title}</CardDescription>
@@ -56,7 +59,8 @@ export function MetricCard({
       <CardFooter className="flex-col items-start gap-1.5 text-sm">
         <div className="line-clamp-1 flex gap-2 font-medium">
           {footerText}{" "}
-          <IconComponent className={cn("size-4", iconColorClass)}  />
+          {/* L'icône passe sans erreur grâce à la simplification du type IconType */}
+          <IconComponent className={cn("size-4", iconColorClass)} /> 
         </div>
         <div className="text-muted-foreground">{footerDescription}</div>
       </CardFooter>
