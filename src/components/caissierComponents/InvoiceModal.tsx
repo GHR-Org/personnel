@@ -53,7 +53,7 @@ export function InvoiceModal({
     defaultValues: initialData || {
       // Pour la création, invoiceNumber n'est pas renseigné, il sera généré par le backend
       // Pour l'édition, il vient de initialData
-      invoiceNumber: initialData?.invoiceNumber || undefined, // S'assure qu'il est undefined si non présent
+      invoiceNumber: undefined ,
       clientName: "",
       clientAddress: "",
       dateIssued: new Date().toISOString().split('T')[0], // Date du jour

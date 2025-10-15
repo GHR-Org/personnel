@@ -11,6 +11,7 @@ import {
 import * as React from "react";
 import { cn } from "@/lib/utils"; // Assurez-vous d'avoir ce fichier utilitaire pour `cn`
 
+type IconType = React.FC<React.SVGProps<SVGSVGElement> & { className?: string }>; 
 interface MetricCardProps {
   title: string;
   value: string;
@@ -18,7 +19,7 @@ interface MetricCardProps {
   isTrendingUp: boolean;
   footerText: string;
   footerDescription: string;
-  icon: React.ElementType;
+  icon: IconType; // Composant icône passé en prop
   iconColorClass?: string; // Gardons celle-ci pour la couleur de l'icône si besoin
   cardClasses?: string; // Nouvelle prop pour les classes de la carte elle-même
 }
@@ -55,7 +56,7 @@ export function MetricCard({
       <CardFooter className="flex-col items-start gap-1.5 text-sm">
         <div className="line-clamp-1 flex gap-2 font-medium">
           {footerText}{" "}
-          <IconComponent className={cn("size-4", iconColorClass)} />
+          <IconComponent className={cn("size-4", iconColorClass)}  />
         </div>
         <div className="text-muted-foreground">{footerDescription}</div>
       </CardFooter>
