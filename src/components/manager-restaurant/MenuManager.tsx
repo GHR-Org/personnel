@@ -28,18 +28,12 @@ import { MenuItemFormValues } from "@/schemas/MenuItem";
 import { IMAGE_URL } from "@/lib/constants/constant";
 import Image from "next/image";
 import { deletePlat } from "../../func/api/plat/APIplat";
-import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogTitle,
-  AlertDialogDescription,
-  AlertDialogCancel,
-  AlertDialogAction,
-} from "@radix-ui/react-alert-dialog";
-import { AlertDialogHeader, AlertDialogFooter } from "../ui/alert-dialog";
+import { AlertDialogHeader, AlertDialogFooter, AlertDialog, AlertDialogContent, AlertDialogTitle, AlertDialogDescription, AlertDialogCancel, AlertDialogAction } from "../ui/alert-dialog";
+import { useEtablissementId } from "@/hooks/useEtablissementId";
+import { motion } from "framer-motion";
 
 export default function MenuManager() {
-  const ETABLISSEMENT_ID = 1; // Backend attend un INTEGER
+  const ETABLISSEMENT_ID = useEtablissementId().etablissementId;
 
   const [openFormDialog, setOpenFormDialog] = useState(false); // Renommé pour clarté
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
@@ -226,109 +220,133 @@ export default function MenuManager() {
 
   return (
     <>
-      {menus.length === 0 && !isLoading ? ( // Afficher ce bloc uniquement si pas de menus ET pas en chargement
-        <div className="flex flex-col items-center justify-center text-center text-gray-500">
-          <p className="text-xl font-semibold mb-4">
-            Aucun menu disponible pour le moment.
-          </p>
-          <p className="mb-6">
-            Cliquez sur &quot;Ajouter un menu&quot; pour commencer à créer votre
-            carte !
-          </p>
-          <Card
-            className="cursor-pointer hover:shadow-md transition flex flex-col items-center justify-center p-4 min-h-[200px]"
-            onClick={handleOpenCreateForm}
-          >
-            <CardContent className="flex flex-col items-center gap-2 py-10">
-              <Plus className="w-8 h-8 text-muted-foreground" />
-              <span className="text-base text-muted-foreground font-semibold">
-                Ajouter un menu
-              </span>
-            </CardContent>
-          </Card>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 pb-6">
-          <Card
-            className="cursor-pointer hover:shadow-md transition flex flex-col items-center justify-center p-4 min-h-[200px]"
-            onClick={handleOpenCreateForm}
-          >
-            <CardContent className="flex flex-col items-center gap-2 py-10">
-              <Plus className="w-8 h-8 text-muted-foreground" />
-              <span className="text-base text-muted-foreground font-semibold">
-                Ajouter un menu
-              </span>
-            </CardContent>
-          </Card>
+      {menus.length === 0 && !isLoading ? (
+  // AUCUN MENU DISPONIBLE
+  <div className="flex flex-col items-center justify-center text-center py-20 px-6">
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6 }}
+      className="flex flex-col items-center"
+    >
+      <Image
+        src="/empty-menu.svg" // 💡 Mets ici une belle illustration SVG
+        alt="Aucun menu"
+        width={240}
+        height={240}
+        className="mb-6 opacity-80"
+      />
+      <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">
+        Aucun menu disponible
+      </h2>
+      <p className="text-gray-500 dark:text-gray-400 max-w-sm mb-8">
+        Commencez à construire votre carte dès maintenant et faites découvrir vos plats à vos clients.
+      </p>
 
-          {menus.map((menu) => (
-            <Card
-              key={menu.id}
-              className="cursor-pointer hover:shadow-md transition-shadow duration-200 h-auto w-100"
-              onClick={() => handleViewDetails(menu)}
-            >
-              <CardHeader className="flex flex-row items-start justify-between space-x-2 p-4">
-                <CardTitle className="text-lg font-semibold leading-tight pr-2">
-                  {menu.libelle}
-                </CardTitle>
-                {menu.type && (
-                  <Badge variant="default" className="text-xs shrink-0">
-                    {menu.type}
-                  </Badge>
-                )}
-              </CardHeader>
-              <CardContent className="space-y-3 p-4 pt-0">
-                {menu.image_url && (
-                  <div className="relative h-40 w-full rounded-md overflow-hidden bg-gray-100">
-                    <Image
-                      src={`${IMAGE_URL}/${menu.image_url}`}
-                      alt={menu.libelle}
-                      fill={true}
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      className="object-cover"
-                    />
-                  </div>
-                )}
-                {menu.description && (
-                  <p className="text-sm text-muted-foreground line-clamp-3">
-                    {menu.description}
-                  </p>
-                )}
-                <div className="flex items-center justify-between text-base font-medium">
-                  <span>Prix:</span>
-                  <span>
-                    {menu.prix?.toLocaleString("mg-MG", {
-                      style: "currency",
-                      currency: "MGA",
-                      minimumFractionDigits: 0,
-                    })}
-                  </span>
-                </div>
-                <div className="flex flex-row justify-between w-full">
-                  {menu.note !== undefined && menu.note !== null && (
-                    <div className="flex items-center gap-1">
-                      <StarRatingDisplay rating={menu.note} />
-                      <span className="text-sm text-muted-foreground">
-                        ({menu.note.toFixed(1)}/5)
-                      </span>
-                    </div>
-                  )}
-                  {menu.disponible ? (
-                    <Badge
-                      variant="default"
-                      className="bg-green-500 hover:bg-green-500/80"
-                    >
-                      Disponible
-                    </Badge>
-                  ) : (
-                    <Badge variant="destructive">Non disponible</Badge>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+      <Button
+        onClick={handleOpenCreateForm}
+        size="lg"
+        className="flex items-center gap-2 px-6 py-3 text-base font-semibold shadow-lg hover:scale-105 transition-all duration-300"
+      >
+        <Plus className="w-5 h-5" />
+        Ajouter un menu
+      </Button>
+    </motion.div>
+  </div>
+) : (
+  // LISTE DES MENUS DISPONIBLES
+  <motion.div
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    transition={{ duration: 0.6 }}
+    className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 py-10"
+  >
+    {/* Bouton + Ajouter */}
+    <motion.div
+      whileHover={{ scale: 1.05 }}
+      className="flex flex-col items-center justify-center border-2 border-dashed border-muted-foreground/30 rounded-2xl p-6 cursor-pointer hover:border-primary/60 hover:bg-primary/5 transition-all duration-300"
+      onClick={handleOpenCreateForm}
+    >
+      <Plus className="w-10 h-10 text-muted-foreground mb-3" />
+      <span className="text-base font-semibold text-muted-foreground">
+        Ajouter un menu
+      </span>
+    </motion.div>
+
+    {/* Liste dynamique des menus */}
+    {menus.map((menu) => (
+      <motion.div
+        key={menu.id}
+        whileHover={{ scale: 1.03 }}
+        className="bg-white dark:bg-gray-800 rounded-2xl shadow-md hover:shadow-xl transition-all cursor-pointer flex flex-col overflow-hidden"
+        onClick={() => handleViewDetails(menu)}
+      >
+        {menu.image_url && (
+          <div className="relative h-48 w-full overflow-hidden">
+            <Image
+              src={`${IMAGE_URL}/${menu.image_url}`}
+              alt={menu.libelle}
+              fill
+              className="object-cover hover:scale-110 transition-transform duration-500"
+            />
+          </div>
+        )}
+
+        <div className="p-5 flex flex-col flex-grow justify-between">
+          <div>
+            <div className="flex items-start justify-between mb-3">
+              <h3 className="text-lg font-semibold leading-tight text-gray-800 dark:text-gray-100">
+                {menu.libelle}
+              </h3>
+              {menu.type && (
+                <Badge variant="secondary" className="text-xs">
+                  {menu.type}
+                </Badge>
+              )}
+            </div>
+
+            {menu.description && (
+              <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-3 mb-4">
+                {menu.description}
+              </p>
+            )}
+          </div>
+
+          <div className="flex items-center justify-between text-base font-medium mb-3">
+            <span className="text-muted-foreground">Prix</span>
+            <span className="text-primary font-semibold">
+              {menu.prix?.toLocaleString("mg-MG", {
+                style: "currency",
+                currency: "MGA",
+                minimumFractionDigits: 0,
+              })}
+            </span>
+          </div>
+
+          <div className="flex items-center justify-between mt-auto">
+            {menu.note !== undefined && (
+              <div className="flex items-center gap-1">
+                <StarRatingDisplay rating={menu.note} />
+                <span className="text-xs text-gray-400">
+                  ({menu.note.toFixed(1)}/5)
+                </span>
+              </div>
+            )}
+
+            {menu.disponible ? (
+              <Badge variant="default" className="bg-green-500 hover:bg-green-500/80">
+                Disponible
+              </Badge>
+            ) : (
+              <Badge variant="destructive">Indisponible</Badge>
+            )}
+          </div>
         </div>
-      )}
+      </motion.div>
+    ))}
+  </motion.div>
+)}
+
 
       {/* MenuItemForm pour la création et la modification */}
       <MenuItemForm
@@ -458,6 +476,7 @@ export default function MenuManager() {
               </Button>
             )}
             <Button variant="destructive" onClick={(() =>{
+              setIsDetailModalOpen(false)
               setIsDeleteConfirmOpen(true)
             })}>
               {" "}

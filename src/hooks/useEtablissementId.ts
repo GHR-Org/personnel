@@ -8,7 +8,7 @@ import { getCurrentUser } from "@/func/api/personnel/apipersonnel"; // Assurez-v
  * @returns {{ etablissementId: number | null, isLoading: boolean }} L'ID de l'établissement et l'état de chargement.
  */
 export const useEtablissementId = () => {
-  const [etablissementId, setEtablissementId] = useState<number>(0);
+  const [etablissementId, setEtablissementId] = useState<number>(1);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {

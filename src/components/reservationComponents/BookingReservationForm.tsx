@@ -1,11 +1,11 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import React, { useState, useMemo } from "react";
 import { format, startOfDay, addDays, addHours } from "date-fns";
 import { fr } from "date-fns/locale";
+import { motion } from "framer-motion";
 
-// Composants Shadcn UI
+// SHADCN UI
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -25,56 +25,52 @@ import {
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 
-// Icônes et utilitaires
+// ICONS
 import { IconCalendar, IconPlus } from "@tabler/icons-react";
 import { Loader2 } from "lucide-react";
 
-// Les composants qui restent les mêmes
+// CUSTOM COMPONENTS
 import { ArticlesDataTable } from "./ArticlesDataTable";
 import { RoomSelector } from "./RoomSelector";
 import { ProductSelector } from "./ProduitSelector";
 
-// Les Types et Enum
+// ENUMS & HOOKS
 import { ReservationStatut } from "@/lib/enum/ReservationStatus";
 import { ModePaiment } from "@/lib/enum/ModePaiment";
 import { ModeCheckin } from "@/lib/enum/ModeCheckin";
 import { useEtablissementId } from "@/hooks/useEtablissementId";
 
-// IMPORTS pour React Hook Form et Zod
+// FORMS
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
-// DÉFINITION DU SCHÉMA AVEC ZOD (le même que celui de l'étape 2)
+// === FORM SCHEMA (inchangé) ===
 const ArticleItemSchema = z.object({
   id: z.string(),
   nom: z.string(),
-  quantite: z
-    .number()
-    .int()
-    .positive("La quantité doit être un nombre positif."),
-  prix: z.number().positive("Le prix doit être un nombre positif."),
-  total: z.number().positive("Le total doit être un nombre positif."),
+  quantite: z.number().int().positive(),
+  prix: z.number().positive(),
+  total: z.number().positive(),
 });
 
 const arheeSchema = z.object({
-  montant: z.number().min(0, "Le montant ne peut pas être négatif.").optional(),
+  montant: z.number().min(0).optional(),
   date_paiement: z.string().optional(),
   mode_paiement: z.string().optional(),
   commentaire: z.string().optional(),
 });
-export type ArticleItem = z.infer<typeof ArticleItemSchema>;
 
 export const bookingFormSchema = z
   .object({
-    date_arrivee: z.string().min(1, "La date d'arrivée est requise."),
-    date_depart: z.string().min(1, "La date de départ est requise."),
-    duree: z.number().int().min(1, "La durée doit être d'au moins 1 nuit."),
+    date_arrivee: z.string().min(1),
+    date_depart: z.string().min(1),
+    duree: z.number().int().min(1),
     client_id: z.number(),
-    nbr_adultes: z.number().int().min(1, "Il doit y avoir au moins 1 adulte."),
+    nbr_adultes: z.number().int().min(1),
     nbr_enfants: z.number().int().min(0).optional(),
     status: z.nativeEnum(ReservationStatut),
-    chambre_id: z.number().int().min(1, "Veuillez sélectionner une chambre."),
+    chambre_id: z.number().int().min(1),
     mode_checkin: z.nativeEnum(ModeCheckin),
     code_checkin: z.string().optional(),
     articles: z.array(ArticleItemSchema).default([]),
@@ -139,8 +135,6 @@ export function BookingReservationForm({
   const [showProductSelector, setShowProductSelector] = useState(false);
   const [roomPrice, setRoomPrice] = useState<number>(0);
   const { etablissementId } = useEtablissementId();
-
-  // On écoute les valeurs des champs pour les calculs
   const formValues = watch();
 
   const numberOfNights = useMemo(() => {
@@ -167,290 +161,171 @@ export function BookingReservationForm({
   const grandTotal = totalSejour + articlesTotal;
   const arheeAttendu = grandTotal > 0 ? grandTotal / 2 : 0;
 
-  // Fonctions de gestion des articles, adaptées pour utiliser setValue
   const handleAddArticle = (produit: any) => {
-    const newArticle: ArticleItem = {
+    const newArticle = {
       id: crypto.randomUUID(),
       nom: produit.nom,
       prix: produit.prix,
       quantite: 1,
       total: produit.prix,
     };
-    const currentArticles = formValues.articles ?? [];
-    setValue("articles", [...currentArticles, newArticle]);
+    const current = formValues.articles ?? [];
+    setValue("articles", [...current, newArticle]);
     setShowProductSelector(false);
   };
 
-  const handleRemoveArticle = (idToRemove: string) => {
-    const updatedArticles = (formValues.articles || []).filter(
-      (article) => article.id !== idToRemove
-    );
-    setValue("articles", updatedArticles);
-  };
-
-  const handleQuantityChange = (idToUpdate: string, newQuantity: number) => {
-    const updatedArticles = (formValues.articles || []).map((article) =>
-      article.id === idToUpdate
-        ? {
-            ...article,
-            quantite: Math.max(1, newQuantity),
-            total: Math.max(1, newQuantity) * article.prix,
-          }
-        : article
-    );
-    setValue("articles", updatedArticles);
-  };
-
-  const handleSelectRoom = (roomId: number, price: number) => {
-    setValue("chambre_id", roomId);
-    setRoomPrice(price);
-  };
-
-  const onValidSubmit: SubmitHandler<BookingFormInputs> = (data) => {
+  const onValidSubmit: SubmitHandler<BookingFormInputs> = (data) =>
     onSubmit(data);
+
+  // === ANIMATIONS ===
+  const fadeIn = {
+    hidden: { opacity: 0, y: 15 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
   };
 
   return (
-    <form onSubmit={handleSubmit(onValidSubmit)} className="space-y-6">
-      {/*... le reste de ton code JSX, en remplaçant les props "value" et "onChange" par "register" */}
-      {/* et en utilisant l'objet "errors" pour afficher les messages d'erreur */}
-      <h2 className="text-lg font-semibold">Détails de la réservation</h2>
-      <p className="text-sm text-gray-500">
-        Client ID sélectionné : **`{clientId}`**
-      </p>
+    <motion.form
+      onSubmit={handleSubmit(onValidSubmit)}
+      initial="hidden"
+      animate="visible"
+      variants={fadeIn}
+      className="relative space-y-8 p-8 rounded-3xl 
+      bg-white/60 dark:bg-gray-800/40 backdrop-blur-xl 
+      border border-white/20 shadow-2xl
+      transition hover:shadow-[0_0_40px_-10px_rgba(0,0,0,0.2)]"
+    >
+      {/* <motion.div variants={fadeIn} className="text-center mb-6">
+        <p className="text-gray-500 dark:text-gray-400 text-sm">
+          Détails du séjour et paiement pour le client #{clientId}
+        </p>
+      </motion.div> */}
 
-      {/* ... (Section Séjour) */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 border p-4 rounded-lg">
-        <h2 className="col-span-full text-lg font-semibold mb-2">Séjour</h2>
-        <div>
-          <Label htmlFor="date_arrivee">Date d&apos;arrivée</Label>
+      {/* Section Séjour */}
+      <motion.div
+        variants={fadeIn}
+        className="grid grid-cols-1 md:grid-cols-3 gap-6"
+      >
+        <div className="flex flex-col gap-2">
+          <Label>Date d'arrivée</Label>
           <Popover>
             <PopoverTrigger asChild>
-              <Button
-                variant={"outline"}
-                className={cn(
-                  "w-[140px] pl-3 text-left font-normal",
-                  !formValues.date_arrivee && "text-muted-foreground"
-                )}
-              >
-                {formValues.date_arrivee ? (
-                  format(new Date(formValues.date_arrivee), "PPP", {
-                    locale: fr,
-                  })
-                ) : (
-                  <span>Choisissez une date</span>
-                )}
-                <IconCalendar className="ml-auto h-4 w-4 opacity-50" />
+              <Button variant="outline" className="justify-between">
+                {formValues.date_arrivee
+                  ? format(new Date(formValues.date_arrivee), "PPP", {
+                      locale: fr,
+                    })
+                  : "Choisir..."}
+                <IconCalendar size={18} />
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
+            <PopoverContent>
               <Calendar
                 mode="single"
-                selected={
-                  formValues.date_arrivee
-                    ? new Date(formValues.date_arrivee)
-                    : undefined
+                selected={new Date(formValues.date_arrivee)}
+                onSelect={(d) =>
+                  setValue("date_arrivee", format(d!, "yyyy-MM-dd"))
                 }
-                onSelect={(date) =>
-                  setValue(
-                    "date_arrivee",
-                    date ? format(date, "yyyy-MM-dd") : ""
-                  )
-                }
-                disabled={(date) => startOfDay(date) < startOfDay(new Date())}
-                initialFocus
                 locale={fr}
               />
             </PopoverContent>
           </Popover>
-          {errors.date_arrivee && (
-            <p className="text-sm font-medium text-red-500 mt-1">
-              {errors.date_arrivee.message}
-            </p>
-          )}
         </div>
-        <div>
-          <Label htmlFor="date_depart">Date de départ</Label>
+
+        <div className="flex flex-col gap-2">
+          <Label>Date de départ</Label>
           <Popover>
             <PopoverTrigger asChild>
-              <Button
-                variant={"outline"}
-                className={cn(
-                  "w-[140px] pl-3 text-left font-normal",
-                  !formValues.date_depart && "text-muted-foreground"
-                )}
-              >
-                {formValues.date_depart ? (
-                  format(new Date(formValues.date_depart), "PPP", {
-                    locale: fr,
-                  })
-                ) : (
-                  <span>Choisissez une date</span>
-                )}
-                <IconCalendar className="ml-auto h-4 w-4 opacity-50" />
+              <Button variant="outline" className="justify-between">
+                {formValues.date_depart
+                  ? format(new Date(formValues.date_depart), "PPP", {
+                      locale: fr,
+                    })
+                  : "Choisir..."}
+                <IconCalendar size={18} />
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
+            <PopoverContent>
               <Calendar
                 mode="single"
-                selected={
-                  formValues.date_depart
-                    ? new Date(formValues.date_depart)
-                    : undefined
+                selected={new Date(formValues.date_depart)}
+                onSelect={(d) =>
+                  setValue("date_depart", format(d!, "yyyy-MM-dd"))
                 }
-                onSelect={(date) =>
-                  setValue(
-                    "date_depart",
-                    date ? format(date, "yyyy-MM-dd") : ""
-                  )
-                }
-                disabled={(date) =>
-                  startOfDay(date) <=
-                  startOfDay(new Date(formValues.date_arrivee))
-                }
-                initialFocus
                 locale={fr}
               />
             </PopoverContent>
           </Popover>
-          {errors.date_depart && (
-            <p className="text-sm font-medium text-red-500 mt-1">
-              {errors.date_depart.message}
-            </p>
-          )}
         </div>
-        <div className="flex flex-col">
+
+        <div className="flex flex-col gap-2">
           <Label>Nombre de nuits</Label>
-          <Input value={numberOfNights} readOnly className="w-[100px]" />
-        </div>
-        <div>
-          <Label htmlFor="nbr_adultes">Nombre d&apos;adultes</Label>
           <Input
-            type="number"
-            {...register("nbr_adultes", { valueAsNumber: true })}
-            className="w-[80px]"
-          />
-          {errors.nbr_adultes && (
-            <p className="text-sm font-medium text-red-500 mt-1">
-              {errors.nbr_adultes.message}
-            </p>
-          )}
-        </div>
-        <div>
-          <Label htmlFor="nbr_enfants">Nombre d&apos;enfants</Label>
-          <Input
-            type="number"
-            {...register("nbr_enfants", { valueAsNumber: true })}
-            className="w-[80px]"
+            readOnly
+            value={numberOfNights}
+            className="text-center font-semibold"
           />
         </div>
-      </div>
+      </motion.div>
 
-      {/* ... (Sections Articles, Récapitulatif, etc.) */}
-
-      {/* Section Chambres désirées */}
-      <div className="w-full flex flex-row flex-wrap gap-4 border p-4 rounded-lg">
-        <h2 className="col-span-full text-lg font-semibold mb-2">
-          Chambres désirées
-        </h2>
-        <div>
-          <Label className="sr-only">Sélectionner une chambre</Label>
-          <RoomSelector
-            etablissementId={1}
-            selectedRoomId={formValues.chambre_id}
-            onSelectRoom={(roomId, price) => {
-              handleSelectRoom(roomId, price);
-            }}
-          />
-          {errors.chambre_id && (
-            <p className="text-sm font-medium text-red-500 mt-1">
-              {errors.chambre_id.message}
-            </p>
-          )}
-        </div>
-        <div className="col-span-full flex gap-2">
-          <Button type="button" variant="outline">
-            <span className="font-bold">F3</span> - Chambres
-          </Button>
-          <Button type="button" variant="outline">
-            <span className="font-bold">F4</span> - Rooming
-          </Button>
-        </div>
-      </div>
+      {/* Section Chambres */}
+      <motion.div variants={fadeIn} className="space-y-4">
+        <Label className="font-semibold text-lg">Chambres désirées</Label>
+        <RoomSelector
+          etablissementId={1}
+          selectedRoomId={formValues.chambre_id}
+          onSelectRoom={(id, price) => {
+            setValue("chambre_id", id);
+            setRoomPrice(price);
+          }}
+        />
+      </motion.div>
 
       {/* Section Articles */}
-      <div className="border p-4 rounded-lg">
-        <h2 className="text-lg font-semibold mb-2">Articles</h2>
+      <motion.div variants={fadeIn} className="space-y-4">
+        <Label className="font-semibold text-lg">Articles</Label>
         {showProductSelector ? (
-          <div className="space-y-4">
-            <ProductSelector
-              etablissementId={etablissementId!}
-              selectedProduitId={null}
-              onSelectProduit={handleAddArticle}
-            />
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setShowProductSelector(false)}
-            >
-              Annuler l&apos;ajout
-            </Button>
-          </div>
+          <ProductSelector
+            etablissementId={etablissementId!}
+            selectedProduitId={null}
+            onSelectProduit={handleAddArticle}
+          />
         ) : (
-          <>
-            {(formValues.articles || []).length > 0 && (
-              <ArticlesDataTable
-                value={formValues.articles}
-                onRemove={handleRemoveArticle}
-                onQuantityChange={handleQuantityChange}
-              />
-            )}
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setShowProductSelector(true)}
-              className="mt-4"
-            >
-              <IconPlus className="mr-2 h-4 w-4" /> Ajouter un article
-            </Button>
-          </>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => setShowProductSelector(true)}
+            className="hover:scale-[1.02] transition-transform"
+          >
+            <IconPlus className="mr-2" /> Ajouter un article
+          </Button>
         )}
-      </div>
+      </motion.div>
+      {/* === Section Arhée === */}
+      <motion.div
+        variants={fadeIn}
+        className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 rounded-2xl 
+    bg-white/50 dark:bg-gray-800/40 backdrop-blur-xl border border-white/20 shadow-lg"
+      >
+        <h2 className="col-span-full text-lg font-semibold mb-4 text-gray-800 dark:text-gray-100">
+          Arhée
+        </h2>
 
-      {/* Section Récapitulatif des coûts */}
-      <div className="border p-4 rounded-lg bg-gray-50">
-        <h2 className="text-lg font-semibold mb-2">Récapitulatif des coûts</h2>
-        <div className="flex justify-between items-center text-gray-700">
-          <span>
-            Prix de la chambre ({roomPrice.toFixed(2)} €) x {numberOfNights}{" "}
-            nuit(s)
-          </span>
-          <span className="font-medium">{totalSejour.toFixed(2)} €</span>
-        </div>
-        <div className="flex justify-between items-center text-gray-700">
-          <span>Articles additionnels</span>
-          <span className="font-medium">{articlesTotal.toFixed(2)} €</span>
-        </div>
-        <hr className="my-2" />
-        <div className="flex justify-between items-center text-lg font-bold text-gray-900">
-          <span>Total de la réservation</span>
-          <span>{grandTotal.toFixed(2)} €</span>
-        </div>
-      </div>
-
-      {/* Section Arhée */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border p-4 rounded-lg">
-        <h2 className="col-span-full text-lg font-semibold mb-2">arhee</h2>
-        <div>
+        <div className="flex flex-col gap-2">
           <Label>Montant attendu</Label>
-          <Input value={`${arheeAttendu.toFixed(2)} Ar`} readOnly />
+          <Input
+            value={`${arheeAttendu.toFixed(2)} Ar`}
+            readOnly
+            className="bg-white/30 dark:bg-gray-700/30"
+          />
         </div>
-        <div>
+
+        <div className="flex flex-col gap-2">
           <Label htmlFor="arhee.montant">Montant à attribuer (Ar)</Label>
           <Input
             type="number"
             {...register("arhee.montant", { valueAsNumber: true })}
             placeholder="0.00"
+            className="bg-white/30 dark:bg-gray-700/30"
           />
           {errors.arhee?.montant && (
             <p className="text-sm font-medium text-red-500 mt-1">
@@ -458,24 +333,23 @@ export function BookingReservationForm({
             </p>
           )}
         </div>
-        <div>
-          <Label>Date de paiement des arhee</Label>
+
+        <div className="flex flex-col gap-2">
+          <Label>Date de paiement des Arhée</Label>
           <Popover>
             <PopoverTrigger asChild>
               <Button
-                variant={"outline"}
+                variant="outline"
                 className={cn(
-                  "w-[200px] pl-3 text-left font-normal",
+                  "w-full pl-3 text-left font-normal",
                   !formValues.arhee?.date_paiement && "text-muted-foreground"
                 )}
               >
-                {formValues.arhee?.date_paiement ? (
-                  format(new Date(formValues.arhee.date_paiement), "PPP", {
-                    locale: fr,
-                  })
-                ) : (
-                  <span>Choisir une date</span>
-                )}
+                {formValues.arhee?.date_paiement
+                  ? format(new Date(formValues.arhee.date_paiement), "PPP", {
+                      locale: fr,
+                    })
+                  : "Choisir une date"}
                 <IconCalendar className="ml-auto h-4 w-4 opacity-50" />
               </Button>
             </PopoverTrigger>
@@ -499,7 +373,8 @@ export function BookingReservationForm({
             </PopoverContent>
           </Popover>
         </div>
-        <div>
+
+        <div className="flex flex-col gap-2">
           <Label htmlFor="arhee.mode_paiement">Mode de paiement</Label>
           <Select
             value={formValues.arhee?.mode_paiement ?? ""}
@@ -517,21 +392,28 @@ export function BookingReservationForm({
             </SelectContent>
           </Select>
         </div>
-        <div className="col-span-full">
+
+        <div className="col-span-full flex flex-col gap-2">
           <Label htmlFor="arhee.commentaire">Commentaire sur le paiement</Label>
           <Textarea
             {...register("arhee.commentaire")}
             placeholder="Ajouter un commentaire..."
+            className="bg-white/30 dark:bg-gray-700/30"
           />
         </div>
-      </div>
+      </motion.div>
 
-      {/* Section Statut et Check-in */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border p-4 rounded-lg">
-        <h2 className="col-span-full text-lg font-semibold mb-2">
+      {/* === Section Statut & Check-in === */}
+      <motion.div
+        variants={fadeIn}
+        className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 rounded-2xl 
+    bg-white/50 dark:bg-gray-800/40 backdrop-blur-xl border border-white/20 shadow-lg"
+      >
+        <h2 className="col-span-full text-lg font-semibold mb-4 text-gray-800 dark:text-gray-100">
           Statut et Check-in
         </h2>
-        <div>
+
+        <div className="flex flex-col gap-2">
           <Label htmlFor="status">Statut de la réservation</Label>
           <Select
             value={formValues.status ?? ""}
@@ -551,7 +433,8 @@ export function BookingReservationForm({
             </SelectContent>
           </Select>
         </div>
-        <div>
+
+        <div className="flex flex-col gap-2">
           <Label htmlFor="mode_checkin">Mode de Check-in</Label>
           <Select
             value={formValues.mode_checkin ?? ""}
@@ -571,24 +454,62 @@ export function BookingReservationForm({
             </SelectContent>
           </Select>
         </div>
-        <div>
-          <Label htmlFor="code_checkin">Code Check-in</Label>
-          <Input {...register("code_checkin")} placeholder="Code..." />
-        </div>
-      </div>
 
-      <div className="flex justify-end gap-2 mt-6">
-        <Button type="button" variant="outline" onClick={onBack}>
-          Précédent
+        <div className="flex flex-col gap-2">
+          <Label htmlFor="code_checkin">Code Check-in</Label>
+          <Input
+            {...register("code_checkin")}
+            placeholder="Code..."
+            className="bg-white/30 dark:bg-gray-700/30"
+          />
+        </div>
+      </motion.div>
+
+      {/* Récapitulatif */}
+      <motion.div
+        variants={fadeIn}
+        className="rounded-2xl bg-gradient-to-r from-blue-100/60 to-white/30 
+        dark:from-gray-700/40 dark:to-gray-800/30 
+        p-6 shadow-inner"
+      >
+        <h3 className="font-semibold text-lg mb-3">Récapitulatif</h3>
+        <div className="flex justify-between text-gray-700 dark:text-gray-300">
+          <span>
+            Chambre ({roomPrice.toFixed(2)} €) x {numberOfNights} nuit(s)
+          </span>
+          <span>{totalSejour.toFixed(2)} €</span>
+        </div>
+        <div className="flex justify-between text-gray-700 dark:text-gray-300">
+          <span>Articles</span>
+          <span>{articlesTotal.toFixed(2)} €</span>
+        </div>
+        <hr className="my-2 border-white/30" />
+        <div className="flex justify-between font-bold text-lg text-blue-600 dark:text-blue-400">
+          <span>Total</span>
+          <span>{grandTotal.toFixed(2)} €</span>
+        </div>
+      </motion.div>
+
+      {/* Boutons */}
+      <motion.div
+        variants={fadeIn}
+        className="flex justify-end gap-3 pt-6 border-t border-white/20"
+      >
+        <Button variant="outline" onClick={onBack}>
+          Retour
         </Button>
-        <Button type="submit" disabled={isLoading || !isValid}>
+        <Button
+          type="submit"
+          disabled={isLoading || !isValid}
+          className="px-6 text-white bg-blue-600 hover:bg-blue-700 shadow-md"
+        >
           {isLoading ? (
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            <Loader2 className="h-4 w-4 animate-spin" />
           ) : (
-            "Sauvegarder la réservation"
+            "Confirmer"
           )}
         </Button>
-      </div>
-    </form>
+      </motion.div>
+    </motion.form>
   );
 }

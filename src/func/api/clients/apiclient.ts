@@ -120,7 +120,7 @@ export const getClientByEmail = async (email: string): Promise<Client[]> => {
   }
   try {
     const response = await apiClient.get<GetClientsResponse>(
-      `${APIURL}/clientemail/${email}`
+      `${APIURL}/client/email/${email}`
     );
     // Retourne directement le tableau 'clients'
     return response.data.clients;

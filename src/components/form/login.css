@@ -1,0 +1,48 @@
+/* src/components/login.css */
+
+/* baseline helpers pour l'effet de fond animé GSAP */
+.gsap-bg, .gsap-bg-2 {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  will-change: transform, filter, opacity, background-position;
+  transform-origin: center;
+}
+
+/* Deux calques de dégradé qui se superposent */
+.gsap-bg {
+  background: radial-gradient(600px 400px at 10% 20%, rgba(99,102,241,0.18), transparent 30%),
+              radial-gradient(400px 300px at 80% 80%, rgba(99,102,241,0.10), transparent 40%);
+  mix-blend-mode: overlay;
+  filter: blur(4px);
+  z-index: 0;
+}
+
+.gsap-bg-2 {
+  background: radial-gradient(500px 350px at 90% 10%, rgba(168,85,247,0.18), transparent 30%),
+              radial-gradient(300px 200px at 20% 90%, rgba(79,70,229,0.12), transparent 40%);
+  mix-blend-mode: screen;
+  filter: blur(2px);
+  z-index: 0;
+  opacity: 0.9;
+}
+
+/* petite bordure arrondie pour la carte */
+.card-rounded {
+  border-radius: 14px;
+}
+
+/* petit floating pour l'illustration */
+@keyframes float-slow {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+.animate-float-slow {
+  animation: float-slow 6s ease-in-out infinite;
+}
+
+/* styles responsives supplémentaires si besoin */
+@media (max-width: 768px) {
+  .gsap-bg, .gsap-bg-2 { filter: blur(6px); }
+}

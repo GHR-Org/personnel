@@ -29,9 +29,10 @@ import "@/styles/calendar.css";
 import { cn } from "@/lib/utils"; 
 import { BookingEvent } from "@/types/reservation";
 import { useQueryClient } from "@tanstack/react-query";
-import { sendBookingConfirmation } from "@/func/api/reservation/apireservation";
+import { checkinReservation, sendBookingConfirmation } from "@/func/api/reservation/apireservation";
 import { useAuth } from "@/hooks/useAuth";
 import { getCurrentUser } from "@/func/api/personnel/apipersonnel";
+import { Report } from "../modals/Report";
 
 interface RoomTableRoom {
   id: number;
@@ -129,8 +130,17 @@ const DashboardPageContent = () => {
 }, [handleOpenChange]);
 
 
-  const openarheeModal = useCallback((reservation: BookingEvent) => { /* ... */ }, []);
-  const openReportIncidentModal = useCallback((reservation: BookingEvent) => { /* ... */ }, []);
+  const openarheeModal = useCallback((reservation: BookingEvent) => { setarheeToView(reservation);
+        // 2. Ouvrir la modale
+        handleOpenChange(setIsarheeModalOpen, true); }, [handleOpenChange]);
+  const openReportIncidentModal = useCallback((reservation: BookingEvent) => {
+        // 1. Mettre l'objet de la réservation dans l'état pour que la modale y accède
+        setReservationForReport(reservation);
+        
+        // 2. Ouvrir la modale
+        // Utilisation de handleOpenChange pour gérer les états de fermeture
+        handleOpenChange(setIsReportIncidentModalOpen, true);
+    }, [handleOpenChange]);
   const handleSaveReservation = useCallback(
     (newReservationData: BookingFormInputs) => {
         if (reservationToEdit) {
@@ -166,7 +176,45 @@ const DashboardPageContent = () => {
     [handleOpenChange, reservationToEdit, createBookingMutation, updateBookingMutation, queryClient, etablissementId]
 );
   const updateReservationStatus = useCallback((reservationId: string, newStatus: ReservationStatut, message: string) => { /* ... */ }, []);
-  const handleCheckInClient = useCallback((reservationId: number | undefined) => { /* ... */ }, [updateReservationStatus]);
+  const handleCheckInClient = useCallback(async(reservationId: number | undefined) => { 
+    if (!reservationId) {
+            toast.error("ID de réservation manquant pour l'arrivée.");
+            return;
+        }
+
+        // 1. Récupérer l'utilisateur actuel (Personnel)
+        const user = await getCurrentUser();
+
+        if (!user || !user.id) {
+            toast.error("Utilisateur non authentifié. Impossible d'effectuer l'arrivée.");
+            return;
+        }
+
+        try {
+            // 2. Préparer les données de statut pour le PATCH
+            const statusData = {
+                status: ReservationStatut.ARRIVEE, // Le nouveau statut est "Arrivée"
+                personnel_id: user.id,             // L'ID du personnel qui effectue l'action
+            };
+
+            // 3. Appeler l'API pour mettre à jour le statut
+            await checkinReservation(reservationId, statusData);
+
+            // 4. Invalider les requêtes pour rafraîchir le calendrier
+            queryClient.invalidateQueries({
+                queryKey: ["reservations", etablissementId],
+            });
+
+            // 5. Afficher une notification de succès
+            toast.success(`Arrivée enregistrée avec succès pour la réservation n° ${reservationId} !`);
+            
+            // Fermer le tiroir si la mise à jour vient du tiroir
+            handleOpenChange(setIsDetailsDrawerOpen, false); 
+        } catch (error) {
+            console.error("Erreur lors de l'enregistrement de l'arrivée :", error);
+            toast.error("Échec de l'enregistrement de l'arrivée.");
+        }
+   }, [queryClient, etablissementId ]);
   const handleCheckoutReservation = useCallback((reservationId: number | undefined) => { /* ... */ }, [updateReservationStatus]);
   const handleCancelReservation = useCallback(async (reservationId: number) => { 
     const user = await getCurrentUser();
@@ -336,10 +384,9 @@ const DashboardPageContent = () => {
       />
       
       {isReportIncidentModalOpen && reservationForReport && (
-        <ReportIncidentModal
+        <Report
           open={isReportIncidentModalOpen}
           onOpenChange={(status) => handleOpenChange(setIsReportIncidentModalOpen, status)}
-          reservation={reservationForReport}
         />
       )}
       <ViewarheeModal 

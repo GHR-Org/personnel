@@ -44,6 +44,7 @@ const CongesPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true); 
   const [error, setError] = useState<string | null>(null);
   const [currentFilters, setCurrentFilters] = useState<CongeFilters>({});
+  const [isDetailsLoading, setIsDetailsLoading] = useState(false);
 
   // États pour les modales d'action
   const [isAddEditModalOpen, setIsAddEditModalOpen] = useState(false);
@@ -92,14 +93,25 @@ const CongesPage: React.FC = () => {
   };
 
   const handleViewDetails = async (congeId: string) => {
-    const congeDetails = await getCongeById(congeId);
-    if (congeDetails) {
-      setSelectedConge(congeDetails);
-      setIsDetailsModalOpen(true);
-    } else {
-      toast.error("Impossible de charger les détails du congé.");
-    }
-  };
+    setSelectedConge(null); 
+    setIsDetailsLoading(true); 
+    
+    try {
+      const congeDetails = await getCongeById(congeId);
+      if (congeDetails) {
+        setSelectedConge(congeDetails); // On met à jour l'objet
+        setIsDetailsModalOpen(true); // On ouvre la modale
+      } else {
+        toast.error("Impossible de charger les détails du congé.");
+        setIsDetailsModalOpen(false); // On ferme si échec
+      }
+    } catch (error) {
+      toast.error("Erreur lors du chargement des détails.");
+      setIsDetailsModalOpen(false); // On ferme si erreur
+    } finally {
+      setIsDetailsLoading(false); // 👈 On termine le chargement
+    }
+  };
 
   const handleDeleteRequest = (congeId: string) => {
     setCongeToDeleteId(congeId);
@@ -146,7 +158,7 @@ const CongesPage: React.FC = () => {
       const newConge = await createConge(congeData);
 
       if (newConge) {
-        toast.success("Nouveau congé ajouté avec succès. ✅");
+        toast.success("Nouveau congé ajouté avec succès. ");
         success = true;
       } else {
         toast.error("Échec de l'ajout du congé.");
@@ -229,15 +241,29 @@ const CongesPage: React.FC = () => {
         </DialogContent>
       </Dialog>
 
-      <Dialog open={isDetailsModalOpen} onOpenChange={setIsDetailsModalOpen}>
-        <DialogContent className="sm:max-w-[500px]">
-          <DialogHeader>
-            <DialogTitle>Détails du Congé</DialogTitle>
-          </DialogHeader>
-          {selectedConge && <DetailsConge conge={selectedConge} />}
-        </DialogContent>
-      </Dialog>
+     <Dialog open={isDetailsModalOpen} onOpenChange={setIsDetailsModalOpen}>
+  <DialogContent className="sm:max-w-[500px]">
+    <DialogHeader>
+      <DialogTitle>Détails du Congé</DialogTitle>
+    </DialogHeader>
 
+    {isDetailsLoading ? (
+      // On affiche le loader SOUS le titre pendant le chargement
+      <div className="flex justify-center items-center h-20">
+        <Loader2 className="h-5 w-5 animate-spin text-blue-500" />
+        <span className="ml-2">Chargement des détails...</span>
+      </div>
+    ) : selectedConge ? (
+      // Une fois chargé, si les données sont là, on affiche le composant
+      <DetailsConge conge={selectedConge} />
+    ) : (
+      // En cas d'échec
+      <p className="text-center text-red-500 py-4">
+        Désolé, impossible d'afficher les détails de ce congé.
+      </p>
+    )}
+  </DialogContent>
+</Dialog>
       <AlertDialog
         open={isDeleteConfirmOpen}
         onOpenChange={setIsDeleteConfirmOpen}

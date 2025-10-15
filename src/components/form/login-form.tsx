@@ -1,213 +1,267 @@
 /* eslint-disable @next/next/no-img-element */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-"use client"; 
+"use client";
 
-import { useEffect, useState } from "react"; 
-import { useRouter } from "next/navigation"; 
-import { cn } from "@/lib/utils"; 
-import { Button } from "@/components/ui/button"; 
-import { Card, CardContent } from "@/components/ui/card"; 
+import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import gsap from "gsap";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label"; 
-import { toast } from "sonner"; 
-import { Eye, EyeOff } from "lucide-react";
-
+import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
+import { Eye, EyeOff, Lock, Mail } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useTheme } from "next-themes";
+import "./login.css";
 
-/**
- * Composant de formulaire de connexion pour le personnel.
- * Gère la saisie des identifiants, la validation, la soumission et la redirection.
- */
 export function LoginForm({
-  className, // 
-  ...props // 
+  className,
+  ...props
 }: React.ComponentProps<"div">) {
-  // --- Gestion des états locaux du composant ---
-  const [loading, setLoading] = useState(false); 
-  const [formData, setFormData] = useState({ email: "", password: "" }); 
-  const [validationErrors, setValidationErrors] = useState<{ [key: string]: string }>({}); 
-  const [apiError, setApiError] = useState(""); 
-  const [showPassword, setShowPassword] = useState(false); 
+  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [validationErrors, setValidationErrors] = useState<{ [key: string]: string }>({});
+  const [apiError, setApiError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const router = useRouter();
+  const { loginPersonnel } = useAuth();
+  const { theme } = useTheme();
 
-  const router = useRouter(); 
-  const { loginPersonnel } = useAuth(); 
-  const {theme} = useTheme()
-  const [logoSrc, setLogoSrc] = useState('/logo/dark.png');
-          useEffect(() => {
-            if (theme === 'dark') {
-              setLogoSrc('/logo/white.png');
-            } else {
-              setLogoSrc('/logo/dark.png');
-            }
-          }, [theme]);
+  // logo adaptatif
+  const [logoSrc, setLogoSrc] = useState("/logo/white.png");
+  useEffect(() => {
+    setLogoSrc(theme === "dark" ? "/logo/dark.png" : "/logo/white.png");
+  }, [theme]);
 
-  // --- Fonctions de gestion des événements ---
+  // refs pour GSAP
+  const bgRef = useRef<HTMLDivElement | null>(null);
+  const bg2Ref = useRef<HTMLDivElement | null>(null);
+  const cardRef = useRef<HTMLDivElement | null>(null);
+  const tlRef = useRef<gsap.core.Timeline | null>(null);
 
-  /**
-   * Gère les changements dans les champs de saisie (email et mot de passe).
-   * Met à jour l'état `formData` et efface les erreurs de validation/API pour le champ modifié.
-   */
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target; // Destructure le nom et la valeur du champ
-    setFormData((prevData) => ({ ...prevData, [name]: value })); // Met à jour le champ spécifique dans formData
-    setValidationErrors((prevErrors) => ({ ...prevErrors, [name]: "" })); // Efface l'erreur de validation pour ce champ
-    setApiError(""); // Efface l'erreur API (si l'utilisateur recommence à taper)
-  };
+  useEffect(() => {
+    // Initialise timeline GSAP
+    const tl = gsap.timeline({ repeat: -1, defaults: { ease: "sine.inOut" } });
 
-  /**
-   * Gère le basculement de l'affichage du mot de passe.
-   */
-  const handleTogglePasswordVisibility = () => {
-    setShowPassword((prevShowPassword) => !prevShowPassword);
-  };
+    // Rotation lente et translation pour le premier calque
+    if (bgRef.current) {
+      tl.to(bgRef.current, {
+        rotation: 360,
+        duration: 60,
+        transformOrigin: "50% 50%",
+        ease: "none",
+      }, 0);
 
-  /**
-   * Valide les champs du formulaire avant la soumission.
-   * Retourne un objet contenant les erreurs si des champs sont invalides.
-   */
+      // Animation de blur / position / opacity cyclique
+      tl.to(bgRef.current, {
+        filter: "blur(8px)",
+        backgroundPosition: "20% 80%",
+        duration: 10,
+        yoyo: true,
+        repeat: 1
+      }, 0);
+    }
+
+    // Second calque: décalage et pulsation légère
+    if (bg2Ref.current) {
+      tl.to(bg2Ref.current, {
+        rotation: -360,
+        duration: 90,
+        transformOrigin: "50% 50%",
+        ease: "none",
+      }, 0);
+
+      tl.to(bg2Ref.current, {
+        filter: "blur(4px)",
+        opacity: 0.7,
+        scale: 1.05,
+        duration: 12,
+        yoyo: true,
+        repeat: 1
+      }, 0.5);
+    }
+
+    // petite pulse sur la carte (subtle)
+    if (cardRef.current) {
+      tl.to(cardRef.current, {
+        scale: 1.01,
+        boxShadow: "0 30px 80px rgba(0,0,0,0.18)",
+        duration: 6,
+        yoyo: true,
+        repeat: -1,
+      }, 0);
+    }
+
+    tlRef.current = tl;
+
+    return () => {
+      // cleanup timeline
+      tl.kill();
+      tlRef.current = null;
+    };
+  }, []);
+
+  // validation simple
   const validate = () => {
-    const newErrors: { [key: string]: string } = {};
-    if (!formData.email) {
-      newErrors.email = "L'adresse e-mail est requise.";
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "L'adresse e-mail n'est pas valide.";
-    }
-    if (!formData.password) {
-      newErrors.password = "Le mot de passe est requis.";
-    }
-    return newErrors;
+    const errors: { [key: string]: string } = {};
+    if (!formData.email) errors.email = "L'adresse e-mail est requise.";
+    else if (!/\S+@\S+\.\S+/.test(formData.email)) errors.email = "Adresse e-mail invalide.";
+    if (!formData.password) errors.password = "Le mot de passe est requis.";
+    return errors;
   };
 
-  /**
-   * Gère la soumission du formulaire de connexion.
-   * Effectue la validation, appelle l'API de connexion, et gère les redirections ou les erreurs.
-   */
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((p) => ({ ...p, [name]: value }));
+    setValidationErrors((p) => ({ ...p, [name]: "" }));
+    setApiError("");
+  };
+
+  const handleTogglePassword = () => setShowPassword((p) => !p);
+
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault(); // Empêche le comportement par défaut du formulaire (rechargement de page)
-    setApiError(""); // Réinitialise l'erreur de l'API à chaque nouvelle soumission
-    toast.info("Connexion en cours..."); // Affiche un toast d'information
-
-    const errors = validate(); // Exécute la validation côté client
-    if (Object.keys(errors).length > 0) {
-      setValidationErrors(errors); // Met à jour l'état des erreurs de validation
-      return; // Arrête la fonction si des erreurs de validation sont présentes
-    }
-
-    setLoading(true); // Active l'état de chargement pendant la soumission
+    e.preventDefault();
+    const errors = validate();
+    if (Object.keys(errors).length) return setValidationErrors(errors);
+    setLoading(true);
     try {
-      // 1. Appelle la fonction de connexion pour obtenir les tokens
-      await loginPersonnel(formData, router); // Cette fonction stocke déjà les tokens dans le localStorage
-
-      // 2. Récupère les informations détaillées de l'utilisateur (Personnel)
+      toast.info("Connexion en cours...");
+      await loginPersonnel(formData, router);
     } catch (error: any) {
-      setLoading(false); // Désactive l'état de chargement
-      setApiError(error.message || "Une erreur est survenue lors de la connexion."); // Met à jour l'état de l'erreur API
-      toast.error(error.message || "Une erreur est survenue lors de la connexion."); // Aff
+      setApiError(error.message || "Erreur de connexion");
+      toast.error(error.message || "Erreur de connexion");
+      setLoading(false);
     }
   };
 
-  // --- Rendu du composant (JSX) ---
   return (
     <div
-      className={cn("flex flex-col bg-gray-50 dark:bg-gray-950 gap-6 w-4xl md:w-4xl sm:w-lg", className)}
+      className={cn(
+        "relative flex h-screen w-full items-center justify-center overflow-hidden bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-950 dark:to-black transition-all duration-500",
+        className
+      )}
       {...props}
+      aria-live="polite"
     >
-      <Card className="overflow-hidden p-0">
-        <CardContent className="grid p-0 md:grid-cols-2">
-          {/* Formulaire de connexion */}
-          <form onSubmit={handleSubmit} className="p-6 md:p-8">
-            <div className="flex flex-col gap-6">
-              {/* En-tête du formulaire */}
-              <div className="flex flex-col items-center text-center">
-                <h1 className="text-2xl font-bold">Bon retour parmi nous !</h1>
-                <p className="text-muted-foreground text-balance">
-                  Connectez-vous à votre compte GHR Inc.
+      {/* GSAP background calques (absolutes) */}
+      <div ref={bgRef} className="gsap-bg" aria-hidden="true" />
+      <div ref={bg2Ref} className="gsap-bg-2" aria-hidden="true" />
+
+      {/* Conteneur principal centré */}
+      <div ref={cardRef} className="z-10 w-full max-w-5xl px-6">
+        <Card className="card-rounded overflow-hidden border-0 shadow-2xl backdrop-blur-xl bg-white/70 dark:bg-gray-900/60">
+          <CardContent className="grid md:grid-cols-2 p-0">
+            {/* FORM */}
+            <form onSubmit={handleSubmit} className="flex flex-col justify-center md:p-10 p-6">
+              <div className="text-center mb-6">
+                <img
+                  src={logoSrc}
+                  alt="Logo"
+                  width={110}
+                  height={110}
+                  className="mx-auto mb-4"
+                />
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-100">
+                  Bienvenue sur <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-500">GHR Inc.</span>
+                </h1>
+                <p className="text-gray-500 dark:text-gray-400 mt-1">
+                  Connectez-vous à votre espace professionnel
                 </p>
               </div>
 
-              {/* Affichage de l'erreur générale de l'API */}
               {apiError && (
-                <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md">
+                <div className="mb-4 p-3 text-sm text-red-600 bg-red-50 dark:bg-red-950/30 border border-red-300/30 rounded-md">
                   {apiError}
                 </div>
               )}
 
-              {/* Champ Email */}
-              <div className="grid gap-3">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  name="email" // Nom du champ pour l'état `formData`
-                  placeholder="admin@ghr.com"
-                  value={formData.email} // Valeur contrôlée par l'état
-                  onChange={handleChange} // Gestionnaire de changement
-                  required // Rendu requis par le navigateur
-                  disabled={loading} // Désactivé pendant le chargement
-                />
-                {/* Affichage de l'erreur de validation spécifique à l'email */}
+              <div className="mb-5">
+                <Label htmlFor="email">Adresse e-mail</Label>
+                <div className="relative mt-2">
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 w-4 h-4" />
+                  <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    placeholder="admin@ghr.com"
+                    className="pl-9"
+                    value={formData.email}
+                    onChange={handleChange}
+                    disabled={loading}
+                    aria-invalid={!!validationErrors.email}
+                    aria-describedby={validationErrors.email ? "email-error" : undefined}
+                  />
+                </div>
                 {validationErrors.email && (
-                  <p className="text-sm text-red-500">{validationErrors.email}</p>
+                  <p id="email-error" className="text-sm text-red-500 mt-1">{validationErrors.email}</p>
                 )}
               </div>
 
-              {/* Champ Mot de passe avec fonctionnalité d'affichage/masquage */}
-              <div className="grid gap-3">
-                <div className="flex items-center">
+              <div className="mb-6">
+                <div className="flex items-center justify-between">
                   <Label htmlFor="password">Mot de passe</Label>
                   <a
                     href="/forgot-password"
-                    className="ml-auto text-sm underline-offset-2 hover:underline"
+                    className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
                   >
                     Mot de passe oublié ?
                   </a>
                 </div>
-                <div className="relative">
+                <div className="relative mt-2">
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 w-4 h-4" />
                   <Input
                     id="password"
-                    type={showPassword ? "text" : "password"} // Type dynamique basé sur l'état
-                    name="password" // Nom du champ pour l'état `formData`
-                    value={formData.password} // Valeur contrôlée par l'état
-                    onChange={handleChange} // Gestionnaire de changement
-                    required // Rendu requis par le navigateur
-                    disabled={loading} // Désactivé pendant le chargement
-                    className="pr-10" // Ajoute un padding à droite pour laisser de la place à l'icône
+                    name="password"
+                    type={showPassword ? "text" : "password"}
+                    className="pl-9 pr-10"
+                    value={formData.password}
+                    onChange={handleChange}
+                    disabled={loading}
+                    aria-invalid={!!validationErrors.password}
+                    aria-describedby={validationErrors.password ? "password-error" : undefined}
                   />
                   <Button
-                    type="button" // Important pour éviter de soumettre le formulaire
+                    type="button"
                     variant="ghost"
                     size="sm"
-                    className="absolute inset-y-0 right-0 h-full px-3 text-muted-foreground hover:bg-transparent"
-                    onClick={handleTogglePasswordVisibility}
-                    disabled={loading}
+                    onClick={handleTogglePassword}
+                    className="absolute right-1 top-1/2 -translate-y-1/2 hover:bg-transparent"
+                    aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
                   >
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </Button>
                 </div>
-                {/* Affichage de l'erreur de validation spécifique au mot de passe */}
                 {validationErrors.password && (
-                  <p className="text-sm text-red-500">{validationErrors.password}</p>
+                  <p id="password-error" className="text-sm text-red-500 mt-1">{validationErrors.password}</p>
                 )}
               </div>
 
-              {/* Bouton de soumission */}
-              <Button type="submit" className="w-full text-white" disabled={loading}>
-                {loading ? "Connexion..." : "Se connecter"} {/* Texte dynamique selon l'état de chargement */}
+              <Button
+                type="submit"
+                disabled={loading}
+                className="w-full text-lg font-medium bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg hover:scale-[1.02] transition-transform duration-300"
+                aria-disabled={loading}
+              >
+                {loading ? "Connexion..." : "Se connecter"}
               </Button>
-            </div>
-          </form>
+            </form>
 
-          {/* Section image latérale (visible sur les grands écrans) */}
-          <div className="hidden bg-muted md:block relative">
-            <img
-              alt="background"
-              className="w-full h-full object-cover animate-pulse" // Remplir l'espace et assombrir l'image
-              src={logoSrc} // Chemin de l'image de fond
-            />
-          </div>
-        </CardContent>
-      </Card>
+            {/* Illustration côté droit */}
+            <div className="hidden md:flex items-center justify-center rounded-lg h-full relative bg-gradient-to-br from-blue-600/80 to-purple-700/80 dark:from-blue-900/60 dark:to-purple-900/60">
+              <img
+                src="https://img.icons8.com/3d-fluency/400/lock--v1.png"
+                alt="Connexion sécurisée"
+                className="w-64 h-64 drop-shadow-2xl animate-float-slow"
+                aria-hidden="true"
+              />
+              <div className="absolute bottom-6 text-white/80 text-sm text-center px-6">
+                *Vos informations sont protégées et chiffrées
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 // src/api/reservation.api.ts
 
 import apiClient from "@/func/APIClient";
@@ -41,7 +40,7 @@ export const getBookings = async (etablissement_id: number): Promise<BookingManu
     const response = await apiClient.get<GetReservationsResponse>(
       `${APIURL}/reservation/etablissement/${etablissement_id}`
     );
-    return response.data.reservations;
+    return response.data.reservations;  
     console.table()
   } catch (error: unknown) {
     console.error("Erreur lors de la récupération des réservations:", error); 
@@ -132,6 +131,46 @@ interface ConfirmationResponse {
  * @returns 
  */
 export const sendBookingConfirmation = async (
+  reservationId: number,
+  statusData: UpdateBookingStatutData // Ajout du paramètre 'statusData'
+): Promise<ConfirmationResponse> => {
+  try {
+    const response = await apiClient.patch<ConfirmationResponse>(
+      `${APIURL}/reservation/${reservationId}`,
+      statusData // Le corps de la requête PATCH
+    );
+    return response.data;
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      console.error("Erreur lors de l'envoi de la confirmation:", error.response?.data || error.message);
+      throw new Error(error.response?.data?.message || "Erreur inconnue lors de l'envoi de la confirmation.");
+    } else {
+      console.error("Erreur inattendue lors de l'envoi de la confirmation:", error);
+      throw new Error("Une erreur inattendue est survenue lors de l'envoi de la confirmation.");
+    }
+  }
+};
+export const checkinReservation = async (
+  reservationId: number,
+  statusData: UpdateBookingStatutData // Ajout du paramètre 'statusData'
+): Promise<ConfirmationResponse> => {
+  try {
+    const response = await apiClient.patch<ConfirmationResponse>(
+      `${APIURL}/reservation/${reservationId}`,
+      statusData // Le corps de la requête PATCH
+    );
+    return response.data;
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      console.error("Erreur lors de l'envoi de la confirmation:", error.response?.data || error.message);
+      throw new Error(error.response?.data?.message || "Erreur inconnue lors de l'envoi de la confirmation.");
+    } else {
+      console.error("Erreur inattendue lors de l'envoi de la confirmation:", error);
+      throw new Error("Une erreur inattendue est survenue lors de l'envoi de la confirmation.");
+    }
+  }
+};
+export const DeclinedReservation = async (
   reservationId: number,
   statusData: UpdateBookingStatutData // Ajout du paramètre 'statusData'
 ): Promise<ConfirmationResponse> => {

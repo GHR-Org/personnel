@@ -56,7 +56,7 @@ export default function LoginPage() {
     //     </form>
     //   </div>
     // </div>
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 dark:bg-gray-950">
+    <div className="flex h-8/12 items-center justify-center bg-gray-50 dark:bg-gray-950">
           <LoginForm />
     </div>
   );

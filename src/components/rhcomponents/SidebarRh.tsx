@@ -32,11 +32,6 @@ const navItems = [
     icon: <LayoutDashboard className="h-5 w-5" />,
   },
   {
-    label: "Planning du personnel",
-    href: "/rh/planning",
-    icon: <ClipboardList className="h-5 w-5" />,
-  },
-  {
     label: "Suivi des présences",
     href: "/rh/surveillance/planning-personnel",
     icon: <CalendarClock className="h-5 w-5" />,
@@ -53,12 +48,12 @@ const navItems = [
   },
   {
     label: "Bibliothèque de données",
-    href: "/rh/bibliotheque",
+    href: "/rh/personnel",
     icon: <Database className="h-5 w-5" />,
   },
   {
     label: "Rapports",
-    href: "/rh/rapports",
+    href: "/rh/rapport",
     icon: <FileText className="h-5 w-5" />,
   },
 ];

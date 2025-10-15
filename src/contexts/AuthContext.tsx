@@ -3,12 +3,12 @@
 "use client";
 
 import React, {
-  createContext,
-  useState,
-  useEffect,
-  ReactNode,
-  useRef,
-  useCallback,
+  createContext,
+  useState,
+  useEffect,
+  ReactNode,
+  useRef,
+  useCallback,
 } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
@@ -17,299 +17,273 @@ import { useTheme } from "next-themes";
 import Image from "next/image";
 
 interface AuthContextType {
-  user: Personnel | null;
-  loading: boolean;
-  logout: () => void;
+  user: Personnel | null;
+  loading: boolean;
+  logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextType>({
-  user: null,
-  loading: true,
-  logout: () => {},
+  user: null,
+  loading: true,
+  logout: () => {},
 });
 
 interface AuthProviderProps {
-  children: ReactNode;
+  children: ReactNode;
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [user, setUser] = useState<Personnel | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [isAuthorized, setIsAuthorized] = useState(false);
-  const router = useRouter();
-  const pathname = usePathname();
-  const { getCurrentUser, redirectByRole } = useAuth();
-  
+  const [user, setUser] = useState<Personnel | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [isAuthorized, setIsAuthorized] = useState(false);
+  // 🛑 Clé anti-boucle
+  const [isRedirecting, setIsRedirecting] = useState(false); 
+  
+  const router = useRouter();
+  const pathname = usePathname();
+  const { getCurrentUser, redirectByRole } = useAuth();
+  
 
-  const loadingMessages = [
-    "Chargement de la page",
-    "Chargement des données, veuillez patienter",
-    "Nous y sommes presque",
-    "Encore quelques instants",
-  ];
-  const [currentMessage, setCurrentMessage] = useState(loadingMessages[0]);
-  const [messageIndex, setMessageIndex] = useState(0);
-  const [dots, setDots] = useState("");
+  // --- GESTION DES MESSAGES DE CHARGEMENT (Inchangée) ---
+  const loadingMessages = [
+    "Chargement de la page",
+    "Chargement des données, veuillez patienter",
+    "Nous y sommes presque",
+    "Encore quelques instants",
+  ];
+  const [currentMessage, setCurrentMessage] = useState(loadingMessages[0]);
+  const [messageIndex, setMessageIndex] = useState(0);
+  const [dots, setDots] = useState("");
 
-  // Gère le changement de logo en fonction du thème
-  const { theme } = useTheme();
-  const [logoSrc, setLogoSrc] = useState('/logo/dark.png');
-  useEffect(() => {
-    if (theme === 'dark') {
-      setLogoSrc('/logo/dark.png');
-    } else {
-      setLogoSrc('/logo/white.png');
-    }
-  }, [theme]);
+  const { theme } = useTheme();
+  const [logoSrc, setLogoSrc] = useState("/logo/dark.png");
+  
+  useEffect(() => {
+    setLogoSrc(theme === "dark" ? "/logo/dark.png" : "/logo/white.png");
+  }, [theme]);
 
-  // Gère l'affichage des messages de chargement
-  useEffect(() => {
-    if (loading || !isAuthorized) {
-      const messageInterval = setInterval(() => {
-        setMessageIndex((prevIndex) => (prevIndex + 1) % loadingMessages.length);
-      }, 3000); // Change de message toutes les 3 secondes
+  useEffect(() => {
+    if (loading || !isAuthorized) {
+      const messageInterval = setInterval(() => {
+        setMessageIndex(
+          (prevIndex) => (prevIndex + 1) % loadingMessages.length
+        );
+      }, 3000);
+      return () => clearInterval(messageInterval);
+    }
+  }, [loading, isAuthorized, loadingMessages.length]);
 
-      return () => clearInterval(messageInterval);
-    }
-  }, [loading, isAuthorized, loadingMessages.length]);
+  useEffect(() => {
+    setCurrentMessage(loadingMessages[messageIndex]);
+  }, [messageIndex, loadingMessages]);
 
-  // Met à jour le message affiché
-  useEffect(() => {
-    setCurrentMessage(loadingMessages[messageIndex]);
-  }, [messageIndex, loadingMessages]);
+  useEffect(() => {
+    if (loading || !isAuthorized) {
+      const dotsInterval = setInterval(() => {
+        setDots((prevDots) => (prevDots.length >= 3 ? "" : prevDots + "."));
+      }, 500);
+      return () => clearInterval(dotsInterval);
+    }
+  }, [loading, isAuthorized]);
+  // ----------------------------------------------------------------------
 
-  // ---
-  // Gère l'effet de machine à écrire pour les points de suspension
-  useEffect(() => {
-    if (loading || !isAuthorized) {
-      const dotsInterval = setInterval(() => {
-        setDots((prevDots) => {
-          if (prevDots.length >= 3) {
-            return "";
-          }
-          return prevDots + ".";
-        });
-      }, 500); // Ajoute un point toutes les 0,5 secondes
 
-      return () => clearInterval(dotsInterval);
-    }
-  }, [loading, isAuthorized]);
-  // ---
+  // --- DÉFINITION DES ROUTES (Les routes complètes sont utilisées) ---
+  const publicRoutes = new Set([
+    "/login", "/forgot-password", "/reset-password", "/", "/page-not-found"
+  ]);
 
-  const publicRoutes = new Set([
-    "/login",
-    "/forgot-password",
-    "/reset-password",
-    "/"
-  ]);
+  const CaissierRoutes = new Set([
+    "/caissier", "/caissier/caisse", "/caissier/invoice", "/caissier/invoice/facture", 
+    "/caissier/statistiques", "/parametres", "/parametres/general", "/parametres/profil", 
+    "/parametres/notifications", "/parametres/security", "/parametres/help", "/"
+  ]);
+  const RhRoutes = new Set([
+    "/rh/surveillance/conges", "/rh", "/rh/rapport", "/rh/planning", "/rh/surveillance", 
+    "/rh/surveillance/planning-personnel", "/rh/personnel", "/reservations/restaurant", 
+    "/parametres", "/parametres/general", "/parametres/profil", "/parametres/notifications", 
+    "/parametres/security", "/parametres/help", "/"
+  ]);
+  const ReceptionRoutes = new Set([
+    "/reception/dashboard", "/reception/reservation", "/reception", "/reception/rapports", 
+    "/reception/caissier", "/reception/caissier/caisse", "/reception/caissier/invoice", 
+    "/reception/caissier/invoice/facture", "/reception/caissier/statistiques", 
+    "/parametres", "/parametres/general", "/parametres/profil", "/parametres/notifications", 
+    "/parametres/security", "/parametres/help", "/"
+  ]);
+  const TechnicienRoutes = new Set([
+    "/maintenance", "/maintenance/equipements", "/maintenance/incidents", 
+    "/maintenance/interventions", "/maintenance/rapports", "/parametres", 
+    "/parametres/general", "/parametres/profil", "/parametres/notifications", 
+    "/parametres/security", "/parametres/help", "/maintenance/interventions/calendrier", 
+    "/maintenance/documentation", "/"
+  ]);
+  const ManagerRoutes = new Set([
+    "/manager", "/manager/personnalisation", "/manager/commande", "/manager/menus", 
+    "/manager/personnalisation", "/manager/rapports", "/manager/restaurant", "/parametres", 
+    "/parametres/general", "/parametres/profil", "/parametres/notifications", 
+    "/parametres/security", "/parametres/help", "/"
+  ]);
+  // ----------------------------------------------------------------------
+  
+  const hasCheckedPath = useRef<string | null>(null);
 
-  const CaissierRoutes = new Set([
-    "/caissier",
-    "/caissier/caisse",
-    "/caissier/invoice",
-    "/caissier/invoice/facture",
-    "/caissier/statistiques",
-    "/parametres",
-    "/parametres/general",
-    "/parametres/profil",
-    "/parametres/notifications",
-    "/parametres/security",
-    "/parametres/help",
-    "/"
-  ]);
-  const RhRoutes = new Set([
-    "/rh",
-    "/rh/rapport",
-    "/rh/surveillance",
-    "/rh/surveillance/conges",
-    "/rh/surveillance/planning-personnel",
-    "/rh/personnel",
-    "/reservations/restaurant",
-    "/parametres",
-    "/parametres/general",
-    "/parametres/profil",
-    "/parametres/notifications",
-    "/parametres/security",
-    "/parametres/help",
-    "/"
-  ]);
-  const ReceptionRoutes = new Set([
-    "/reception/dashboard",
-    "/reception/reservation",
-    "/reception",
-    "/reception/rapports",
-    "/reception/caissier",
-    "/reception/caissier/caisse",
-    "/reception/caissier/invoice",
-    "/reception/caissier/invoice/facture",
-    "/reception/caissier/statistiques",
-    "/parametres",
-    "/parametres/general",
-    "/parametres/profil",
-    "/parametres/notifications",
-    "/parametres/security",
-    "/parametres/help",
-    "/"
-  ]);
-  const TechnicienRoutes = new Set([
-    "/maintenance",
-    "/maintenance/equipements",
-    "/maintenance/incidents",
-    "/maintenance/interventions",
-    "/parametres",
-    "/parametres/general",
-    "/parametres/profil",
-    "/parametres/notifications",
-    "/parametres/security",
-    "/parametres/help",
-    "/maintenance/interventions/calendrier",
-    "/maintenance/documentation",
-    "/"
-  ]);
-  const ManagerRoutes = new Set([
-    "/manager",
-    "/manager/personnalisation",
-    "/manager/commande",
-    "/manager/menus",
-    "/manager/personnalisation",
-    "/manager/rapports",
-    "/manager/restaurant",
-    "/parametres",
-    "/parametres/general",
-    "/parametres/profil",
-    "/parametres/notifications",
-    "/parametres/security",
-    "/parametres/help",
-    "/"
-  ]);
+  // 🛑 NOUVEAU : Gestionnaire de fin de chargement et de redirection
+  // Permet d'encapsuler la logique de changement d'état
+  const completeAuthorization = useCallback((authorized: boolean, redirectPath: string | null = null) => {
+    if (redirectPath) {
+      setIsRedirecting(true);
+      setLoading(true); 
+      // On met le chemin actuel dans le ref, pour que l'useEffect suivant puisse détecter le changement
+      hasCheckedPath.current = pathname; 
+      router.replace(redirectPath);
+    } else {
+      setIsAuthorized(authorized);
+      setLoading(false);
+      setIsRedirecting(false); // S'assurer que le drapeau est à false si l'autorisation est complétée
+      hasCheckedPath.current = pathname;
+    }
+  }, [pathname, router]);
 
-  const hasCheckedPath = useRef<string | null>(null);
-
-  const checkAuthorization = useCallback(async () => {
-    if (hasCheckedPath.current === pathname) {
-      if (!loading && isAuthorized) {
-        return;
-      }
-    }
-
-    setLoading(true);
-    setIsAuthorized(false);
-
-    const accessToken = localStorage.getItem("access_token_ghr");
-
-    try {
-      if (publicRoutes.has(pathname)) {
-        if (accessToken) {
-          try {
-            const userData = await getCurrentUser();
-            if (userData?.role) {
-              redirectByRole(userData, router);
-              return;
-            }
-          } catch (error) {
-            console.error("Erreur de token sur route publique:", error);
-            localStorage.removeItem("access_token_ghr");
-            localStorage.removeItem("refresh_token_ghr");
-            router.replace("/login");
-          }
-        }
-        setIsAuthorized(true);
+  const checkAuthorization = useCallback(async () => {
+    // 🛑 ANTI-BOUCLE 1 : Si on redirige déjà, on s'arrête.
+    if (isRedirecting) {
+      setLoading(true);
+      return;
+    }
+    
+    // 🛑 ANTI-BOUCLE 2 : Si le chemin a déjà été vérifié avec succès, on s'arrête.
+    if (hasCheckedPath.current === pathname && isAuthorized) {
         setLoading(false);
-        hasCheckedPath.current = pathname;
-        return;
-      }
+        return;
+    }
+    
+    setLoading(true);
+    setIsAuthorized(false);
 
-      if (!accessToken) {
-        router.replace("/login");
-        setLoading(false);
-        return;
-      }
+    const accessToken = localStorage.getItem("access_token_ghr");
 
-      const userData = await getCurrentUser();
-      setUser(userData);
+    try {
+      // 1. Gestion des routes publiques
+      if (publicRoutes.has(pathname)) {
+        if (accessToken) {
+          try {
+            const userData = await getCurrentUser();
+            if (userData?.role && pathname === "/") {
+              // Si connecté et sur '/', on redirige vers le dashboard par rôle
+              redirectByRole(userData, router);
+              return;
+            }
+          } catch (error) {
+            localStorage.removeItem("access_token_ghr");
+            localStorage.removeItem("refresh_token_ghr");
+          }
+        }
+        // Autorise l'accès à la route publique
+        completeAuthorization(true, null); 
+        return;
+      }
 
-      if (userData?.role) {
-        const { role } = userData;
-        let allowedRoutes: Set<string> = new Set();
+      // 2. Routes privées : Vérification du token
+      if (!accessToken) {
+        completeAuthorization(false, "/login");
+        return;
+      }
 
-        if (role === "Caissier") {
-          allowedRoutes = CaissierRoutes;
-        } else if (role === "Receptionniste") {
-          allowedRoutes = ReceptionRoutes;
-        } else if (role === "Technicien") {
-          allowedRoutes = TechnicienRoutes;
-        } else if (role === "RH") {
-          allowedRoutes = RhRoutes;
-        } else if (role === "Manager") {
-          allowedRoutes = ManagerRoutes;
-        } else {
-          console.warn(`Rôle inconnu: ${role}. Redirection vers /login`);
-          router.replace("/login");
-          setLoading(false);
-          return;
-        }
+      // 3. Récupération des données utilisateur et vérification de rôle
+      const userData = await getCurrentUser();
+      setUser(userData);
 
-        if (allowedRoutes.has(pathname)) {
-          setIsAuthorized(true);
-          setLoading(false);
-        } else {
-          console.warn(`Accès non autorisé à ${pathname} pour le rôle ${role}.`);
-          console.log("Redirection vers la première page autorisée :", Array.from(allowedRoutes)[0]);
-          router.replace(Array.from(allowedRoutes)[0]);
-        }
-      } else {
-        console.error("Informations utilisateur ou rôle manquants après l'authentification.");
-        router.replace("/login");
-        setLoading(false);
-      }
-    } catch (error) {
-      console.error("Erreur lors de la vérification d'authentification/autorisation:", error);
-      localStorage.removeItem("access_token_ghr");
-      localStorage.removeItem("refresh_token_ghr");
-      router.replace("/login");
-      setLoading(false);
-    }
-    hasCheckedPath.current = pathname;
-  }, [pathname, router, getCurrentUser, isAuthorized, loading, CaissierRoutes, ReceptionRoutes, TechnicienRoutes, RhRoutes, ManagerRoutes, publicRoutes, redirectByRole]);
+      if (userData?.role) {
+        const { role } = userData;
+        let allowedRoutes: Set<string> = new Set();
+        
+        // Logique d'assignation des allowedRoutes
+        if (role === "Caissier") { allowedRoutes = CaissierRoutes; } 
+        else if (role === "Receptionniste") { allowedRoutes = ReceptionRoutes; } 
+        else if (role === "Technicien") { allowedRoutes = TechnicienRoutes; } 
+        else if (role === "RH") { allowedRoutes = RhRoutes; } 
+        else if (role === "Manager") { allowedRoutes = ManagerRoutes; } 
+        else {
+          console.warn(`Rôle inconnu: ${role}. Redirection vers /login`);
+          completeAuthorization(false, "/login");
+          return;
+        }
+        
+        // 4. Vérification de l'autorisation de la route actuelle
+        if (allowedRoutes.has(pathname)) {
+          // Autorisé
+          completeAuthorization(true, null);
+        } else {
+          // Non autorisé -> Redirection vers la page d'erreur
+          console.warn(`Accès non autorisé à ${pathname} pour le rôle ${role}. Redirection vers /page-not-found.`);
+          completeAuthorization(false, "/page-not-found");
+          return;
+        }
+      } else {
+        console.error("Informations utilisateur ou rôle manquants après l'authentification.");
+        completeAuthorization(false, "/login");
+        return;
+      }
+    } catch (error) {
+      console.error("Erreur lors de la vérification d'authentification/autorisation:", error);
+      localStorage.removeItem("access_token_ghr");
+      localStorage.removeItem("refresh_token_ghr");
+      completeAuthorization(false, "/login");
+    }
+  }, [pathname, router, getCurrentUser, isAuthorized, isRedirecting, CaissierRoutes, ReceptionRoutes, TechnicienRoutes, RhRoutes, ManagerRoutes, publicRoutes, redirectByRole, completeAuthorization]);
 
-  useEffect(() => {
-    checkAuthorization();
-  }, [checkAuthorization]);
+  useEffect(() => {
+    checkAuthorization();
+  }, [checkAuthorization]);
 
-  const logout = () => {
-    localStorage.removeItem("access_token_ghr");
-    localStorage.removeItem("refresh_token_ghr");
-    setUser(null);
-    hasCheckedPath.current = null;
-    router.replace("/login");
-  };
+  // 🛑 ANTI-BOUCLE 3 : useEffect pour réinitialiser le drapeau isRedirecting après le changement de route effectif
+  // C'est ici que l'on donne le feu vert pour une nouvelle vérification.
+  useEffect(() => {
+    if (isRedirecting && hasCheckedPath.current !== pathname) {
+      // La redirection a eu lieu, on réinitialise pour que checkAuthorization se relance 
+      // sur le nouveau 'pathname' (/page-not-found ou /login) sans être bloqué par 'isRedirecting'.
+      setIsRedirecting(false);
+    }
+  }, [pathname, isRedirecting]);
 
-  return (
-    <AuthContext.Provider value={{ user, loading, logout }}>
-      {loading || !isAuthorized ? (
-        <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200">
-          <Image
-            src={logoSrc}
-            alt="Logo de l'application"
-            width={150}
-            height={150}
-            className="mb-4 animate-pulse"
-          />
-          <p className="mt-4 text-xl font-medium text-center">{currentMessage}{dots}</p>
-        </div>
-      ) : (
-        children
-      )}
-    </AuthContext.Provider>
-  );
+  const logout = () => {
+    localStorage.removeItem("access_token_ghr");
+    localStorage.removeItem("refresh_token_ghr");
+    setUser(null);
+    hasCheckedPath.current = null;
+    router.replace("/login");
+  };
+
+  return (
+    <AuthContext.Provider value={{ user, loading, logout }}>
+      {loading || !isAuthorized ? (
+        <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200">
+          <Image
+            src={logoSrc}
+            alt="Logo de l'application"
+            width={150}
+            height={150}
+            className="mb-4 animate-pulse"
+          />
+          <p className="mt-4 text-xl font-medium text-center">
+            {currentMessage}
+            {dots}
+          </p>
+        </div>
+      ) : (
+        children
+      )}
+    </AuthContext.Provider>
+  );
 };
 
 export const useAuthContext = () => {
-  const context = React.useContext(AuthContext);
-  if (!context) {
-    throw new Error(
-      "useAuthContext doit être utilisé à l'intérieur d'un AuthProvider"
-    );
-  }
-  return context;
+  const context = React.useContext(AuthContext);
+  if (!context) {
+    throw new Error(
+      "useAuthContext doit être utilisé à l'intérieur d'un AuthProvider"
+    );
+  }
+  return context;
 };

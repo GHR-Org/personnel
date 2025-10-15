@@ -21,12 +21,18 @@ import { useLayout } from "@/contexts/LayoutContext";
 import Image from "next/image";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
+import { IconReport } from "@tabler/icons-react";
 
 const navItems = [
   {
     label: "Dashboard",
     href: "/maintenance",
     icon: <LayoutDashboard className="h-5 w-5" />,
+  },
+  {
+    label: "Planning",
+    href: "/maintenance/interventions/calendrier",
+    icon: <ClipboardList className="h-5 w-5" />,
   },
   {
     label: "Équipements",
@@ -43,11 +49,9 @@ const navItems = [
     href: "/maintenance/interventions",
     icon: <CalendarClock className="h-5 w-5" />,
   },
-  {
-    label: "Planning",
-    href: "/maintenance/interventions/calendrier",
-    icon: <ClipboardList className="h-5 w-5" />,
-  },
+  { label: 'Rapports',
+     href: '/maintenance/rapports',
+    icon : <IconReport className="h-5 w-5" />},
 ];
 
 export default function Sidebar() {

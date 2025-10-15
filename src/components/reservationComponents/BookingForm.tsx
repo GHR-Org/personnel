@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 // src/components/BookingForm.tsx
 
 "use client";
@@ -21,12 +19,11 @@ interface BookingFormProps {
 export function BookingForm({ onSave, onCancel, onClose }: BookingFormProps) {
   const [step, setStep] = useState<"client" | "reservation">("client");
   const [clientData, setClientData] = useState<any | null>(null);
-  const [clientId, setClientId] = useState<number | null>(null);
+  const [clientId, setClientId] = useState<number>(0);
   // Le type `Partial` est correct ici car les données peuvent être partielles au début
   const [reservationData, setReservationData] = useState<Partial<BookingFormInputs> | null>(null);
 
   const handleClientSubmit = async (data: any) => {
-    // ... (votre code pour le client) ...
     const newClientId = 123;
     setClientId(newClientId);
     setClientData(data);

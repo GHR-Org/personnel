@@ -77,21 +77,39 @@ export function CommandeForm({ open, onOpenChange, table }: CommandeFormProps) {
     setShowProductSelector(false);
   };
 
-  const handleRemoveArticle = (index: string) => {
-    let Index = parseInt(index, 10);
-    remove(Index);
-  };
+  const handleRemoveArticle = (fieldIdToRemove: string) => {
+    // 🎯 1. Trouver l'index numérique à partir de l'ID unique de useFieldArray
+    const indexToRemove = fields.findIndex(field => field.id === fieldIdToRemove);
 
-  const handleQuantityChange = (index: string, newQuantity: number) => {
-    let Index = parseInt(index, 10);
-    const articleToUpdate = fields[Index];
+    if (indexToRemove !== -1) {
+        remove(indexToRemove); // Supprime l'article en utilisant l'index numérique
+    } else {
+        console.error(`Article avec l'ID ${fieldIdToRemove} non trouvé.`);
+    }
+};
+
+// La Data Table renvoie l'ID (string) du champ généré par useFieldArray
+const handleQuantityChange = (fieldIdToUpdate: string, newQuantity: number) => {
+    // 🎯 1. Trouver l'index numérique à partir de l'ID unique de useFieldArray
+    const indexToUpdate = fields.findIndex(field => field.id === fieldIdToUpdate);
+    
+    // 2. Assurez-vous que l'article existe
+    if (indexToUpdate === -1) {
+        console.error(`Article avec l'ID ${fieldIdToUpdate} non trouvé pour la mise à jour.`);
+        return;
+    }
+    
+    const articleToUpdate = fields[indexToUpdate];
+    // 3. Assurez-vous que la quantité est toujours >= 1
     const updatedQuantity = Math.max(1, newQuantity);
-    update(Index, {
+
+    // 4. Utiliser l'index numérique pour mettre à jour
+    update(indexToUpdate, {
       ...articleToUpdate,
       quantite: updatedQuantity,
       total: updatedQuantity * articleToUpdate.prix,
     });
-  };
+};
 
   // Calcul du prix total de la commande
   const calculateTotalPrice = () => {
