@@ -36,9 +36,9 @@ export function LoginForm({
   const [logoSrc, setLogoSrc] = useState('/logo/dark.png');
           useEffect(() => {
             if (theme === 'dark') {
-              setLogoSrc('/logo/dark.png');
-            } else {
               setLogoSrc('/logo/white.png');
+            } else {
+              setLogoSrc('/logo/dark.png');
             }
           }, [theme]);
 
