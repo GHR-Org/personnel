@@ -2,7 +2,7 @@
 "use client";
 
 import * as React from "react";
-import { Pie, PieChart, Cell, Tooltip, Sector as RechartsSector } from "recharts";
+import { Pie, PieChart, Cell,  Sector as RechartsSector } from "recharts";
 import {
   Card,
   CardContent,
@@ -41,8 +41,7 @@ export function PaidInvoicesCircleChart({
 
   // --- NOUVEAU: Lire les couleurs CSS directement si possible ---
   // Cette approche est plus robuste si ChartContainer ne transmet pas les vars correctement
-  const paidColor = "hsl(var(--chart-1))"; // Gardez la variable pour la cohérence
-  const unpaidColor = "hsl(var(--chart-5))"; // Gardez la variable pour la cohérence
+
 
   // Pour garantir que les couleurs sont bien lues, vous pouvez faire cela:
   // Note: document.documentElement n'est disponible que côté client
@@ -108,7 +107,6 @@ export function PaidInvoicesCircleChart({
     );
   };
 
-  const paidIndex = data.findIndex(entry => entry.name === "Payées");
 
   return (
     <Card className="col-span-1 md:col-span-3">

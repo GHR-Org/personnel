@@ -12,7 +12,7 @@ export async function getRoomTypes() {
 
 export async function getAvailableRooms(checkInDate, checkOutDate) {
   try {
-    const response = await apiClient.get(/rooms/available?checkIn=\&checkOut=\);
+    const response = await apiClient.get(`/rooms/available?checkIn=${checkInDate}&checkOut=${checkOutDate}`);
     return response.data;
   } catch (error) {
     console.error("Erreur lors de la récupération des chambres disponibles :", error);
@@ -22,10 +22,10 @@ export async function getAvailableRooms(checkInDate, checkOutDate) {
 
 export async function updateRoomStatus(roomId, status) {
   try {
-    const response = await apiClient.put(/rooms/\/status, { status });
+    const response = await apiClient.put(`/rooms/${roomId}/status`, { status });
     return response.data;
   } catch (error) {
-    console.error(Erreur lors de la mise à jour du statut de la chambre \ :, error);
+    console.error(`Erreur lors de la mise à jour du statut de la chambre:`, error);
     throw error;
   }
 }

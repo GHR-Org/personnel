@@ -27,7 +27,7 @@ export interface FurnitureItem {
   id: number;
   type: FurnitureType;
   position: [number, number, number];
-  rotation: [number, number, number] | undefined;
+  rotation?: [number, number, number] ;
   name?: string;
   status: TableStatus;
 }

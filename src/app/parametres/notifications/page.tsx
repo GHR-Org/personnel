@@ -10,7 +10,7 @@ export default function NotificationSettingsPage() {
       <div className="mx-8">
         <p className="text-gray-600 mb-4">
           Gérez vos préférences de notification ici. Vous pouvez choisir de
-          recevoir des notifications par email, SMS, ou via l'application.
+          recevoir des notifications par email, SMS, ou via l&apos;application.
         </p>
         <NotificationForm />
       </div>

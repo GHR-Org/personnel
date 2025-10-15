@@ -1,12 +1,12 @@
 // src/data/roomCalendarTestData.ts
 
 import { addDays } from "date-fns";
-import { Civilite } from "../enum/Civilite";
 import { ModeCheckin } from "../enum/ModeCheckin";
 import { ReservationStatut } from "../enum/ReservationStatus";
 import { Room } from "./RoomCalendar";
 import { BookingEvent } from "@/types/reservation";
 import {format} from "date-fns";
+import { randomUUID } from "crypto";
 
 
 const today = new Date();
@@ -24,7 +24,7 @@ export const rooms: Room[] = [
 // Exemple de réservations diverses avec statuts variés et durées différentes
 export const reservations: BookingEvent[] = [
   {
-    id: "r1",
+    id: parseInt(randomUUID()),
     chambre_id: 101,
     client_id: 1,
     first_name: "Alice",
@@ -37,11 +37,10 @@ export const reservations: BookingEvent[] = [
     nbr_enfants: 0,
     mode_checkin: ModeCheckin.NUMERIQUE,
     code_checkin: "CHK123",
-    date_reservation: formatDate(addDays(today, -5)),
-    civilite: Civilite.MADAME,
+
   },
   {
-    id: "r2",
+    id: parseInt(randomUUID()),
     chambre_id: 102,
     first_name: "Bob",
     client_id : 2,
@@ -54,11 +53,10 @@ export const reservations: BookingEvent[] = [
     nbr_enfants: 1,
     mode_checkin: ModeCheckin.MANUELLE,
     code_checkin: "CHK456",
-    date_reservation: formatDate(addDays(today, -2)),
-    civilite: Civilite.MONSIEUR,
+
   },
   {
-    id: "r3",
+    id: parseInt(randomUUID()),
     chambre_id: 103,
     first_name: "Claire",
     client_id : 3,
@@ -71,11 +69,10 @@ export const reservations: BookingEvent[] = [
     nbr_enfants: 0,
     mode_checkin: ModeCheckin.NUMERIQUE,
     code_checkin: "CHK789",
-    date_reservation: formatDate(addDays(today, -7)),
-    civilite: Civilite.MADEMOISELLE,
+
   },
   {
-    id: "r4",
+    id: parseInt(randomUUID()),
     chambre_id: 101,
     client_id: 4,
     first_name: "David",
@@ -88,11 +85,9 @@ export const reservations: BookingEvent[] = [
     nbr_enfants: 0,
     mode_checkin: ModeCheckin.TELEPHONE,
     code_checkin: "CHK101",
-    date_reservation: formatDate(addDays(today, -1)),
-    civilite: Civilite.MONSIEUR,
   },
   {
-    id: "r5",
+    id: parseInt(randomUUID()),
     chambre_id: 105,
     client_id : 5,
     first_name: "Eva",
@@ -105,7 +100,5 @@ export const reservations: BookingEvent[] = [
     nbr_enfants: 0,
     mode_checkin: ModeCheckin.NUMERIQUE,
     code_checkin: "CHK202",
-    date_reservation: formatDate(addDays(today, -10)),
-    civilite: Civilite.MADAME,
   },
 ];

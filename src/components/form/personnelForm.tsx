@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
-import { User, Mail, Phone, Building, Calendar, Shield, Briefcase, MapPin } from "lucide-react";
+import { User, Mail, Calendar, Shield, Briefcase } from "lucide-react";
 
 export const personnelSchema = z.object({
   nom: z.string().min(2, "Le nom doit contenir au moins 2 caractères"),
@@ -27,7 +27,7 @@ type PersonnelFormData = z.infer<typeof personnelSchema>;
 
 interface PersonnelFormProps {
   onSubmit: (data: PersonnelFormData) => void;
-  initialData?: any;
+  initialData?: unknown;
 }
 
 export function PersonnelForm({ onSubmit, initialData }: PersonnelFormProps) {
@@ -50,29 +50,29 @@ export function PersonnelForm({ onSubmit, initialData }: PersonnelFormProps) {
   React.useEffect(() => {
     if (initialData) {
       Object.keys(initialData).forEach((key) => {
-        setValue(key as keyof PersonnelFormData, initialData[key]);
+        setValue(key as keyof PersonnelFormData, (initialData as PersonnelFormData)[key]);
       });
     }
   }, [initialData, setValue]);
 
-  const getRoleIcon = (role: string) => {
-    switch (role) {
-      case "Receptionniste":
-        return <User className="h-4 w-4 text-blue-500" />;
-      case "Technicien":
-        return <Shield className="h-4 w-4 text-green-500" />;
-      case "Manager":
-        return <Briefcase className="h-4 w-4 text-purple-500" />;
-      case "RH":
-        return <User className="h-4 w-4 text-orange-500" />;
-      case "Caissier":
-        return <User className="h-4 w-4 text-red-500" />;
-      case "Directeur":
-        return <Shield className="h-4 w-4 text-indigo-500" />;
-      default:
-        return <User className="h-4 w-4 text-gray-500" />;
-    }
-  };
+  // const getRoleIcon = (role: string) => {
+  //   switch (role) {
+  //     case "Receptionniste":
+  //       return <User className="h-4 w-4 text-blue-500" />;
+  //     case "Technicien":
+  //       return <Shield className="h-4 w-4 text-green-500" />;
+  //     case "Manager":
+  //       return <Briefcase className="h-4 w-4 text-purple-500" />;
+  //     case "RH":
+  //       return <User className="h-4 w-4 text-orange-500" />;
+  //     case "Caissier":
+  //       return <User className="h-4 w-4 text-red-500" />;
+  //     case "Directeur":
+  //       return <Shield className="h-4 w-4 text-indigo-500" />;
+  //     default:
+  //       return <User className="h-4 w-4 text-gray-500" />;
+  //   }
+  // };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 max-h-[70vh] overflow-y-auto pr-2">
@@ -220,7 +220,7 @@ export function PersonnelForm({ onSubmit, initialData }: PersonnelFormProps) {
               </Label>
               <Select
                 value={watchedRole}
-                onValueChange={(value) => setValue("role", value as any)}
+                onValueChange={(value) => setValue("role", value as "RH")}
               >
                 <SelectTrigger className={`transition-all duration-200 ${
                   errors.role 
@@ -295,7 +295,7 @@ export function PersonnelForm({ onSubmit, initialData }: PersonnelFormProps) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-3">
               <Label htmlFor="date_embauche" className="text-sm font-semibold text-gray-700">
-                Date d'embauche *
+                Date d&apos;embauche *
               </Label>
               <Input
                 id="date_embauche"
@@ -321,7 +321,7 @@ export function PersonnelForm({ onSubmit, initialData }: PersonnelFormProps) {
               </Label>
               <Select
                 defaultValue="active"
-                onValueChange={(value) => setValue("statut_compte", value as any)}
+                onValueChange={(value) => setValue("statut_compte", value as "active")}
               >
                 <SelectTrigger className="transition-all duration-200 border-gray-300 focus:border-orange-500 focus:ring-orange-200 hover:border-gray-400">
                   <SelectValue placeholder="Sélectionner un statut" />

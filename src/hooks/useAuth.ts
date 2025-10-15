@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+
 import { useContext } from "react";
 import APIClient from "@/func/APIClient";
 import { Personnel } from "@/types/personnel";
@@ -84,7 +83,7 @@ const redirectByRole = (user: Personnel, router: AppRouterInstance) => {
 };
 
 
-export const useAuth = () => {
+export const useAuth = () => { 
 
   const loginPersonnel = async (data: LoginData, router: AppRouterInstance) => {
     try {

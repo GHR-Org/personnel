@@ -64,14 +64,14 @@ export function InvoiceDetailsDrawer({
               <div>
                 <h1 className="text-3xl font-bold text-primary">FACTURE</h1>
                 <p className="text-sm text-muted-foreground">N°: <span className="font-semibold">{invoice.invoiceNumber}</span></p>
-                <p className="text-sm text-muted-foreground">Date d'émission: <span className="font-semibold">{format(new Date(invoice.dateIssued), "dd MMMM yyyy", { locale: fr })}</span></p>
+                <p className="text-sm text-muted-foreground">Date d&apos;émission: <span className="font-semibold">{format(new Date(invoice.dateIssued), "dd MMMM yyyy", { locale: fr })}</span></p>
                 {invoice.dueDate && (
-                  <p className="text-sm text-muted-foreground">Date d'échéance: <span className="font-semibold">{format(new Date(invoice.dueDate), "dd MMMM yyyy", { locale: fr })}</span></p>
+                  <p className="text-sm text-muted-foreground">Date d&apos;échéance: <span className="font-semibold">{format(new Date(invoice.dueDate), "dd MMMM yyyy", { locale: fr })}</span></p>
                 )}
               </div>
               <div className="text-right">
-                <h2 className="text-xl font-semibold">Nom de l'hotel</h2> {/* Mettez le nom de votre entreprise ici */}
-                <p className="text-sm text-muted-foreground">Adresse et Ville de l'hotel</p>
+                <h2 className="text-xl font-semibold">Nom de l&apos;hotel</h2> {/* Mettez le nom de votre entreprise ici */}
+                <p className="text-sm text-muted-foreground">Adresse et Ville de l&apos;hotel</p>
                 <p className="text-sm text-muted-foreground">Telephone et email</p>
                 <p className="text-sm text-muted-foreground">NIF: XXX-XXX-XXX | STAT: YYYY</p> {/* Informations légales */}
               </div>

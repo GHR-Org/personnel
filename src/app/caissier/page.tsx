@@ -1,6 +1,5 @@
 // admin/dashboard-page.tsx
 // Importez votre nouveau layout
-import { ChartAreaInteractive } from "@/components/receptionComponents/chart-area-interactive"
 
 import { SectionCards } from "@/components/caissierComponents/Caissecards"
 

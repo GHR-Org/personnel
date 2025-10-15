@@ -31,7 +31,7 @@ export default function SecuritySettingsPage() {
         <p className="text-sm text-muted-foreground">
           Examinez les appareils et les emplacements où vous vous êtes connecté.
         </p>
-        <Button variant="outline" className="mt-4">Voir l'historique</Button>
+        <Button variant="outline" className="mt-4">Voir l&apos;historique</Button>
       </div>
      </div>
     </>

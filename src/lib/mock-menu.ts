@@ -1,57 +1,54 @@
-import { v4 as uuidv4 } from "uuid"
 import { MenuItemFormValues } from "@/schemas/MenuItem"
 
 export const mockMenuItems: MenuItemFormValues[] = [
   {
-    id: uuidv4(),
     libelle: "Burger Classique",
     description: "Burger au bœuf avec fromage, laitue et tomate",
-    imageUrl: "/image/menuItemImg/Burger.webp",
-    type: "fastfood",
+    type: "FastFood",
     ingredients: ["pain", "bœuf", "fromage", "laitue", "tomate", "sauce"],
     prix: 7.5,
     disponible: true,
     tags: ["halal", "populaire"],
     calories: 850,
-    preparationMinutes: 10,
+    etablissement_id: 1,
+    livrable: false
   },
   {
-    id: uuidv4(),
     libelle: "Salade César",
     description: "Salade fraîche avec poulet grillé, parmesan et croûtons",
-    imageUrl: "/image/menuItemImg/salade.webp",
-    type: "entrée",
+    type: "FastFood",
     ingredients: ["laitue", "poulet", "parmesan", "croûtons", "sauce césar"],
     prix: 6.0,
     disponible: true,
     tags: ["léger", "sans gluten"],
     calories: 420,
-    preparationMinutes: 8,
+     etablissement_id: 1,
+    livrable: false
   },
   {
-    id: uuidv4(),
     libelle: "Tiramisu",
     description: "Dessert italien au café et mascarpone",
-    imageUrl: "/image/menuItemImg/tiramisu.jpg",
-    type: "dessert",
+    type: "Dessert",
     ingredients: ["mascarpone", "café", "biscuit", "cacao"],
     prix: 4.5,
     disponible: true,
     tags: ["végétarien"],
     calories: 520,
-    preparationMinutes: 5,
+     etablissement_id: 1,
+    livrable: false
   },
   {
-    id: uuidv4(),
+
     libelle: "Jus d’orange frais",
     description: "Pur jus pressé à froid",
-    imageUrl: "/image/menuItemImg/jusorange.webp",
-    type: "boisson",
+
+    type: "Boisson",
     ingredients: ["orange"],
     prix: 2.5,
     disponible: true,
     tags: ["bio", "vitaminé"],
     calories: 120,
-    preparationMinutes: 2,
+     etablissement_id: 1,
+    livrable: false
   }
 ]

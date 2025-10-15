@@ -2,7 +2,7 @@
 // SERVICE NOTIFICATIONS
 // ============================================================================
 
-import APIClient from "@/func/APIClient";
+import { apiService, handleApiError } from "./api";
 
 export interface Notification {
   id: number;
@@ -28,13 +28,12 @@ export class NotificationService {
    */
   async getByEtablissement(etablissementId: number): Promise<Notification[]> {
     try {
-      const response = await APIClient.get<NotificationsResponse>(
+      const response = await apiService.get<NotificationsResponse>(
         `${this.baseUrl}/etablissement/${etablissementId}`
       );
-      return response.data.notifications;
+      return response.notifications;
     } catch (error) {
-      console.error("Error fetching notifications:", error);
-      return [];
+      throw new Error(handleApiError(error));
     }
   }
 
@@ -44,9 +43,9 @@ export class NotificationService {
   async updateReadStatus(notificationId: number): Promise<void> {
     try {
       // Le backend PATCH /api/notification/{id} marque automatiquement comme lu
-      await APIClient.patch(`${this.baseUrl}/${notificationId}`);
+      await apiService.patch(`${this.baseUrl}/${notificationId}`);
     } catch (error) {
-      console.error("Error updating notification read status:", error);
+      throw new Error(handleApiError(error));
     }
   }
 
@@ -55,9 +54,9 @@ export class NotificationService {
    */
   async delete(notificationId: number): Promise<void> {
     try {
-      await APIClient.delete(`${this.baseUrl}/${notificationId}`);
+      await apiService.delete(`${this.baseUrl}/${notificationId}`);
     } catch (error) {
-      console.error("Error deleting notification:", error);
+      throw new Error(handleApiError(error));
     }
   }
 }

@@ -12,10 +12,10 @@ export async function createInvoice(invoiceData) {
 
 export async function getInvoiceDetails(invoiceId) {
   try {
-    const response = await apiClient.get(/invoices/\);
+    const response = await apiClient.get(`/invoices/`);
     return response.data;
   } catch (error) {
-    console.error(Erreur lors de la récupération des détails de la facture \ :, error);
+    console.error('Erreur lors de la récupération des détails de la facture  :', error);
     throw error;
   }
 }

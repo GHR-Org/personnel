@@ -1,10 +1,10 @@
-import api from "@/lib/api";
+import apiClient from "@/func/APIClient";
 import { Client } from "@/types/client";
 
 export const useClient = () => {
   const getClients = async (): Promise<Client[]> => {
     try {
-      const response = await api.get("/client");
+      const response = await apiClient.get("/client");
       return response.data;
     } catch (error) {
       console.error("Erreur lors de la récupération des clients :", error);
@@ -14,7 +14,7 @@ export const useClient = () => {
 
   const getClientById = async (id: number): Promise<Client> => {
     try {
-      const response = await api.get(`/client/${id}`);
+      const response = await apiClient.get(`/client/${id}`);
       return response.data;
     } catch (error) {
       console.error("Erreur lors de la récupération du client :", error);
@@ -24,7 +24,7 @@ export const useClient = () => {
 
   const addClient = async (data: Client): Promise<Client> => {
     try {
-      const response = await api.post("/client", data);
+      const response = await apiClient.post("/client", data);
       return response.data;
     } catch (error) {
       console.error("Erreur lors de l'ajout du client :", error);
@@ -37,7 +37,7 @@ export const useClient = () => {
     data: Partial<Client>
   ): Promise<Client> => {
     try {
-      const response = await api.put(`/client/${id}`, data);
+      const response = await apiClient.put(`/client/${id}`, data);
       return response.data;
     } catch (error) {
       console.error("Erreur lors de la mise à jour du client :", error);
@@ -47,7 +47,7 @@ export const useClient = () => {
 
   const deleteClient = async (id: number): Promise<void> => {
     try {
-      await api.delete(`/client/${id}`);
+      await apiClient.delete(`/client/${id}`);
     } catch (error) {
       console.error("Erreur lors de la suppression du client :", error);
       throw new Error("Erreur lors de la suppression du client");

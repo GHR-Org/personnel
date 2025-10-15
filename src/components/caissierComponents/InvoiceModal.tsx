@@ -196,7 +196,7 @@ export function InvoiceModal({
                 name="dateIssued"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Date d'Émission</FormLabel>
+                    <FormLabel>Date d&apos;Émission</FormLabel>
                     <FormControl>
                       <Input type="date" {...field} />
                     </FormControl>
@@ -209,7 +209,7 @@ export function InvoiceModal({
                 name="dueDate"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Date d'Échéance (Optionnel)</FormLabel>
+                    <FormLabel>Date d&apos;Échéance (Optionnel)</FormLabel>
                     <FormControl>
                       <Input type="date" {...field} />
                     </FormControl>

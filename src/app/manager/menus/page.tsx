@@ -1,13 +1,10 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import React, { useState, useMemo, useCallback } from "react";
 import { DataTable } from "@/components/ui/data-table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -22,7 +19,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { mockMenuItems } from "@/types/MenuItem";
+
 
 // Importez MenuItemType si vous voulez la typer explicitement
 // import { MenuItemType } from "@/lib/mock-menu"; // Chemin vers votre type MenuItemType
@@ -75,7 +72,7 @@ export default function PageMenus() {
   // import { mockMenuItems } from "@/lib/mock-menu";
   // const [menus, setMenus] = useState<MenuItem[]>(mockMenuItems);
 
-  const [menus, setMenus] = useState<MenuItem[]>(mockMenuItems);
+  const [menus, setMenus] = useState<MenuItem[]>([]);
 
   // États modales et sélection
   const [selectedMenu, setSelectedMenu] = useState<MenuItem | null>(null);
@@ -89,6 +86,7 @@ export default function PageMenus() {
   const openDetail = useCallback((menu: MenuItem) => {
     setSelectedMenu(menu);
     setIsDetailOpen(true);
+    setGlobalFilter("")
   }, []);
 
   // Ouvrir modale ajout ou édition
@@ -131,7 +129,7 @@ export default function PageMenus() {
       {
         accessorKey: "libelle",
         header: "Libellé",
-        cell: (info: any) => info.getValue(),
+        cell: (info : any) => info.getValue(),
       },
       {
         accessorKey: "type",
@@ -236,8 +234,6 @@ export default function PageMenus() {
             .toLowerCase()
             .includes(globalFilter.toLowerCase())
         )}
-        filterColumnId="libelle"
-        filterPlaceholder="Filtrer par libellé..."
       />
 
       {/* Modale Détail */}

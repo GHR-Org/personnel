@@ -97,7 +97,7 @@ export default function InvoicesPage() {
         <CardHeader>
           <CardTitle>Liste des Factures Payées</CardTitle> {/* Mis à jour le titre */}
           <CardDescription>
-            Visualisez et gérez uniquement les factures dont le statut est "Payée".
+            Visualisez et gérez uniquement les factures dont le statut est &quot;Payée&quot;.
           </CardDescription>
         </CardHeader>
         <CardContent>

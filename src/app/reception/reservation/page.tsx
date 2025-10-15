@@ -22,7 +22,7 @@ export default function Page() {
     setIsOpen(true);
   };
 
-  const createBookingMutation = useCreateBookingMutation();
+  const createBookingMutation = useCreateBookingMutation(ETABLISSEMENT_ID);
 
   // Fonction pour gérer la soumission du formulaire de réservation
   const handleSaveBooking = (data: BookingFormInputs) => {

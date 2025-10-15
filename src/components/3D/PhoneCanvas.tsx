@@ -2,7 +2,13 @@
 import React, { Suspense } from "react";
 import { Canvas, useLoader } from "@react-three/fiber";
 import { Environment, OrbitControls, useGLTF } from "@react-three/drei";
-import { TextureLoader, Mesh, MeshStandardMaterial } from "three";
+// On importe les types de matériaux génériques pour plus de flexibilité
+import { TextureLoader, Mesh, MeshStandardMaterial, Object3D, Material, Texture } from "three"; 
+
+// 🎯 Le nom de la maille de l'écran dans votre fichier GLTF. 
+// À AJUSTER si le nom dans votre modèle est différent (ex: 'Display', 'Phone_Screen', etc.)
+const SCREEN_MESH_NAME = 'Screen'; 
+
 
 function ModelWithScreen() {
   const gltf = useGLTF("/models/Iphone.glb");
@@ -10,23 +16,40 @@ function ModelWithScreen() {
 
   let screenMesh: Mesh | null = null;
   
-  // Parcourir le modèle pour trouver la première maille (Mesh)
-  gltf.scene.traverse((child) => {
-    if ((child as any).isMesh && screenMesh === null) {
-      screenMesh = child as Mesh;
-    }
-  });
-
-  // Assigner la texture si une maille a été trouvée
+  // 1. CIBLAGE PRÉCIS : Utiliser getObjectByName est plus fiable que traverse pour cibler un objet précis.
+  // getObjectByName retourne un Object3D, on l'assure d'être un Mesh.
+  const foundObject = gltf.scene.getObjectByName(SCREEN_MESH_NAME);
+  
+  if (foundObject && (foundObject as Mesh).isMesh) {
+    screenMesh = foundObject as Mesh;
+  }
+  
+  // 2. Assigner la texture si la maille de l'écran a été trouvée
   if (screenMesh) {
-    const material = screenMesh.material as MeshStandardMaterial;
-    if (material) {
-      material.map = screenTexture;
-      material.needsUpdate = true;
+    const material = screenMesh.material;
+    
+    // Gérer les cas où l'objet a un seul matériau ou plusieurs matériaux
+    if (Array.isArray(material)) {
+        // Si c'est un tableau, vous devez savoir quel index est l'écran. 
+        // C'est rare pour les écrans, mais si c'est le cas, remplacez 0 par l'index correct.
+        const screenMaterial = material[0] as Material & { map: Texture | null }; 
+
+        if (screenMaterial) {
+            screenMaterial.map = screenTexture;
+            screenMaterial.needsUpdate = true;
+        }
+        
+    } else if (material) {
+        // C'est un matériau simple. On le type pour ajouter la propriété 'map'
+        const singleMaterial = material as Material & { map: Texture | null };
+        
+        singleMaterial.map = screenTexture;
+        singleMaterial.needsUpdate = true;
     }
   }
 
-  return <primitive object={gltf.scene} scale={0.2} />;
+  // J'ai mis scale={0.2} pour revenir à la valeur initiale (vous aviez mis 1, mais 0.2 était là avant)
+  return <primitive object={gltf.scene} scale={0.2} />; 
 }
 
 export const PhoneCanvas = () => {

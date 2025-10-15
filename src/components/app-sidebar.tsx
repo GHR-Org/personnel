@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-// components/app-sidebar.tsx
 "use client"
 
 import * as React from "react"
@@ -51,11 +49,13 @@ import {
 } from "@/components/ui/sidebar"
 
 // --- Définition des types pour vos données de navigation (important pour TypeScript) ---
+import type { ComponentType } from "react";
+
 interface NavItemBase {
   title?: string;
   name?: string; // Certaines de vos données utilisent 'name', d'autres 'title'
   url: string;
-  icon?: string; // Nom de l'icône en chaîne de caractères
+  icon?: string | React.ComponentType<IconProps>; // Nom de l'icône en chaîne de caractères
   isActive?: boolean;
 }
 
@@ -121,7 +121,7 @@ export function AppSidebar({ data, ...props }: AppSidebarProps) {
         ...item,
         name: item.name ?? item.title ?? '', // Assure que 'name' est toujours présent pour les composants enfants
         title: item.title ?? item.name ?? '', // Assure que 'title' est toujours présent
-        icon: item.icon && iconMap[item.icon] ? iconMap[item.icon] : undefined,
+        icon: typeof item.icon === 'string' && iconMap[item.icon] ? iconMap[item.icon] : undefined,
       };
 
       // Gérer les sous-éléments si votre NavMain/NavDocuments/NavSecondary les gèrent

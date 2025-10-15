@@ -1,7 +1,7 @@
 // src/func/api/conges/apiConge.ts
 
 import apiClient from "@/func/APIClient";
-import { Conge} from "@/types/conge"; // Importe les types de votre schéma
+import { Conge, FormCongeData} from "@/types/conge"; // Importe les types de votre schéma
 
 // Type pour la réponse des listes de congés
 export interface GetCongesResponse {
@@ -46,7 +46,7 @@ export const getCongeById = async (congeId: string): Promise<Conge | null> => {
  * @param congeData Les données du congé à créer (exclut les champs générés par le serveur).
  * @returns Une promesse qui résout en le congé créé avec son ID, ou null en cas d'échec.
  */
-export const createConge = async (congeData: FormData): Promise<Conge | null> => {
+export const createConge = async (congeData: FormCongeData): Promise<Conge | null> => {
     try {
         // La fonction reçoit directement le bon FormData
         const response = await apiClient.post<Conge>(`${APIURL}/conge`, congeData);

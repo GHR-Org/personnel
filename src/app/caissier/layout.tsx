@@ -1,10 +1,10 @@
 "use client";
 
 
-import { AppSidebar } from "@/components/app-sidebar"
 import CaisseNavigation from "@/components/config/CaisseNavigation.json"
 import { SidebarProvider } from "@/components/ui/sidebar"
 import { SiteHeader } from "@/components/site-header"
+import { AppSidebar } from "@/components/app-sidebar";
 
 
 export default function CaissierLayout({

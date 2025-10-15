@@ -9,7 +9,7 @@ export default function DebugPage() {
 
   return (
     <div className="p-6 space-y-6">
-      <h1 className="text-3xl font-bold">Debug - Données d'authentification</h1>
+      <h1 className="text-3xl font-bold">Debug - Données d&apos;authentification</h1>
       
       <Card>
         <CardHeader>

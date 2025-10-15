@@ -1,17 +1,18 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { BookingFormData } from "@/schemas/reservation";
+import { BookingManuel } from "@/schemas/reservation";
 import { Button } from "@/components/ui/button"; // Pour le bouton d'action
 import { IconArrowRight } from "@tabler/icons-react"; // Pour une icône "Sélectionner"
 import { format } from "date-fns";
 import { fr } from 'date-fns/locale';
+import { ClientNameCell } from "../reservationComponents/ClientNameCell";
 
 interface ColumnsProps {
-  onSelectReservation: (reservation: BookingFormData) => void;
+  onSelectReservation: (reservation: BookingManuel) => void;
 }
 
-export const createReservationColumns = ({ onSelectReservation }: ColumnsProps): ColumnDef<BookingFormData>[] => [
+export const createReservationColumns = ({ onSelectReservation }: ColumnsProps): ColumnDef<BookingManuel>[] => [
   {
     accessorKey: "id",
     header: "ID Réservation",
@@ -22,7 +23,18 @@ export const createReservationColumns = ({ onSelectReservation }: ColumnsProps):
   {
     accessorKey: "nom",
     header: "Nom Client",
-    cell: ({ row }) => `${row.original.prenom} ${row.original.nom}`,
+    cell: ({ row }) => {
+      // 💡 On passe l'ID client au composant ClientNameCell
+      const clientId = row.original.client_id;
+      
+      // On s'assure que clientId est bien un nombre avant de le passer
+      if (typeof clientId !== 'number' || isNaN(clientId)) {
+          return <span className="text-destructive">ID Invalide</span>;
+      }
+
+      // 🎯 C'est ici que l'appel asynchrone est déclenché pour chaque ligne !
+      return <ClientNameCell clientId={clientId} />;
+    },
   },
   {
     accessorKey: "dateArrivee",

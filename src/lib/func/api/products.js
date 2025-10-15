@@ -12,10 +12,10 @@ export async function getMenuItems() {
 
 export async function getProductStock(productId) {
   try {
-    const response = await apiClient.get(/products/\/stock);
+    const response = await apiClient.get(`/products/${productId}/stock`);
     return response.data;
   } catch (error) {
-    console.error(Erreur lors de la récupération du stock du produit \ :, error);
+    console.error("Erreur lors de la récupération du stock du produit:", error);
     throw error;
   }
 }

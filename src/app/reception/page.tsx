@@ -1,7 +1,7 @@
 
 import { ChartAreaInteractive } from "@/components/receptionComponents/chart-area-interactive";
 import { SectionCards } from "@/components/receptionComponents/Receptioncards";
-import {RoomCalendar} from "@/components/calendar/RoomCalendar";
+
 
 export default function Page() {
   return (
@@ -27,7 +27,7 @@ export default function Page() {
         <section>
           
           <div className="px-4 lg:px-6">
-            <RoomCalendar/>
+            {/* <RoomCalendar/> */}
           </div>
         </section>
 

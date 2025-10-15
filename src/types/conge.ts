@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 // src/types/conge.ts
 
 /**
@@ -31,3 +31,4 @@ export interface Conge {
   raison: string; // Raison ou description courte du congé (optionnel)
   fichierJoin: any; // Liste des URLs ou IDs de fichiers joints (ex: certificat médical) (optionnel)
 }
+export type FormCongeData = Omit<Conge, "id" | "status" | "dateDmd" | "dureeJoursOuvres">;

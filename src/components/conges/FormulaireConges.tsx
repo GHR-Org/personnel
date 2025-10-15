@@ -1,9 +1,7 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 // src/components/conges/FormulaireConge.tsx
 
 import React, { useState, useEffect } from 'react';
-import { CongeType } from '@/types/conge';
+import { CongeType, FormCongeData } from '@/types/conge';
 import { CongeSchema } from '@/schemas/conge';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -53,7 +51,7 @@ interface Personnel {
 
 interface FormulaireCongeProps {
   initialData?: FormFields;
-  onSave: (conge: FormData) => void; // La fonction onSave accepte maintenant FormData
+  onSave: (conge: FormCongeData) => void; // La fonction onSave accepte maintenant FormData
   onCancel: () => void;
   etablissementId: number;
 }

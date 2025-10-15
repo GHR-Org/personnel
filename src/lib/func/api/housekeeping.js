@@ -10,12 +10,12 @@ export async function getHousekeepingTasks() {
   }
 }
 
-export async function assignHousekeepingTask(taskId, assigneeId) {
+export async function assignHousekeepingTask(assigneeId) {
   try {
-    const response = await apiClient.post(/housekeeping/tasks/\/assign, { assigneeId });
+    const response = await apiClient.post(`/housekeeping/tasks/assign`, { assigneeId });
     return response.data;
   } catch (error) {
-    console.error(Erreur lors de l'assignation de la tâche de ménage \ :, error);
+    console.error("Erreur lors de l'assignation de la tâche de ménage:", error);
     throw error;
   }
 }

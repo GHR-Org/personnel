@@ -65,7 +65,9 @@ export default function Page () {
             }} />
             
             {/* Passer les statistiques directement, elles sont déjà initialisées */}
-            {statistics && <RealTimePersonnelActivity statsPersonnel={statistics} />}
+            {statistics && <RealTimePersonnelActivity etablissementId={0} onNewNotification={function (): void {
+                    throw new Error('Function not implemented.');
+                } } />}
         </section>
         <Toaster /> {/* S'assurer que Toaster est rendu quelque part, souvent dans RootLayout */}
         </>

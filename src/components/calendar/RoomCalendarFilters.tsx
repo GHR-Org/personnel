@@ -1,6 +1,5 @@
 // components/roomCalendar/RoomCalendarFilters.tsx
 import * as React from "react";
-import { Input } from "@/components/ui/input";
 import { Select, SelectTrigger, SelectItem, SelectContent, SelectValue } from "@/components/ui/select";
 
 interface RoomCalendarFiltersProps {

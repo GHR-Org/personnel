@@ -2,15 +2,16 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { BookingFormData } from "@/schemas/reservation"; // Pour le type Articles
+import { BookingManuel } from "@/schemas/reservation"; // Pour le type Articles
 
 interface ArticlesFacturesTableProps {
-  articles: BookingFormData['articles'];
+  articles: BookingManuel['articles'];
 }
 
 export function ArticlesFacturesTable({ articles }: ArticlesFacturesTableProps) {
+  const listeArticles = articles ?? [];
   const calculateTotal = () => {
-    return articles.reduce((sum, item) => sum + (item.prixUnitaire * item.quantite), 0);
+    return listeArticles.reduce((sum, item) => sum + (item.prix * item.quantite), 0);
   };
 
   return (
@@ -19,7 +20,7 @@ export function ArticlesFacturesTable({ articles }: ArticlesFacturesTableProps) 
         <CardTitle>Articles et Services Facturés</CardTitle>
       </CardHeader>
       <CardContent>
-        {articles.length === 0 ? (
+        {listeArticles.length === 0 ? (
           <p className="text-muted-foreground">Aucun article facturé.</p>
         ) : (
           <Table>
@@ -32,12 +33,12 @@ export function ArticlesFacturesTable({ articles }: ArticlesFacturesTableProps) 
               </TableRow>
             </TableHeader>
             <TableBody>
-              {articles.map((item, index) => (
+              {listeArticles.map((item, index) => (
                 <TableRow key={index}>
-                  <TableCell>{item.libelle}</TableCell>
+                  <TableCell>{item.nom}</TableCell>
                   <TableCell className="text-right">{item.quantite}</TableCell>
-                  <TableCell className="text-right">{item.prixUnitaire.toFixed(2)} Ar</TableCell>
-                  <TableCell className="text-right">{(item.prixUnitaire * item.quantite).toFixed(2)} Ar</TableCell>
+                  <TableCell className="text-right">{item.prix.toFixed(2)} Ar</TableCell>
+                  <TableCell className="text-right">{(item.prix * item.quantite).toFixed(2)} Ar</TableCell>
                 </TableRow>
               ))}
               <TableRow>
