@@ -128,10 +128,10 @@ export const config = {
     },
     rapport: {
       statut: "EN_ATTENTE" as const,
-      type: "Général",
+    type: "Général",
     },
   },
-} as const;
+};
 
 // Environment-specific overrides
 if (process.env.NODE_ENV === "development") {

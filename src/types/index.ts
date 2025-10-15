@@ -353,7 +353,7 @@ export interface Client {
   email: string;
   phone: string;
   pays: string;
-  created_at: string;
+  // created_at: string;
   account_status: AccountStatus;
 }
 
