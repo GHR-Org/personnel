@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "cross-env NEXT_PUBLIC_IGNORE_BUILD_ERRORS=true next build",
+    "build": "NEXT_PUBLIC_IGNORE_BUILD_ERRORS=true next build",
     "start": "next start",
     "lint": "next lint"
   },
@@ -97,6 +97,7 @@
     "@types/react-big-calendar": "^1.16.2",
     "@types/react-dom": "^19",
     "@types/three": "^0.178.1",
+    "cross-env": "^10.1.0",
     "eslint": "^9",
     "eslint-config-next": "15.3.4",
     "tailwindcss": "^4",
